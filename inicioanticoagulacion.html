@@ -1,0 +1,1196 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#f5f1ea">
+<title>Inicio de anticoagulación · Ictus + FA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:          #f5f1ea;
+    --bg-card:     #faf7f1;
+    --bg-elevated: #ffffff;
+    --ink:         #1a1a1a;
+    --ink-soft:    #5a5550;
+    --ink-faint:   #8a857f;
+    --rule:        rgba(26, 26, 26, 0.14);
+    --rule-soft:   rgba(26, 26, 26, 0.06);
+
+    --go:          #2d5a3e;
+    --go-bg:       #e6ede5;
+    --wait:        #8a5a1f;
+    --wait-bg:     #f1e6d3;
+
+    --ehra-color:  #2a4d6e;
+    --ehra-bg:     #e3eaf0;
+    --elan-color:  #6b3f7d;
+    --elan-bg:     #ebe1f0;
+
+    --serif: 'Instrument Serif', 'Times New Roman', serif;
+    --sans:  'IBM Plex Sans', system-ui, -apple-system, sans-serif;
+    --mono:  'IBM Plex Mono', ui-monospace, monospace;
+  }
+
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  .app {
+    max-width: 560px;
+    margin: 0 auto;
+    padding: 18px 22px 140px;
+    position: relative;
+  }
+
+  /* ── Nav superior ────────────────────────────────────── */
+  .nav {
+    display: flex;
+    align-items: center;
+    margin-bottom: 28px;
+  }
+  .nav a {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--ink-soft);
+    text-decoration: none;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 8px 0;
+    transition: color 0.15s;
+  }
+  .nav a:hover { color: var(--ink); }
+  .nav a .arr {
+    font-family: var(--serif);
+    font-size: 16px;
+    font-style: italic;
+    transition: transform 0.2s;
+  }
+  .nav a:hover .arr { transform: translateX(-3px); }
+
+  /* ── Cabecera ────────────────────────────────────────── */
+  .head { margin-bottom: 36px; }
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-bottom: 14px;
+  }
+  .eyebrow::before {
+    content: "";
+    display: inline-block;
+    width: 18px;
+    height: 1px;
+    background: var(--ink-faint);
+    vertical-align: middle;
+    margin-right: 10px;
+    transform: translateY(-2px);
+  }
+  h1 {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: 38px;
+    line-height: 1.05;
+    letter-spacing: -0.01em;
+    margin-bottom: 14px;
+  }
+  h1 em { font-style: italic; color: var(--ink-soft); }
+  .lede {
+    font-size: 14.5px;
+    color: var(--ink-soft);
+    line-height: 1.55;
+    max-width: 44ch;
+  }
+
+  /* ── Secciones ───────────────────────────────────────── */
+  .step {
+    border-top: 1px solid var(--rule);
+    padding: 26px 0 8px;
+  }
+  .step-num {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--ink-faint);
+    margin-bottom: 10px;
+    letter-spacing: 0.08em;
+  }
+  .step-q {
+    font-family: var(--serif);
+    font-size: 22px;
+    line-height: 1.2;
+    margin-bottom: 6px;
+    font-weight: 400;
+  }
+  .step-hint {
+    font-size: 13.5px;
+    color: var(--ink-soft);
+    margin-bottom: 16px;
+    line-height: 1.5;
+  }
+
+  /* Cards de selección */
+  .cards {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .card {
+    appearance: none;
+    width: 100%;
+    background: var(--bg-card);
+    border: 1px solid var(--rule);
+    border-radius: 13px;
+    padding: 14px 16px;
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    -webkit-tap-highlight-color: transparent;
+    font-family: var(--sans);
+  }
+  .card:hover { border-color: var(--ink); }
+  .card[aria-pressed="true"] {
+    background: var(--ink);
+    border-color: var(--ink);
+    color: var(--bg);
+  }
+  .card[aria-pressed="true"] .card-desc { color: rgba(245, 241, 234, 0.7); }
+  .card-title {
+    font-family: var(--serif);
+    font-size: 20px;
+    line-height: 1.1;
+    margin-bottom: 3px;
+  }
+  .card-desc {
+    font-size: 13px;
+    color: var(--ink-soft);
+    line-height: 1.45;
+  }
+
+  /* Imágenes en las cards */
+  .card-img-container {
+    display: none;
+    margin-top: 12px;
+    gap: 8px;
+    justify-content: center;
+    animation: fadeInImg 0.3s ease both;
+  }
+  .card[aria-pressed="true"] .card-img-container {
+    display: flex;
+  }
+  .card-img-container img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    object-fit: cover;
+  }
+  .card-img-container.dual-img img {
+    width: calc(50% - 4px);
+  }
+  @keyframes fadeInImg {
+    from { opacity: 0; transform: translateY(-4px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Tiempo */
+  .time-row {
+    display: flex;
+    align-items: stretch;
+    gap: 8px;
+    background: var(--bg-card);
+    border: 1px solid var(--rule);
+    border-radius: 14px;
+    padding: 4px;
+  }
+  .time-row input {
+    flex: 1;
+    appearance: none; border: none; background: transparent;
+    font-family: var(--mono); font-size: 26px; font-weight: 500;
+    color: var(--ink); padding: 12px 16px; outline: none;
+    min-width: 0;
+  }
+  .time-row input::placeholder { color: var(--ink-faint); font-weight: 400; }
+  .time-units {
+    display: flex; background: var(--bg); border-radius: 11px;
+    padding: 3px; align-self: center; margin-right: 4px;
+  }
+  .time-units button {
+    appearance: none; border: none; background: transparent;
+    padding: 8px 12px; font-family: var(--sans); font-size: 13px;
+    font-weight: 500; color: var(--ink-soft); border-radius: 8px;
+    cursor: pointer; -webkit-tap-highlight-color: transparent;
+  }
+  .time-units button[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
+
+  /* ── Veredicto dual ──────────────────────────────────── */
+  .verdict-area {
+    margin-top: 40px;
+    border-top: 1px solid var(--rule);
+    padding-top: 28px;
+  }
+  .verdict-incomplete {
+    text-align: center;
+    color: var(--ink-faint);
+    font-size: 13.5px;
+    font-style: italic;
+    font-family: var(--serif);
+    padding: 24px 0;
+  }
+  .verdict-head {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-bottom: 16px;
+    text-align: center;
+  }
+
+  .dual {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  @media (max-width: 520px) {
+    .dual { grid-template-columns: 1fr; gap: 10px; }
+  }
+
+  .v-card {
+    background: var(--bg-elevated);
+    border: 1px solid var(--rule);
+    border-radius: 16px;
+    padding: 18px 16px 16px;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  .v-card::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: var(--accent);
+  }
+  .v-card.is-ehra { --accent: var(--ehra-color); }
+  .v-card.is-elan { --accent: var(--elan-color); }
+
+  .v-source {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 4px;
+    font-weight: 500;
+  }
+  .v-meta {
+    font-size: 11.5px;
+    color: var(--ink-faint);
+    margin-bottom: 14px;
+    font-style: italic;
+    font-family: var(--serif);
+  }
+  .v-title {
+    font-family: var(--serif);
+    font-size: 26px;
+    line-height: 1.05;
+    letter-spacing: -0.01em;
+    margin-bottom: 8px;
+  }
+  .v-title em { font-style: italic; }
+  .v-card.go .v-title  { color: var(--go); }
+  .v-card.wait .v-title { color: var(--wait); }
+  .v-sub {
+    font-size: 12.5px;
+    color: var(--ink-soft);
+    line-height: 1.45;
+    flex: 1;
+  }
+  .v-sub strong { font-weight: 500; color: var(--ink); }
+
+  .v-card.go   { background: linear-gradient(180deg, var(--go-bg) 0%, var(--bg-elevated) 60%); }
+  .v-card.wait { background: linear-gradient(180deg, var(--wait-bg) 0%, var(--bg-elevated) 60%); }
+
+  /* Divergencia warning */
+  .diverge {
+    background: var(--bg-card);
+    border: 1px dashed var(--rule);
+    border-radius: 12px;
+    padding: 12px 14px;
+    margin-bottom: 16px;
+    font-size: 12.5px;
+    color: var(--ink-soft);
+    line-height: 1.5;
+  }
+  .diverge strong {
+    font-family: var(--serif);
+    font-size: 14px;
+    color: var(--ink);
+    font-weight: 400;
+    display: block;
+    margin-bottom: 4px;
+  }
+  .diverge .icon {
+    font-family: var(--serif);
+    font-style: italic;
+    color: var(--ink-faint);
+    margin-right: 4px;
+  }
+
+  .why-btn {
+    appearance: none;
+    width: 100%;
+    background: var(--ink);
+    color: var(--bg);
+    border: none;
+    padding: 15px 20px;
+    border-radius: 12px;
+    font-family: var(--sans);
+    font-size: 14.5px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    -webkit-tap-highlight-color: transparent;
+    letter-spacing: 0.01em;
+  }
+  .why-btn:hover { opacity: 0.9; }
+  .why-btn .arrow {
+    font-family: var(--serif);
+    font-size: 20px;
+    transition: transform 0.2s;
+  }
+  .why-btn:hover .arrow { transform: translateX(3px); }
+
+  /* Pie */
+  .foot {
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 1px solid var(--rule);
+    font-size: 11.5px;
+    color: var(--ink-faint);
+    line-height: 1.55;
+    font-style: italic;
+    font-family: var(--serif);
+  }
+
+  /* ── Bottom sheet ──────────────────────────────────── */
+  .backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(26, 26, 26, 0.4);
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    z-index: 90;
+  }
+  .backdrop.open { opacity: 1; pointer-events: auto; }
+
+  .sheet {
+    position: fixed;
+    left: 0; right: 0; bottom: 0;
+    background: var(--bg);
+    border-radius: 24px 24px 0 0;
+    max-height: 90vh;
+    transform: translateY(100%);
+    transition: transform 0.34s cubic-bezier(0.32, 0.72, 0, 1);
+    z-index: 100;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 -20px 60px rgba(0,0,0,0.15);
+  }
+  .sheet.open { transform: translateY(0); }
+  .sheet-handle {
+    width: 40px;
+    height: 4px;
+    background: var(--rule);
+    border-radius: 2px;
+    margin: 12px auto 0;
+    flex-shrink: 0;
+  }
+  .sheet-head {
+    padding: 18px 22px 14px;
+    border-bottom: 1px solid var(--rule);
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    flex-shrink: 0;
+  }
+  .sheet-head h2 {
+    font-family: var(--serif);
+    font-size: 22px;
+    font-weight: 400;
+    line-height: 1.1;
+  }
+  .sheet-close {
+    appearance: none;
+    background: none;
+    border: none;
+    font-size: 26px;
+    line-height: 1;
+    color: var(--ink-soft);
+    cursor: pointer;
+    padding: 0 4px;
+    font-family: var(--serif);
+  }
+  .sheet-body {
+    overflow-y: auto;
+    padding: 22px 22px 80px;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Contenido del panel */
+  .pblock {
+    margin-bottom: 28px;
+  }
+  .pblock:last-child { margin-bottom: 0; }
+  .pblock h3 {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-bottom: 10px;
+    font-weight: 500;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--rule-soft);
+  }
+  .pblock h3 .badge {
+    display: inline-block;
+    padding: 2px 7px;
+    border-radius: 4px;
+    margin-left: 6px;
+    font-size: 10px;
+  }
+  .pblock h3 .badge.ehra { background: var(--ehra-bg); color: var(--ehra-color); }
+  .pblock h3 .badge.elan { background: var(--elan-bg); color: var(--elan-color); }
+
+  .pblock p {
+    font-size: 14px;
+    color: var(--ink);
+    line-height: 1.6;
+    margin-bottom: 10px;
+  }
+  .pblock p:last-child { margin-bottom: 0; }
+  .pblock p strong { font-weight: 500; }
+
+  /* Bloque de cita expandible */
+  .cite {
+    margin: 8px 0 14px;
+    border-left: 2px solid var(--rule);
+    padding-left: 12px;
+  }
+  .cite summary {
+    cursor: pointer;
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    padding: 4px 0;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: color 0.15s;
+  }
+  .cite summary::-webkit-details-marker { display: none; }
+  .cite summary:hover { color: var(--ink); }
+  .cite summary::before {
+    content: "+";
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    background: var(--rule-soft);
+    border-radius: 50%;
+    text-align: center;
+    line-height: 13px;
+    font-size: 12px;
+    font-family: var(--sans);
+    color: var(--ink-soft);
+    font-weight: 400;
+    transition: transform 0.2s;
+  }
+  .cite[open] summary::before {
+    content: "−";
+    transform: rotate(180deg);
+  }
+  .cite[open] { border-left-color: var(--ink); }
+  .cite-body {
+    padding: 10px 0 4px;
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--ink-soft);
+  }
+  .cite-source {
+    display: block;
+    margin-top: 8px;
+    font-family: var(--mono);
+    font-style: normal;
+    font-size: 10.5px;
+    color: var(--ink-faint);
+    letter-spacing: 0.04em;
+  }
+
+  /* Mini-resumen del caso */
+  .summary-box {
+    background: var(--bg-card);
+    border-radius: 12px;
+    padding: 14px 16px;
+    margin-bottom: 22px;
+    font-size: 13px;
+    color: var(--ink);
+    line-height: 1.55;
+  }
+  .summary-box .label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    display: block;
+    margin-bottom: 6px;
+  }
+  .summary-box .row {
+    display: flex;
+    justify-content: space-between;
+    padding: 4px 0;
+    border-bottom: 1px solid var(--rule-soft);
+  }
+  .summary-box .row:last-child { border-bottom: none; }
+  .summary-box .row .k { color: var(--ink-soft); }
+  .summary-box .row .v { font-family: var(--mono); font-size: 12px; }
+
+  /* Stats */
+  .panel-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin: 12px 0;
+  }
+  .panel-stat-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 9px 12px;
+    background: var(--bg-card);
+    border-radius: 9px;
+    font-size: 12.5px;
+  }
+  .panel-stat-row .label {
+    color: var(--ink-soft);
+    flex: 1;
+    padding-right: 12px;
+  }
+  .panel-stat-row .val {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--ink);
+    text-align: right;
+    white-space: nowrap;
+  }
+
+  /* Animaciones */
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .v-card, .verdict-incomplete, .diverge {
+    animation: fadeIn 0.32s ease both;
+  }
+
+  @media (max-width: 360px) {
+    h1 { font-size: 32px; }
+    .v-title { font-size: 22px; }
+    .app { padding: 16px 18px 120px; }
+  }
+</style>
+</head>
+<body>
+
+<main class="app">
+
+  <nav class="nav">
+    <a href="index.html"><span class="arr">←</span> NEUROTOOLS</a>
+  </nav>
+
+  <header class="head">
+    <div class="eyebrow">Inicio de anticoagulación · Ictus + FA</div>
+    <h1>Cuándo iniciar el <em>ACOD</em></h1>
+    <p class="lede">Comparativa entre la regla clínica de <strong>EHRA 2021</strong> (basada en NIHSS) y la evidencia del ensayo <strong>ELAN</strong> (basada en imagen).</p>
+  </header>
+
+  <!-- ── Paso 1 — NIHSS ── -->
+  <section class="step">
+    <div class="step-num">01 / Clínica</div>
+    <div class="step-q">Gravedad por NIHSS</div>
+    <div class="step-hint">Determina el día objetivo según la regla 1-3-6-12 (EHRA).</div>
+    <div class="cards" data-field="nihss">
+      <button class="card" data-val="mild">
+        <div class="card-title">Leve</div>
+        <div class="card-desc">NIHSS &lt; 8</div>
+      </button>
+      <button class="card" data-val="moderate">
+        <div class="card-title">Moderado</div>
+        <div class="card-desc">NIHSS 8 – 15</div>
+      </button>
+      <button class="card" data-val="severe">
+        <div class="card-title">Grave</div>
+        <div class="card-desc">NIHSS &gt; 15</div>
+      </button>
+    </div>
+  </section>
+
+  <!-- ── Paso 2 — Tamaño infarto ── -->
+  <section class="step">
+    <div class="step-num">02 / Neuroimagen</div>
+    <div class="step-q">Tamaño del infarto</div>
+    <div class="step-hint">Clasificación radiológica por TC o RM según ELAN.</div>
+    <div class="cards" data-field="size">
+      
+      <!-- Menor -->
+      <button class="card" data-val="minor">
+        <div class="card-title">Menor</div>
+        <div class="card-desc">≤ 1,5 cm en cualquier territorio.</div>
+        <div class="card-img-container">
+          <img src="leve.png" alt="Esquema de infarto menor">
+        </div>
+      </button>
+
+      <!-- Moderado -->
+      <button class="card" data-val="moderate">
+        <div class="card-title">Moderado</div>
+        <div class="card-desc">Rama cortical superficial de ACM, ACA o ACP.</div>
+        <div class="card-img-container">
+          <img src="moderado.png" alt="Esquema de infarto moderado">
+        </div>
+      </button>
+
+      <!-- Mayor -->
+      <button class="card" data-val="major">
+        <div class="card-title">Mayor</div>
+        <div class="card-desc">Extenso en ACM/ACA/ACP, o tronco/cerebelo &gt; 1,5 cm.</div>
+        <div class="card-img-container dual-img">
+          <img src="severo1.png" alt="Esquema de infarto mayor 1">
+          <img src="severo2.png" alt="Esquema de infarto mayor 2">
+        </div>
+      </button>
+
+    </div>
+  </section>
+
+  <!-- ── Paso 3 — Tiempo ── -->
+  <section class="step">
+    <div class="step-num">03 / Cronología</div>
+    <div class="step-q">Tiempo desde el inicio</div>
+    <div class="step-hint">Tiempo transcurrido desde el inicio de síntomas (o «último visto bien»).</div>
+    <div class="time-row">
+      <input type="number" id="timeInput" placeholder="0" min="0" step="0.5" inputmode="decimal">
+      <div class="time-units" data-field="unit">
+        <button data-val="h" aria-pressed="true">horas</button>
+        <button data-val="d">días</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Veredicto ── -->
+  <section class="verdict-area" id="verdict">
+    <div class="verdict-incomplete">Completa los tres apartados para ver la comparativa.</div>
+  </section>
+
+  <footer class="foot">
+    Esta herramienta sintetiza dos marcos de decisión (EHRA 2021 y ELAN 2023). No sustituye al juicio clínico ni a la valoración individualizada del paciente.
+  </footer>
+
+</main>
+
+<!-- ── Bottom sheet ── -->
+<div class="backdrop" id="backdrop"></div>
+<aside class="sheet" id="sheet" aria-hidden="true">
+  <div class="sheet-handle"></div>
+  <div class="sheet-head">
+    <h2>Justificación</h2>
+    <button class="sheet-close" id="sheetClose" aria-label="Cerrar">×</button>
+  </div>
+  <div class="sheet-body" id="sheetBody"></div>
+</aside>
+
+<script>
+'use strict';
+
+/* ─────────────────────────────────────────────────────────
+   ESTADO
+   ───────────────────────────────────────────────────────── */
+const state = {
+  nihss: null,   // 'mild' | 'moderate' | 'severe'
+  size:  null,   // 'minor' | 'moderate' | 'major'
+  time:  null,
+  unit:  'h'
+};
+
+/* ─────────────────────────────────────────────────────────
+   LÓGICA
+   ───────────────────────────────────────────────────────── */
+function ehraTargetDay(nihss) {
+  return nihss === 'mild' ? 3 : nihss === 'moderate' ? 6 : 12;
+}
+
+function ehraVerdict(days) {
+  const target = ehraTargetDay(state.nihss);
+  if (days >= target) {
+    return { status: 'go', title: 'Iniciar', target };
+  }
+  const remaining = Math.max(1, Math.ceil(target - days));
+  return { status: 'wait', title: `Día ${target}`, target, remaining };
+}
+
+/* Ventanas de ELAN según tamaño del infarto.
+   Cada ventana son los límites [inicio, fin) en horas. */
+const ELAN_WINDOWS = {
+  minor:    { early: [0,   48],  late: [72,  96]  },  // ≤48h ; día 3–4
+  moderate: { early: [0,   48],  late: [144, 192] },  // ≤48h ; día 6–7
+  major:    { early: [144, 192], late: [288, 360] }   // día 6–7 ; día 12–14
+};
+
+function elanVerdict(hours, days) {
+  const win = ELAN_WINDOWS[state.size];
+
+  // Caso especial: en ictus mayor, ELAN no estudió inicio antes del día 6
+  if (state.size === 'major' && hours < win.early[0]) {
+    const remaining = Math.max(1, Math.ceil(6 - days));
+    return { status: 'wait', title: 'Día 6', target: 6, remaining };
+  }
+
+  let arm;
+  if (hours >= win.early[0] && hours < win.early[1])       arm = 'early';
+  else if (hours >= win.early[1] && hours < win.late[0])   arm = 'between';
+  else if (hours >= win.late[0]  && hours < win.late[1])   arm = 'late';
+  else                                                     arm = 'beyond';
+
+  return { status: 'go', title: 'Iniciar', arm };
+}
+
+function computeVerdict() {
+  if (!state.nihss || !state.size || state.time === null || state.time === '' || isNaN(state.time)) {
+    return { kind: 'incomplete' };
+  }
+  const hours = state.unit === 'd' ? Number(state.time) * 24 : Number(state.time);
+  const days = hours / 24;
+  return {
+    kind: 'ok',
+    hours,
+    days,
+    ehra: ehraVerdict(days),
+    elan: elanVerdict(hours, days)
+  };
+}
+
+/* ─────────────────────────────────────────────────────────
+   RENDER VEREDICTO
+   ───────────────────────────────────────────────────────── */
+const verdictEl = document.getElementById('verdict');
+
+function render() {
+  const r = computeVerdict();
+
+  if (r.kind === 'incomplete') {
+    verdictEl.innerHTML = `<div class="verdict-incomplete">Completa los tres apartados para ver la comparativa.</div>`;
+    return;
+  }
+
+  const divergent = r.ehra.status !== r.elan.status;
+
+  verdictEl.innerHTML = `
+    <div class="verdict-head">Recomendación</div>
+    <div class="dual">
+      ${cardHTML('ehra', r.ehra, ehraSubtitle(r.ehra))}
+      ${cardHTML('elan', r.elan, elanSubtitle(r.elan))}
+    </div>
+    ${divergent ? divergenceHTML(r) : ''}
+    <button class="why-btn" id="openSheet">Ver justificación y citas <span class="arrow">→</span></button>
+  `;
+
+  document.getElementById('openSheet').addEventListener('click', openSheet);
+}
+
+function cardHTML(which, v, sub) {
+  const sourceLabel = which === 'ehra' ? 'EHRA 2021' : 'ELAN 2023';
+  const meta = which === 'ehra' ? 'Regla 1-3-6-12 (NIHSS)' : 'Basado en imagen';
+  return `
+    <div class="v-card is-${which} ${v.status}">
+      <div class="v-source">${sourceLabel}</div>
+      <div class="v-meta">${meta}</div>
+      <div class="v-title">${v.title}</div>
+      <div class="v-sub">${sub}</div>
+    </div>
+  `;
+}
+
+function ehraSubtitle(v) {
+  if (v.status === 'go') {
+    let text = `Has superado el día ${v.target} para un ictus ${nihssWord(state.nihss)}.`;
+    if (state.nihss === 'moderate' || state.nihss === 'severe') {
+      text += `<br><strong>Imagen previa</strong> (máximo 24h antes) para descartar transformación hemorrágica.`;
+    }
+    return text;
+  }
+  // status === 'wait'
+  let text = `<strong>No indicado.</strong> Se podría iniciar anticoagulación a partir del día ${v.target}.`;
+  if (state.nihss === 'moderate' || state.nihss === 'severe') {
+    text += `<br><br><em>*Deberá realizarse prueba de imagen de control como máximo 24 horas antes de iniciar anticoagulación.</em>`;
+  }
+  return text;
+}
+
+function elanSubtitle(v) {
+  if (v.status === 'wait') {
+    return `<strong>No indicado.</strong> Se podría iniciar anticoagulación a partir del día ${v.target}.<br><br><em>ELAN no estudió el inicio antes del día 6 en ictus mayor.</em>`;
+  }
+  // status === 'go'
+  switch (v.arm) {
+    case 'early':
+      return `Encaja con la <strong>rama precoz</strong> del ensayo.`;
+    case 'late':
+      return `Encaja con la <strong>rama tardía</strong> del ensayo. Ambas ramas demostraron seguridad.`;
+    case 'between':
+      return `Entre las dos ramas estudiadas. Ambas fueron seguras, iniciar es razonable.`;
+    case 'beyond':
+      return `Más allá de la ventana del ensayo; iniciar es claramente seguro.`;
+  }
+}
+
+function nihssWord(n) {
+  return n === 'mild' ? 'leve' : n === 'moderate' ? 'moderado' : 'grave';
+}
+
+function sizeWord(s) {
+  return s === 'minor' ? 'menor' : s === 'moderate' ? 'moderado' : 'mayor';
+}
+
+function divergenceHTML(r) {
+  return `
+    <div class="diverge">
+      <strong><span class="icon">⚠</span> Discrepancia entre ambos enfoques</strong>
+      ${divergenceText(r)}
+    </div>
+  `;
+}
+
+function divergenceText(r) {
+  const ehraGo = r.ehra.status === 'go';
+  const elanGo = r.elan.status === 'go';
+  if (ehraGo && !elanGo) {
+    return `EHRA permitiría iniciar ya por NIHSS ${nihssWord(state.nihss)}, pero ELAN obliga a esperar al día 6 porque el infarto es mayor por imagen. <strong>Prima el criterio radiológico</strong>: el riesgo de transformación hemorrágica depende del tamaño, no solo del déficit clínico.`;
+  }
+  if (!ehraGo && elanGo) {
+    return `EHRA mandaría esperar al día ${r.ehra.target} por NIHSS ${nihssWord(state.nihss)}, pero ELAN demostró seguridad iniciando antes en infartos ${sizeWord(state.size)}es por imagen. <strong>La evidencia ELAN respalda iniciar ya</strong> en este perfil.`;
+  }
+  return '';
+}
+
+/* ─────────────────────────────────────────────────────────
+   PANEL / BOTTOM SHEET
+   ───────────────────────────────────────────────────────── */
+const sheet      = document.getElementById('sheet');
+const backdrop   = document.getElementById('backdrop');
+const sheetBody  = document.getElementById('sheetBody');
+const sheetClose = document.getElementById('sheetClose');
+
+function openSheet() {
+  const r = computeVerdict();
+  if (r.kind !== 'ok') return;
+  sheetBody.innerHTML = panelContent(r);
+  sheetBody.scrollTop = 0;
+  sheet.classList.add('open');
+  backdrop.classList.add('open');
+  sheet.setAttribute('aria-hidden', 'false');
+  document.body.style.overflow = 'hidden';
+}
+function closeSheet() {
+  sheet.classList.remove('open');
+  backdrop.classList.remove('open');
+  sheet.setAttribute('aria-hidden', 'true');
+  document.body.style.overflow = '';
+}
+backdrop.addEventListener('click', closeSheet);
+sheetClose.addEventListener('click', closeSheet);
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeSheet();
+});
+
+/* ─────────────────────────────────────────────────────────
+   CONTENIDO DEL PANEL
+   ───────────────────────────────────────────────────────── */
+function panelContent(r) {
+  const days = r.days.toFixed(1);
+  return `
+    <div class="summary-box">
+      <span class="label">Tu caso</span>
+      <div class="row"><span class="k">Gravedad clínica</span><span class="v">NIHSS ${nihssWord(state.nihss)}</span></div>
+      <div class="row"><span class="k">Tamaño en imagen</span><span class="v">${sizeWord(state.size)}</span></div>
+      <div class="row"><span class="k">Tiempo de evolución</span><span class="v">${days} d (${Math.round(r.hours)} h)</span></div>
+    </div>
+
+    ${ehraSection(r)}
+    ${elanSection(r)}
+    ${(r.ehra.status !== r.elan.status) ? divergenceSection(r) : ''}
+    ${limitationsSection()}
+  `;
+}
+
+function ehraSection(r) {
+  const target = r.ehra.target;
+  const v = r.ehra;
+  return `
+    <div class="pblock">
+      <h3>EHRA 2021 <span class="badge ehra">${v.title}</span></h3>
+
+      <p>La <strong>European Heart Rhythm Association</strong> recomienda diferir el inicio del ACOD según la gravedad clínica medida por la NIHSS. Para un ictus <strong>${nihssWord(state.nihss)}</strong>, el inicio se sitúa a partir del <strong>día ${target}</strong>.</p>
+
+      <details class="cite">
+        <summary>Cita · regla 1-3-6-12</summary>
+        <div class="cite-body">
+          «If infarct size is not expected to substantially increase the risk of haemorrhagic transformation in patients with mild stroke, OAC may be initiated ≥ 3 days after AIS. In patients with moderate stroke, anticoagulation may be started ≥ 6–8 days and in patients with severe stroke at ≥ 12–14 days, after excluding secondary haemorrhagic transformation by repeating brain imaging.»
+          <span class="cite-source">Steffel J et al. EHRA 2021 Practical Guide, sección «AF patients post-ischaemic stroke», p. 1654</span>
+        </div>
+      </details>
+
+      <p>En ictus <strong>moderados y graves</strong>, antes de iniciar es <strong>obligatorio descartar transformación hemorrágica</strong> con TC o RM (realizada como máximo 24 horas antes del inicio), ya que la disrupción de la barrera hematoencefálica tras el ictus aumenta el riesgo de sangrado parenquimatoso secundario. En ictus leves no se exige rutinariamente esta imagen de control.</p>
+
+      <details class="cite">
+        <summary>Cita · imagen previa</summary>
+        <div class="cite-body">
+          «Since stroke-related disruption of the blood–brain barrier increases the risk of secondary haemorrhagic transformation, timing of (re-)starting OAC must balance the risk of recurrent ischaemic stroke vs. risk of parenchymal bleeding.»
+          <span class="cite-source">EHRA 2021, p. 1653</span>
+        </div>
+      </details>
+
+      <p>Los autores reconocen que <strong>la regla es expert-opinion</strong>, no derivada de ECA: «These time frames and actions represent expert opinion-driven practical advice until more evidence becomes available.»</p>
+
+      <details class="cite">
+        <summary>Cita · nivel de evidencia</summary>
+        <div class="cite-body">
+          «These time frames and actions represent expert opinion-driven practical advice until more evidence becomes available. A multidisciplinary team approach appears mandatory in these challenging situations.»
+          <span class="cite-source">EHRA 2021, p. 1654 + Figura 21</span>
+        </div>
+      </details>
+
+      <details class="cite">
+        <summary>Cita · guías ESC 2020</summary>
+        <div class="cite-body">
+          «OAC should be (re-)initiated as soon as considered possible from the neurological perspective (in most cases within the first 2 weeks).»
+          <span class="cite-source">Hindricks G et al. 2020 ESC Guidelines for AF, Eur Heart J 2021; 42:373-498</span>
+        </div>
+      </details>
+    </div>
+  `;
+}
+
+function elanSection(r) {
+  const v = r.elan;
+
+  let armText = '';
+  if (v.status === 'go') {
+    const w = ELAN_WINDOWS[state.size];
+    const lateRange = state.size === 'minor' ? 'día 3–4'
+                    : state.size === 'moderate' ? 'día 6–7'
+                    : 'día 12–14';
+    const earlyRange = state.size === 'major' ? 'día 6–7' : '≤48 h';
+
+    switch (v.arm) {
+      case 'early':
+        armText = `Tu caso encaja con la <strong>rama precoz</strong> (${earlyRange}) del ensayo. Esta rama demostró menos ictus recurrentes sin aumentar la HIC sintomática.`;
+        break;
+      case 'late':
+        armText = `Tu caso encaja con la <strong>rama tardía</strong> (${lateRange}) del ensayo. ELAN demostró que ambas ramas son seguras; ninguna mostró exceso de HIC.`;
+        break;
+      case 'between':
+        armText = `Tu caso queda <strong>entre las dos ramas estudiadas</strong> (entre la rama precoz y la tardía). Si la rama precoz fue segura y la tardía también, no hay razón para suponer mayor riesgo en este intervalo intermedio.`;
+        break;
+      case 'beyond':
+        armText = `Tu caso está <strong>más allá de la rama tardía</strong> del ensayo. Iniciar es claramente seguro: ambos brazos estudiados ya habrían iniciado el ACOD en este momento.`;
+        break;
+    }
+  } else {
+    armText = `En ictus <strong>mayor</strong> por imagen, ELAN no estudió el inicio antes del día 6. Ambas ramas del ensayo (precoz y tardía) iniciaron el ACOD a partir de ese punto, por lo que iniciar antes sería extrapolar más allá de la evidencia disponible.`;
+  }
+
+  return `
+    <div class="pblock">
+      <h3>ELAN 2023 <span class="badge elan">${v.title}</span></h3>
+
+      <p>El ensayo <strong>ELAN</strong> (n = 2 013, NEJM 2023) estratificó por <strong>tamaño radiológico</strong>, no por NIHSS, porque la escala clínica depende también de la localización del infarto. ${armText}</p>
+
+      <details class="cite">
+        <summary>Cita · diseño del ensayo</summary>
+        <div class="cite-body">
+          «Early treatment was defined as initiation of a DOAC within 48 hours after stroke onset in participants with minor or moderate stroke and on day 6 or 7 in those with major stroke. Later treatment was defined as initiation of a DOAC in participants with a minor stroke on day 3 or 4 after stroke onset, in participants with a moderate stroke on day 6 or 7, and in participants with a major stroke on day 12, 13, or 14.»
+          <span class="cite-source">Fischer U et al. ELAN trial, NEJM 2023; 388:2411-21. Métodos · Trial Treatment, p. 2413</span>
+        </div>
+      </details>
+
+      <details class="cite">
+        <summary>Cita · por qué imagen y no NIHSS</summary>
+        <div class="cite-body">
+          «We chose to use an imaging-based definition of stroke severity because an alternative, the NIHSS score, is dependent on both the location and size of the infarct. The size of an infarct measured by volume analysis has been related to the risk of haemorrhagic transformation.»
+          <span class="cite-source">ELAN, Discusión, p. 2419</span>
+        </div>
+      </details>
+
+      <p><strong>Resultados a 30 días</strong> (rama precoz vs tardía):</p>
+      <div class="panel-stats">
+        <div class="panel-stat-row"><span class="label">Evento primario compuesto</span><span class="val">2,9 % vs 4,1 %</span></div>
+        <div class="panel-stat-row"><span class="label">Ictus isquémico recurrente</span><span class="val">1,4 % vs 2,5 %</span></div>
+        <div class="panel-stat-row"><span class="label">HIC sintomática</span><span class="val">0,2 % vs 0,2 %</span></div>
+        <div class="panel-stat-row"><span class="label">Sangrado mayor extracraneal</span><span class="val">0,3 % vs 0,5 %</span></div>
+      </div>
+
+      <details class="cite">
+        <summary>Cita · resultados primarios</summary>
+        <div class="cite-body">
+          «A primary-outcome event occurred in 29 participants (2.9 %) in the early-treatment group and in 41 participants (4.1 %) in the later-treatment group (risk difference, −1.18 percentage points; 95 % CI, −2.84 to 0.47).»
+          <span class="cite-source">ELAN, Resultados, Tabla 2 y Figura 2, p. 2417-2418</span>
+        </div>
+      </details>
+
+      <p>El análisis post hoc bootstrap mostró una probabilidad del <strong>98 %</strong> de que el inicio precoz no aumente el evento primario en más de 0,5 puntos porcentuales.</p>
+
+      <details class="cite">
+        <summary>Cita · análisis bootstrap</summary>
+        <div class="cite-body">
+          «The curve in Figure S1A indicates a 98 % probability that early treatment with DOACs would increase the risk of a primary-outcome event by no more than 0.5 percentage points.»
+          <span class="cite-source">ELAN, Resultados, p. 2418</span>
+        </div>
+      </details>
+
+      ${state.size === 'major' ? `
+      <p>En ictus <strong>mayor</strong>, ELAN no estudió el inicio antes del día 6: ambas ramas (precoz y tardía) arrancaron el ACOD a partir de ese punto.</p>
+      <details class="cite">
+        <summary>Cita · ictus mayor</summary>
+        <div class="cite-body">
+          «Further research is needed to confirm whether persons with atrial fibrillation and severe ischaemic stroke can receive anticoagulation earlier than 6 days after symptom onset.»
+          <span class="cite-source">ELAN, Discusión, p. 2419</span>
+        </div>
+      </details>
+      ` : ''}
+
+      <details class="cite">
+        <summary>Cita · respaldo final de los autores</summary>
+        <div class="cite-body">
+          «Early treatment initiation can therefore be supported if indicated or if desired.»
+          <span class="cite-source">ELAN, Discusión, p. 2419</span>
+        </div>
+      </details>
+    </div>
+  `;
+}
+
+function divergenceSection(r) {
+  const ehraGo = r.ehra.status === 'go';
+  const elanGo = r.elan.status === 'go';
+
+  let text = '';
+  if (ehraGo && !elanGo) {
+    text = `<p>EHRA permitiría iniciar (NIHSS ${nihssWord(state.nihss)} → día ${r.ehra.target}), pero ELAN obliga a esperar al día 6 porque el infarto es <strong>mayor por imagen</strong>. En esta situación <strong>prima el criterio radiológico</strong>: el riesgo de transformación hemorrágica depende del tamaño del infarto, no solo del déficit clínico, y una NIHSS baja puede infravalorar el daño tisular real (p. ej., infarto extenso de localización silente).</p>
+    <p>La actitud razonable es <strong>seguir la pauta de ELAN</strong> (esperar al día 6, con imagen de control) sobre la regla EHRA, porque la regla 1-3-6-12 se basa en opinión de expertos mientras que el límite del día 6 en ictus mayor está respaldado por un ECA con 2 013 pacientes.</p>`;
+  } else if (!ehraGo && elanGo) {
+    text = `<p>EHRA mandaría esperar al día ${r.ehra.target} (NIHSS ${nihssWord(state.nihss)}), pero ELAN demostró que iniciar antes en infartos <strong>${sizeWord(state.size)}es</strong> por imagen es seguro (HIC sintomática 0,2 % en ambas ramas). La discrepancia surge porque una NIHSS alta puede reflejar un infarto pequeño en localización elocuente (p. ej., cápsula interna, tronco), no necesariamente un infarto grande.</p>
+    <p>La evidencia de ELAN <strong>respalda iniciar ya</strong> en este perfil. Los autores son explícitos: «el inicio precoz puede respaldarse si está indicado o se desea».</p>`;
+  }
+
+  return `
+    <div class="pblock">
+      <h3>Discrepancia entre ambos marcos</h3>
+      ${text}
+      <details class="cite">
+        <summary>Cita · razón del cambio de paradigma</summary>
+        <div class="cite-body">
+          «We chose to use an imaging-based definition of stroke severity because an alternative, the NIHSS score, is dependent on both the location and size of the infarct. […] Our data suggest that the incidence of symptomatic intracranial haemorrhage is low with early anticoagulation if imaging-based classification is used.»
+          <span class="cite-source">ELAN, Discusión, p. 2419</span>
+        </div>
+      </details>
+    </div>
+  `;
+}
+
+function limitationsSection() {
+  return `
+    <div class="pblock">
+      <h3>Limitaciones de ambos marcos</h3>
+
+      <p><strong>EHRA 2021:</strong> la regla 1-3-6-12 es <em>expert opinion</em>, sin respaldo de ECA. La guía reconoce explícitamente que el balance entre riesgo embólico y hemorrágico no está bien definido en intervalos concretos y propone esperar más en infartos grandes.</p>
+
+      <p><strong>ELAN 2023:</strong> NIHSS mediano bajo en la aleatorización (3, IQR 1–6), exclusión de pacientes con anticoagulación terapéutica previa y de PH1/PH2 Heidelberg, ausencia de adjudicación central del tamaño, y población predominantemente europea sin datos de etnia. No estudió el inicio antes del día 6 en ictus mayor.</p>
+
+      <details class="cite">
+        <summary>Cita · limitaciones ELAN</summary>
+        <div class="cite-body">
+          «The limitations of our trial are the exclusion of persons who were already receiving therapeutic anticoagulation at baseline and the low median NIHSS score at randomization. The trial also has limited statistical power to explore subgroups […]. We did not centrally adjudicate the classification of stroke severity.»
+          <span class="cite-source">ELAN, Discusión, p. 2419-2420</span>
+        </div>
+      </details>
+
+      <p>En ambos casos: <strong>imagen de control antes de iniciar</strong> (obligatoria en EHRA para ictus moderados/graves) para descartar transformación hemorrágica, y decisión <strong>individualizada</strong> integrando edad, carga de microsangrados, hipertensión, riesgo embólico (CHA₂DS₂-VASc) y antecedente de sangrado.</p>
+    </div>
+  `;
+}
+
+/* ─────────────────────────────────────────────────────────
+   BIND DE EVENTOS
+   ───────────────────────────────────────────────────────── */
+document.querySelectorAll('.cards').forEach(group => {
+  const field = group.dataset.field;
+  group.querySelectorAll('.card').forEach(btn => {
+    btn.addEventListener('click', () => {
+      state[field] = btn.dataset.val;
+      group.querySelectorAll('.card').forEach(b => b.setAttribute('aria-pressed', b === btn ? 'true' : 'false'));
+      render();
+    });
+  });
+});
+
+document.querySelectorAll('.time-units button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    state.unit = btn.dataset.val;
+    document.querySelectorAll('.time-units button').forEach(b => b.setAttribute('aria-pressed', b === btn ? 'true' : 'false'));
+    render();
+  });
+});
+
+document.getElementById('timeInput').addEventListener('input', e => {
+  const v = e.target.value;
+  state.time = v === '' ? null : Number(v);
+  render();
+});
+
+render();
+</script>
+
+</body>
+</html>

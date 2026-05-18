@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ABCD² · Riesgo post-AIT · NEUROTOOLS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f8fafc;
+    --surface: #ffffff;
+    --primary: #0f172a;
+    --accent: #2563eb;
+    --text-main: #1e293b;
+    --text-muted: #64748b;
+    --border: #e2e8f0;
+    --success: #059669;
+    --success-bg: #d1fae5;
+    --warning: #d97706;
+    --warning-bg: #fef3c7;
+    --danger: #dc2626;
+    --danger-bg: #fee2e2;
+    --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background-color: var(--bg);
+    color: var(--text-main);
+    font-family: 'Instrument Sans', sans-serif;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .container { max-width: 1100px; margin: 0 auto; padding: 40px 24px; }
+
+  header { margin-bottom: 40px; display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 2px solid var(--border); padding-bottom: 24px; }
+  .header-titles h1 { font-size: 2.25rem; font-weight: 700; color: var(--primary); letter-spacing: -0.025em; }
+  .header-titles p { color: var(--text-muted); font-size: 1.1rem; }
+
+  .breadcrumb a { color: var(--accent); text-decoration: none; font-weight: 600; font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.05em; }
+
+  /* LAYOUT */
+  .grid { display: grid; grid-template-columns: 1fr 1.2fr; gap: 32px; }
+  @media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
+
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 24px; box-shadow: var(--shadow); margin-bottom: 24px; }
+  .card-title { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; }
+  .card-title-left { display: flex; align-items: center; gap: 8px; }
+  .card-title-left::before { content: ''; width: 4px; height: 16px; background: var(--accent); border-radius: 2px; }
+
+  .score-badge { background: #f1f5f9; padding: 2px 8px; border-radius: 4px; color: var(--accent); font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; font-weight: 700; }
+
+  /* BOTONES DE SELECCIÓN */
+  .field-group { margin-bottom: 24px; }
+  .field-group:last-child { margin-bottom: 0; }
+  
+  .btn-group { display: flex; flex-direction: column; gap: 8px; }
+  @media (min-width: 600px) { .btn-group.row { flex-direction: row; } }
+  
+  .btn-opt { flex: 1; display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; border: 1px solid var(--border); border-radius: 8px; background: var(--surface); cursor: pointer; font-size: 0.95rem; font-weight: 500; transition: all 0.2s; text-align: left; }
+  .btn-opt:hover { border-color: var(--text-muted); background: #f8fafc; }
+  .btn-opt.active { background: #eff6ff; border-color: var(--accent); color: var(--primary); box-shadow: 0 0 0 1px var(--accent); }
+  .btn-opt-val { font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; font-weight: 700; color: var(--text-muted); }
+  .btn-opt.active .btn-opt-val { color: var(--accent); }
+
+  /* RESULTADOS */
+  .res-panel { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 32px; box-shadow: var(--shadow); border-top: 4px solid var(--accent); position: sticky; top: 24px; }
+  
+  .score-header { display: flex; align-items: center; gap: 20px; margin-bottom: 24px; padding-bottom: 24px; border-bottom: 1px solid var(--border); }
+  .total-score { font-size: 4.5rem; font-weight: 700; line-height: 1; color: var(--primary); letter-spacing: -0.05em; font-family: 'JetBrains Mono', monospace; }
+  .total-score span { font-size: 1.5rem; color: var(--text-muted); font-weight: 500; }
+  
+  .risk-level-tag { display: inline-block; padding: 6px 14px; border-radius: 6px; font-weight: 700; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
+  .risk-low { background: var(--success-bg); color: var(--success); }
+  .risk-mod { background: var(--warning-bg); color: var(--warning); }
+  .risk-high { background: var(--danger-bg); color: var(--danger); }
+
+  /* ESTADÍSTICAS */
+  .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
+  .stat-box { background: #f1f5f9; padding: 16px; border-radius: 8px; border: 1px solid var(--border); text-align: center; }
+  .stat-label { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted); display: block; margin-bottom: 4px; }
+  .stat-value { font-family: 'JetBrains Mono', monospace; font-size: 1.5rem; font-weight: 700; color: var(--primary); }
+
+  /* TRATAMIENTO */
+  .treatment-box { background: #eff6ff; border-radius: 8px; padding: 24px; border: 1px solid #bfdbfe; margin-bottom: 16px; }
+  .tx-title { font-size: 1.1rem; font-weight: 700; color: #1e40af; margin-bottom: 12px; display: block; }
+  .tx-desc { font-size: 0.95rem; color: var(--primary); line-height: 1.6; }
+
+  .alt-box { background: var(--surface); border: 1px dashed var(--text-muted); padding: 16px; border-radius: 8px; }
+  .alt-title { font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; display: block; }
+
+  .evidence-tag { display: inline-block; font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; color: var(--accent); background: #dbeafe; padding: 2px 6px; border-radius: 4px; margin-top: 12px; }
+
+  footer { margin-top: 60px; text-align: center; padding-top: 24px; border-top: 1px solid var(--border); font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-muted); }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <header>
+    <div class="header-titles">
+      <div class="breadcrumb"><a href="index.html">← VOLVER AL ÍNDICE</a></div>
+      <h1>Escala <em>ABCD²</em></h1>
+      <p>Estimación de riesgo y pauta de antiagregación post-AIT</p>
+    </div>
+  </header>
+
+  <div class="grid">
+    <div class="inputs-col">
+      <div class="card" id="card-age">
+        <div class="card-title">
+          <div class="card-title-left">A · Edad</div>
+          <div class="score-badge" id="badge-a">0 pt</div>
+        </div>
+        <div class="btn-group row" data-cat="a">
+          <div class="btn-opt" onclick="setVal('a', 0)"><span class="btn-opt-label">< 60 años</span><span class="btn-opt-val">0</span></div>
+          <div class="btn-opt" onclick="setVal('a', 1)"><span class="btn-opt-label">≥ 60 años</span><span class="btn-opt-val">+1</span></div>
+        </div>
+      </div>
+
+      <div class="card" id="card-bp">
+        <div class="card-title">
+          <div class="card-title-left">B · Presión Arterial</div>
+          <div class="score-badge" id="badge-b">0 pt</div>
+        </div>
+        <div class="btn-group row" data-cat="b">
+          <div class="btn-opt" onclick="setVal('b', 0)"><span class="btn-opt-label">< 140/90 mmHg</span><span class="btn-opt-val">0</span></div>
+          <div class="btn-opt" onclick="setVal('b', 1)"><span class="btn-opt-label">PAS ≥ 140 ó PAD ≥ 90</span><span class="btn-opt-val">+1</span></div>
+        </div>
+      </div>
+
+      <div class="card" id="card-clin">
+        <div class="card-title">
+          <div class="card-title-left">C · Características Clínicas</div>
+          <div class="score-badge" id="badge-c">0 pt</div>
+        </div>
+        <div class="btn-group" data-cat="c">
+          <div class="btn-opt" onclick="setVal('c', 0)"><span class="btn-opt-label">Otros síntomas (sensitivos, visuales...)</span><span class="btn-opt-val">0</span></div>
+          <div class="btn-opt" onclick="setVal('c', 1)"><span class="btn-opt-label">Alteración del habla sin debilidad motora</span><span class="btn-opt-val">+1</span></div>
+          <div class="btn-opt" onclick="setVal('c', 2)"><span class="btn-opt-label">Debilidad motora unilateral</span><span class="btn-opt-val">+2</span></div>
+        </div>
+      </div>
+
+      <div class="card" id="card-dur">
+        <div class="card-title">
+          <div class="card-title-left">D · Duración de los síntomas</div>
+          <div class="score-badge" id="badge-d">0 pt</div>
+        </div>
+        <div class="btn-group" data-cat="d">
+          <div class="btn-opt" onclick="setVal('d', 0)"><span class="btn-opt-label">< 10 minutos</span><span class="btn-opt-val">0</span></div>
+          <div class="btn-opt" onclick="setVal('d', 1)"><span class="btn-opt-label">10 - 59 minutos</span><span class="btn-opt-val">+1</span></div>
+          <div class="btn-opt" onclick="setVal('d', 2)"><span class="btn-opt-label">≥ 60 minutos</span><span class="btn-opt-val">+2</span></div>
+        </div>
+      </div>
+
+      <div class="card" id="card-dm">
+        <div class="card-title">
+          <div class="card-title-left">D² · Diabetes</div>
+          <div class="score-badge" id="badge-e">0 pt</div>
+        </div>
+        <div class="btn-group row" data-cat="e">
+          <div class="btn-opt" onclick="setVal('e', 0)"><span class="btn-opt-label">No</span><span class="btn-opt-val">0</span></div>
+          <div class="btn-opt" onclick="setVal('e', 1)"><span class="btn-opt-label">Sí</span><span class="btn-opt-val">+1</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="results-col">
+      <div id="res-panel" class="res-panel" style="display:none;">
+        
+        <div class="score-header">
+          <div class="total-score" id="total-score">0<span>/7</span></div>
+          <div>
+            <div id="risk-badge" class="risk-level-tag">Cargando...</div>
+            <div style="font-size: 0.85rem; color: var(--text-muted);">Clasificación AIT</div>
+          </div>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-box">
+            <span class="stat-label">Riesgo Ictus a 2 días</span>
+            <span class="stat-value" id="stat-2d">-%</span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-label">Riesgo Ictus a 7 días</span>
+            <span class="stat-value" id="stat-7d">-%</span>
+          </div>
+        </div>
+
+        <div class="treatment-box">
+          <span class="tx-title" id="tx-title">Recomendación de Antiagregación</span>
+          <div class="tx-desc" id="tx-desc"></div>
+        </div>
+
+        <div id="alt-box" class="alt-box" style="display:none;">
+          <span class="alt-title">Alternativa (Subgrupo de alto riesgo)</span>
+          <div id="alt-desc" style="font-size: 0.9rem; color: var(--text-main);"></div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    NEUROTOOLS · ESCALA ABCD² · JOHNSTON ET AL. LANCET 2007
+  </footer>
+</div>
+
+<script>
+  const state = { a: null, b: null, c: null, d: null, e: null };
+
+  function setVal(cat, val) {
+    state[cat] = val;
+    
+    // UI Update for buttons
+    const group = document.querySelector(`.btn-group[data-cat="${cat}"]`);
+    group.querySelectorAll('.btn-opt').forEach(btn => btn.classList.remove('active'));
+    
+    // Set active based on matched value
+    group.querySelectorAll('.btn-opt').forEach(btn => {
+      const btnVal = btn.querySelector('.btn-opt-val').textContent.replace('+', '');
+      if (btnVal === val.toString()) {
+        btn.classList.add('active');
+      }
+    });
+
+    // Update mini-badge
+    document.getElementById(`badge-${cat}`).textContent = `+${val} pt`;
+
+    calculate();
+  }
+
+  function calculate() {
+    const vals = Object.values(state);
+    if (vals.includes(null)) return; // Wait until all fields are answered
+
+    const total = vals.reduce((sum, v) => sum + v, 0);
+    document.getElementById('res-panel').style.display = 'block';
+    document.getElementById('total-score').innerHTML = `${total}<span>/7</span>`;
+
+    const badge = document.getElementById('risk-badge');
+    const stat2d = document.getElementById('stat-2d');
+    const stat7d = document.getElementById('stat-7d');
+    const txTitle = document.getElementById('tx-title');
+    const txDesc = document.getElementById('tx-desc');
+    const altBox = document.getElementById('alt-box');
+    const altDesc = document.getElementById('alt-desc');
+
+    altBox.style.display = 'none';
+
+    if (total >= 6) {
+      // 6-7 Puntos
+      badge.textContent = "ALTO RIESGO";
+      badge.className = "risk-level-tag risk-high";
+      stat2d.textContent = "8.1%";
+      stat7d.textContent = "11.7%";
+      
+      txTitle.textContent = "DAPT (Clopidogrel + AAS)";
+      txDesc.innerHTML = "<strong>Doble Antiagregación:</strong> Iniciar Clopidogrel y Aspirina durante <strong>21 días</strong>, seguida de monoterapia.<br><span class='evidence-tag'>CHANCE / POINT</span>";
+      
+      altBox.style.display = 'block';
+      altDesc.innerHTML = "<strong>Ticagrelor + AAS:</strong> Al tener ABCD² ≥ 6, puede considerarse esta pauta de doble antiagregación alternativa durante <strong>30 días</strong>.<br><span class='evidence-tag'>THALES</span>";
+      
+    } else if (total >= 4) {
+      // 4-5 Puntos
+      badge.textContent = "RIESGO MODERADO";
+      badge.className = "risk-level-tag risk-mod";
+      stat2d.textContent = "4.1%";
+      stat7d.textContent = "5.9%";
+      
+      txTitle.textContent = "DAPT (Clopidogrel + AAS)";
+      txDesc.innerHTML = "<strong>Doble Antiagregación:</strong> Umbral superado (≥ 4). Iniciar Clopidogrel y Aspirina durante <strong>21 días</strong>, seguida de monoterapia.<br><span class='evidence-tag'>CHANCE / POINT</span>";
+      
+    } else {
+      // 0-3 Puntos
+      badge.textContent = "BAJO RIESGO";
+      badge.className = "risk-level-tag risk-low";
+      stat2d.textContent = "1.0%";
+      stat7d.textContent = "1.2%";
+      
+      txTitle.textContent = "SAPT (Monoterapia)";
+      txDesc.innerHTML = "<strong>Antiagregación Simple:</strong> El riesgo de recurrencia precoz es bajo. Se recomienda iniciar monoterapia (Aspirina).";
+    }
+  }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trombólisis IV — Contraindicaciones · NEUROTOOLS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #f4efe4;
+    --paper-deep: #ebe4d3;
+    --paper-card: #faf6ec;
+    --ink: #1a1614;
+    --ink-soft: #4a3f38;
+    --ink-muted: #8a7d72;
+    --accent: #7a1f2b;
+    --accent-warm: #a64a3a;
+    --hairline: #cfc4ad;
+    --hairline-soft: #e8e1ce;
+    --green: #4a6741;
+    --amber: #b8862f;
+    --red: #962934;
+    --ease: cubic-bezier(.2,.7,.3,1);
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Instrument Sans', system-ui, sans-serif;
+    font-size: 16px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+    opacity: 0.3;
+    mix-blend-mode: multiply;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.1 0 0 0 0 0.08 0 0 0 0 0.07 0 0 0 0.45 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  }
+
+  .container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 56px 32px 80px;
+    position: relative;
+    z-index: 2;
+  }
+
+  /* HEADER */
+  header {
+    padding-bottom: 36px;
+    margin-bottom: 44px;
+    border-bottom: 1px solid var(--hairline);
+  }
+
+  .breadcrumb {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+    margin-bottom: 28px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .breadcrumb .sep { color: var(--hairline); }
+  .breadcrumb .current { color: var(--accent); }
+  .breadcrumb .version {
+    margin-left: auto;
+    color: var(--ink-muted);
+    font-size: 10px;
+  }
+
+  h1 {
+    font-family: 'Fraunces', Georgia, serif;
+    font-size: clamp(2.4rem, 5vw, 3.6rem);
+    font-weight: 400;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    margin: 0 0 18px;
+    color: var(--ink);
+  }
+  h1 .accent {
+    font-style: italic;
+    color: var(--accent);
+    font-weight: 300;
+  }
+
+  .subtitle {
+    font-family: 'Fraunces', Georgia, serif;
+    font-style: italic;
+    font-weight: 300;
+    font-size: clamp(1.05rem, 1.8vw, 1.25rem);
+    color: var(--ink-soft);
+    max-width: 720px;
+    line-height: 1.4;
+    margin: 0;
+  }
+
+  /* DISCLAIMER */
+  .disclaimer {
+    background: var(--paper-card);
+    border: 1px solid var(--hairline);
+    border-left: 4px solid var(--accent-warm);
+    border-radius: 3px;
+    padding: 18px 22px;
+    margin-bottom: 36px;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 16px;
+    align-items: start;
+  }
+  .disclaimer-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent-warm);
+    font-weight: 600;
+    padding-top: 2px;
+    white-space: nowrap;
+    line-height: 1.5;
+  }
+  .disclaimer-text {
+    font-size: 0.93rem;
+    color: var(--ink-soft);
+    line-height: 1.6;
+  }
+  .disclaimer-text em {
+    font-family: 'Fraunces', Georgia, serif;
+    font-style: italic;
+    color: var(--ink);
+  }
+  .disclaimer-text strong {
+    color: var(--ink);
+    font-weight: 600;
+  }
+
+  /* TOOLBAR */
+  .toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+
+  .legend {
+    display: flex;
+    gap: 22px;
+    flex-wrap: wrap;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    color: var(--ink-muted);
+    text-transform: uppercase;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .legend-bar {
+    width: 14px;
+    height: 3px;
+    border-radius: 1px;
+  }
+  .legend-bar.abs { background: var(--red); }
+  .legend-bar.rel { background: var(--amber); }
+
+  .actions { display: flex; gap: 8px; }
+
+  .btn {
+    font-family: 'Instrument Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    padding: 9px 18px;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: all 0.25s var(--ease);
+    border: 1px solid;
+  }
+  .btn-primary {
+    background: var(--ink);
+    color: var(--paper);
+    border-color: var(--ink);
+  }
+  .btn-primary:hover {
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+  .btn-secondary {
+    background: transparent;
+    color: var(--ink-soft);
+    border-color: var(--hairline);
+  }
+  .btn-secondary:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  /* GRID */
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+  }
+  @media (max-width: 920px) {
+    .grid { grid-template-columns: 1fr; gap: 32px; }
+    .container { padding: 36px 20px 60px; }
+    .disclaimer { grid-template-columns: 1fr; gap: 8px; }
+    .breadcrumb .version { margin-left: 0; flex-basis: 100%; }
+  }
+
+  .column-header {
+    margin-bottom: 22px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--hairline);
+  }
+  .column-meta {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+    margin-bottom: 6px;
+    display: flex;
+    justify-content: space-between;
+  }
+  .column-meta .count { color: var(--ink); }
+
+  .column-title {
+    font-family: 'Fraunces', Georgia, serif;
+    font-weight: 400;
+    font-size: 1.55rem;
+    margin: 0;
+    line-height: 1.15;
+    color: var(--ink);
+  }
+  .column-title em {
+    font-style: italic;
+    color: var(--accent);
+    font-weight: 300;
+  }
+
+  /* CARDS */
+  .card {
+    background: var(--paper-card);
+    border: 1px solid var(--hairline);
+    border-radius: 3px;
+    margin-bottom: 10px;
+    overflow: hidden;
+    position: relative;
+    opacity: 0;
+    transform: translateY(8px);
+    animation: fadeUp 0.7s var(--ease) forwards;
+    transition: border-color 0.25s var(--ease);
+  }
+
+  @keyframes fadeUp {
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .card::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+  }
+  .card.abs::before { background: var(--red); }
+  .card.rel::before { background: var(--amber); }
+
+  .card:hover { border-color: var(--ink-muted); }
+  .card.open { border-color: var(--ink); }
+
+  .card-header {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 14px;
+    align-items: center;
+    padding: 16px 20px 16px 24px;
+    cursor: pointer;
+    user-select: none;
+    transition: padding-left 0.25s var(--ease);
+    position: relative;
+  }
+  .card-header:hover { padding-left: 32px; }
+
+  .card-header::after {
+    content: "→";
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--accent);
+    opacity: 0;
+    transition: opacity 0.25s var(--ease);
+    font-size: 13px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .card-header:hover::after { opacity: 1; }
+
+  .card-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    color: var(--ink-muted);
+    font-weight: 500;
+    padding-top: 3px;
+    align-self: start;
+  }
+  .card.open .card-num { color: var(--accent); }
+
+  .card-title {
+    font-family: 'Instrument Sans', sans-serif;
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--ink);
+    line-height: 1.35;
+    letter-spacing: -0.005em;
+  }
+
+  .card-title .window {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9.5px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 3px 7px;
+    border-radius: 2px;
+    margin-right: 8px;
+    vertical-align: 2px;
+    background: var(--paper-deep);
+    color: var(--ink-soft);
+    border: 1px solid var(--hairline);
+  }
+
+  .chevron {
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--ink-muted);
+    font-size: 12px;
+    transition: transform 0.3s var(--ease), color 0.25s var(--ease);
+  }
+  .card.open .chevron {
+    transform: rotate(90deg);
+    color: var(--accent);
+  }
+
+  .card-body {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s var(--ease);
+  }
+  .card-body-inner {
+    margin: 0 24px;
+    padding: 16px 0 22px;
+    border-top: 1px solid var(--hairline-soft);
+  }
+  .card-body-inner p {
+    margin: 0 0 12px;
+    font-size: 0.95rem;
+    color: var(--ink-soft);
+    line-height: 1.65;
+  }
+  .card-body-inner p:last-child { margin-bottom: 0; }
+  .card-body-inner em {
+    font-family: 'Fraunces', Georgia, serif;
+    font-style: italic;
+    color: var(--ink);
+    font-weight: 400;
+  }
+  .card-body-inner strong { color: var(--ink); font-weight: 600; }
+
+  /* FOOTER */
+  footer {
+    margin-top: 72px;
+    padding-top: 28px;
+    border-top: 1px solid var(--hairline);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    align-items: end;
+  }
+  @media (max-width: 720px) {
+    footer { grid-template-columns: 1fr; }
+  }
+
+  .footer-cite {
+    font-family: 'Fraunces', Georgia, serif;
+    font-style: italic;
+    font-size: 1.1rem;
+    color: var(--accent);
+    font-weight: 300;
+  }
+  .footer-meta {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+    text-align: right;
+    line-height: 1.7;
+  }
+  @media (max-width: 720px) {
+    .footer-meta { text-align: left; }
+  }
+
+  .footer-ref {
+    font-family: 'Fraunces', Georgia, serif;
+    font-style: italic;
+    font-size: 0.88rem;
+    color: var(--ink-soft);
+    margin-top: 14px;
+    line-height: 1.55;
+    grid-column: 1 / -1;
+    padding-top: 18px;
+    border-top: 1px solid var(--hairline-soft);
+    letter-spacing: 0;
+  }
+  .footer-ref strong {
+    font-style: normal;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 500;
+    font-size: 0.7rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+    display: block;
+    margin-bottom: 6px;
+  }
+
+  @media print {
+    body::before, .toolbar, .chevron { display: none; }
+    .card-body { max-height: none !important; }
+    .card { break-inside: avoid; animation: none; opacity: 1; transform: none; }
+    body { background: white; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <header>
+    <div class="breadcrumb">
+      <a href="index.html" style="color: var(--accent-warm); text-decoration: none; font-weight: 600; font-size: 11px;">← VOLVER AL ÍNDICE</a>
+      <span class="sep">/</span>
+      <span>Ictus isquémico agudo</span>
+      <span class="sep">/</span>
+      <span class="current">Trombólisis IV — Contraindicaciones</span>
+      <span class="version">v. 2026 · AHA/ASA</span>
+    </div>
+    <h1>Trombólisis intravenosa<br><span class="accent">contraindicaciones</span></h1>
+    <p class="subtitle">Referencia visual rápida de contraindicaciones absolutas y relativas al tratamiento trombolítico en el ictus isquémico agudo.</p>
+  </header>
+
+  <div class="disclaimer">
+    <div class="disclaimer-label">Aviso<br>clínico</div>
+    <div class="disclaimer-text">
+      Este documento es una <em>herramienta de consulta personal</em> elaborada con fines de ayuda mnemotécnica. <strong>No constituye una guía clínica</strong> y <strong>no sustituye</strong> a las guías clínicas oficiales, los protocolos hospitalarios vigentes ni el juicio clínico del facultativo responsable. Toda decisión terapéutica debe basarse en la evaluación individualizada del paciente y en la consulta de la fuente original referenciada al pie.
+    </div>
+  </div>
+
+  <div class="toolbar">
+    <div class="legend">
+      <div class="legend-item"><span class="legend-bar abs"></span> Absoluta — no administrar</div>
+      <div class="legend-item"><span class="legend-bar rel"></span> Relativa — caso a caso</div>
+    </div>
+    <div class="actions">
+      <button class="btn btn-secondary" onclick="toggleAll(false)">Plegar todo</button>
+      <button class="btn btn-primary" onclick="toggleAll(true)">Expandir todo</button>
+    </div>
+  </div>
+
+  <div class="grid">
+
+    <!-- ABSOLUTAS -->
+    <section>
+      <div class="column-header">
+        <div class="column-meta">
+          <span>Columna 01</span>
+          <span class="count">10 ítems</span>
+        </div>
+        <h2 class="column-title">Contraindicaciones <em>absolutas</em></h2>
+      </div>
+
+      <article class="card abs" style="animation-delay: 0.05s">
+        <div class="card-header" onclick="toggleCard(this)">
+          <span class="card-num">01 /</span>
+          <span class="card-title">TC con hipodensidad extensa</span>
+          <span class="chevron">▶</span>
+        </div>
+        <div class="card-body"><div class="card-body-inner">
+          <p>La trombólisis intravenosa <em>no debe administrarse</em> a pacientes cuyas imágenes cerebrales muestren regiones de hipodensidad clara que parezcan ser responsables de los síntomas clínicos del ictus.</p>
+          <p>La hipodensidad clara se define cuando el grado de hipodensidad es <em>mayor que la densidad de la sustancia blanca contralateral no afectada</em>.</p>
+        </div></div>
+      </article>
+
+      <article class="card abs" style="animation-delay: 0.10s">
+        <div class="card-header" onclick="toggleCard(this)">
+          <span class="card-num">02 /</span>
+          <span class="card-title">TC con hemorragia intracraneal aguda</span>
+          <span class="chevron">▶</span>
+        </div>
+        <div class="card-body"><div class="card-body-inner">
+          <p>La trombólisis intravenosa no debe administrarse a pacientes cuyas imágenes cerebrales por TC revelen una hemorragia intracraneal aguda.</p>
+        </div></div>
+      </article>
+
+      <article class="card abs" style="animation-delay: 0.15s">
+        <div class="card-header" onclick="toggleCard(this)">
+          <span class="card-num">03 /</span>
+          <span class="card-title"><span class="window">&lt; 14 días</span>TCE moderado-severo reciente</span>
+          <span class="chevron">▶</span>
+        </div>
+        <div class="card-body"><div class="card-body-inner">
+          <p>La trombólisis intravenosa probablemente esté contraindicada en pacientes con ictus isquémico agudo con traumatismo craneoencefálico moderado-severo reciente (en los últimos 14 días) que haya provocado <em>&gt;30 minutos de inconsciencia y una escala de coma de Glasgow &lt;13</em>, o evidencia de hemorragia, contusión o fractura de cráneo en la neuroimagen.</p>
+        </div></div>
+      </article>
+
+      <article class="card abs" style="animation-delay: 0.20s">
+        <div class="card-header" onclick="toggleCard(this)">
+          <span class="card-num">04 /</span>
+          <span class="card-title"><span class="window">&lt; 14 días</span>Neurocirugía intracraneal o espinal</span>
+          <span class="chevron">▶</span>
+        </div>
+        <div class="card-body"><div class="card-body-inner">
+          <p>Para pacientes con ictus isquémico agudo y antecedentes de cirugía intracraneal o espinal en los últimos 14 días, la trombólisis IV es <em>potencialmente dañina</em> y no debe administrarse.</p>
+        </div></div>
+      </article>
+
+      <article class="card abs" style="animation-delay: 0.25s">
+        <div class="card-header" onclick="toggleCard(this)">
+          <span class="card-num">05 /</span>
+          <span class="card-title"><span class="window">&lt; 3 meses</span>Lesión medular aguda</span>
+          <span class="chevron">▶</span>
+        </div>
+        <div class="card-body"><div class="card-body-inner">
+          <p>La trombólisis intravenosa probablemente esté contraindicada en pacientes con ictus isquémico agudo con lesión de la médula espinal en los últimos 3 meses.</p>
+        </div></div>
+      </article>
+
+      <article class="card abs" style="animation-delay: 0.30s">
+        <div class="card-header" onclick="toggleCard(this)">
+          <span class="card-num">06 /</span>
+          <span class="card-title">Neoplasia intracraneal intraaxial</span>
+          <span class="chevron">▶</span>
+        </div>
+        <div class="card-body"><div class="card-body-inner">
+          <p>Para los pacientes con ictus isquémico agudo que albergan una neoplasia intracraneal intraaxial, el tratamiento con trombólisis IV es potencialmente dañino y no debe administrarse.</p>
+        </div></div>
+      </article>
+
+      <article class="card abs" style="animation-delay: 0.35s">
+        <div class="card-header" onclick="toggleCard(this)">
+          <span class="card-num">07 /</span>
+          <span class="card-title">Endocarditis infecciosa</span>
+          <span class="chevron">▶</span>
+        </div>
+        <div class="card-body"><div class="card-body-inner">
+          <p>Para pacientes con ictus isquémico agudo y síntomas compatibles con endocarditis infecciosa, no debe administrarse el tratamiento con trombólisis IV, dado el riesgo de hemorragia por émbolos sépticos y aneurismas micóticos.</p>
+        </div></div>
+      </article>
+
+      <article class="card abs" style="animation-delay: 0.40s">
+        <div class="card-header" onclick="toggleCard(this)">
+          <span class="card-num">08 /</span>
+          <span class="card-title">Coagulopatía grave o trombocitopenia</span>
+          <span class="chevron">▶</span>
+        </div>
+        <div class="card-body"><div class="card-body-inner">
+          <p>La seguridad y eficacia de la trombólisis IV en pacientes con <em>plaquetas &lt;100.000/mm³, INR &gt;1,7, aPTT &gt;40 s o PT &gt;15 s</em> es desconocida; puede aumentar sustancialmente el riesgo de daño y no debe administrarse.</p>
+          <p>En pacientes sin uso reciente de warfarina o heparina, el tratamiento puede iniciarse antes de tener los resultados de las pruebas de coagulación, pero debe suspenderse si el INR &gt;1,7, el PT o el PTT son anormales según los estándares del laboratorio local.</p>
+        </div></div>
+      </article>
+
+      <article class="card abs" style="animation-delay: 0.45s">
+        <div class="card-header" onclick="toggleCard(this)">
+          <span class="card-num">09 /</span>
+          <span class="card-title">Disección del arco aórtico</span>
+          <span class="chevron">▶</span>
+        </div>
+        <div class="card-body"><div class="card-body-inner">
+          <p>Para pacientes con ictus isquémico agudo y disección del arco aórtico conocida o sospechada, el tratamiento con trombólisis IV es potencialmente dañino y no debe administrarse.</p>
+        </div></div>
+      </article>
+
+      <article class="card abs" style="animation-delay: 0.50s">
+        <div class="card-header" onclick="toggleCard(this)">
+          <span class="card-num">10 /</span>
+          <span class="card-title">ARIA — anomalías de imagen relacionadas con amiloide</span>
+          <span class="chevron">▶</span>
+        </div>
+        <div class="card-body"><div class="card-body-inner">
+          <p>El riesgo de hemorragia intracerebral relacionada con la trombólisis en pacientes que reciben inmunoterapia amiloide o con <em>anomalías en las imágenes relacionadas con el amiloide (ARIA)</em> es desconocido; la trombólisis IV debe evitarse en estos pacientes.</p>
+        </div></div>
+      </article>
+
+    </section>
+
+    <!-- RELATIVAS -->
+    <section>
+      <div class="column-header">
+        <div class="column-meta">
+          <span>Columna 02</span>
+          <span class="count">18 ítems</span>
+        </div>
+        <h2 class="column-title">Contraindicaciones <em>relativas</em></h2>
+      </div>
+
+      <article class="card rel" style="animation-delay: 0.08s">
+        <div class="card-header" onclick="toggleCard(this)">
+          <span class="card-num">01 /</span>
+          <span class="card-title">Discapacidad preexistente o fragilidad</span>
+          <span class="chevron">▶</span>
+        </div>
+        <div class="card-body"><div class="card-body-inner">
+          <p>Los beneficios frente a los riesgos de ofrecer trombólisis IV en pacientes con discapacidad preexistente o fragilidad siguen siendo inciertos. El tratamiento debe determinarse de forma individualizada.</p>
+        </div></div>
+      </article>
+
+      <article class="card rel" style="animation-delay: 0.13s">
+        <div class="card-header" onclick="toggleCard(this)">
+          <span class="card-num">02 /</span>
+          <span class="card-title"><span class="window">&lt; 48 h</span>Exposición reciente a DOAC</span>
+          <span class="chevron">▶</span>
+        </div>
+        <div class="card-body"><div class="card-body-inner">
+          <p>En pacientes con síntomas incapacitantes y exposición reciente a DOAC (&lt;48 h) que se encuentran dentro de la ventana para alteplasa o tenecteplasa, se desconoce la seguridad de la trombólisis IV. Datos observacionales emergentes pero limitados sugieren que puede considerarse tras un análisis exhaustivo beneficio-riesgo individualizado.</p>
+          <p>Las evaluaciones deben incluir el <em>momento de la última administración de DOAC, función renal, gravedad del ictus, disponibilidad de trombectomía endovascular, disponibilidad de agentes reversores</em> (idarucizumab, andexanet alfa) y ensayos específicos de tiempo de trombina o anti-factor Xa de DOAC, reconociendo el potencial retraso en la trombólisis y el aumento de riesgo trombótico.</p>
+          <p>Todos los aspectos del manejo de los DOAC (tiempo, uso de agentes reversores, resultados de ensayos) deben registrarse cuidadosamente. Se necesitan ensayos clínicos definitivos para establecer la seguridad.</p>
+        </div></div>
+      </article>
+
+      <article class="card rel" style="animation-delay: 0.18s">
+        <div class="card-header" onclick="toggleCard(this)">
+          <span class="card-num">03 /</span>
+          <span class="card-title"><span class="window">&lt; 3 meses</span>Ictus isquémico previo</span>
+          <span class="chevron">▶</span>
+        </div>
+        <div class="card-body"><div class="card-body-inner">
+          <p>El uso de trombólisis IV en pacientes con un ictus isquémico previo en los últimos 3 meses puede conllevar un mayor riesgo de hemorragia intracraneal. El potencial aumento del riesgo según el momento y el tamaño del ictus debe sopesarse frente a los beneficios de manera individualizada.</p>
+        </div></div>
+      </article>
+
+      <article class="card rel" style="animation-delay: 0.23s">
+        <div class="card-header" onclick="toggleCard(this)">
+          <span class="card-num">04 /</span>
+          <span class="card-title">Hemorragia intracerebral previa</span>
+          <span class="chevron">▶</span>
+        </div>
+        <div class="card-body"><div class="card-body-inner">
+          <p>La administración de trombólisis IV en pacientes con antecedentes de hemorragia intracerebral puede aumentar el riesgo de hemorragia sintomática.</p>
+          <p>Se puede considerar que los pacientes con <em>angiopatía amiloide conocida</em> tienen un riesgo mayor que los pacientes con hemorragia intracerebral debida a condiciones modificables (HTA, coagulopatía). La trombólisis IV puede tener un beneficio mayor que el riesgo en estos últimos. El tratamiento debe determinarse de forma individualizada.</p>
+        </div></div>
+      </article>
+
+      <article class="card rel" style="animation-delay: 0.28s">
+        <div class="card-header" onclick="toggleCard(this)">
+          <span class="card-num">05 /</span>
+          <span class="card-title"><span class="window">14 d – 3 m</span>Traumatismo mayor no SNC</span>
+          <span class="chevron">▶</span>
+        </div>
+        <div class="card-body"><div class="card-body-inner">
+          <p>Los pacientes con traumatismo mayor reciente entre 14 días y 3 meses del ictus isquémico agudo pueden tener un mayor riesgo de daño y hemorragia sistémica grave que requiera transfusión. La consideración individual del riesgo frente al beneficio, las áreas involucradas y la consulta con expertos quirúrgicos son apropiadas.</p>
+        </div></div>
+      </article>
+
+      <article class="card rel" style="animation-delay: 0.33s">
+        <div class="card-header" onclick="toggleCard(this)">
+          <span class="card-num">06 /</span>
+          <span class="card-title"><span class="window">&lt; 10 días</span>Cirugía mayor no SNC reciente</span>
+          <span class="chevron">▶</span>
+        </div>
+        <div class="card-body"><div class="card-body-inner">
+          <p>Los pacientes con cirugía mayor reciente en los últimos 10 días del ictus isquémico agudo pueden tener un mayor riesgo de daño. La consideración individual riesgo-beneficio, el área quirúrgica y la consulta con expertos quirúrgicos son apropiadas.</p>
+        </div></div>
+      </article>
+
+      <article class="card rel" style="animation-delay: 0.38s">
+        <div class="card-header" onclick="toggleCard(this)">
+          <span class="card-num">07 /</span>
+          <span class="card-title"><span class="window">&lt; 21 días</span>Hemorragia gastrointestinal o genitourinaria reciente</span>
+          <span class="chevron">▶</span>
+        </div>
+        <div class="card-body"><div class="card-body-inner">
+          <p>Los pacientes con hemorragia gastrointestinal o genitourinaria reciente en los últimos 21 días pueden tener un mayor riesgo de daño. Se recomienda la consulta con especialistas en gastroenterología o urología para determinar si la hemorragia ha sido tratada y el riesgo se ha modificado.</p>
+        </div></div>
+      </article>
+
+      <article class="card rel" style="animation-delay: 0.43s">
+        <div class="card-header" onclick="toggleCard(this)">
+          <span class="card-num">08 /</span>
+          <span class="card-title">Disección arterial intracraneal</span>
+          <span class="chevron">▶</span>
+        </div>
+        <div class="card-body"><div class="card-body-inner">
+          <p>Se desconoce la seguridad de la trombólisis IV en pacientes con ictus isquémico agudo debido a disección arterial intracraneal.</p>
+        </div></div>
+      </article>
+
+      <article class="card rel" style="animation-delay: 0.48s">
+        <div class="card-header" onclick="toggleCard(this)">
+          <span class="card-num">09 /</span>
+          <span class="card-title">Malformaciones vasculares intracraneales</span>
+          <span class="chevron">▶</span>
+        </div>
+        <div class="card-body"><div class="card-body-inner">
+          <p>Se desconoce la seguridad de la trombólisis IV para los pacientes que presentan ictus isquémico agudo y que se sabe que albergan una malformación vascular intracraneal no rota y no tratada.</p>
+        </div></div>
+      </article>
+
+      <article class="card rel" style="animation-delay: 0.53s">
+        <div class="card-header" onclick="toggleCard(this)">
+          <span class="card-num">10 /</span>
+          <span class="card-title"><span class="window">&lt; 3 meses</span>SCACEST reciente</span>
+          <span class="chevron">▶</span>
+        </div>
+        <div class="card-body"><div class="card-body-inner">
+          <p>Los pacientes con SCACEST reciente pueden tener riesgo de mayor daño. Para SCACEST en los últimos 3 meses, la consideración individual riesgo-beneficio debe determinarse junto con <em>consulta emergente de cardiología</em>.</p>
+          <p>Para SCACEST muy reciente (últimos días), se debe considerar el riesgo de <em>hemopericardio</em> en relación con el beneficio potencial.</p>
+          <p>Para ictus isquémico agudo concurrente con SCACEST agudo, el tratamiento debe ser <em>a dosis apropiada para isquemia cerebral</em> y en conjunto con consulta cardiológica emergente. Está justificada la consideración del momento, tipo y gravedad del SCACEST.</p>
+        </div></div>
+      </article>
+
+      <article class="card rel" style="animation-delay: 0.58s">
+        <div class="card-header" onclick="toggleCard(this)">
+          <span class="card-num">11 /</span>
+          <span class="card-title">Pericarditis aguda</span>
+          <span class="chevron">▶</span>
+        </div>
+        <div class="card-body"><div class="card-body-inner">
+          <p>La trombólisis IV para pacientes con ictus isquémico agudo mayor que probablemente produzca una discapacidad grave y pericarditis aguda puede ser razonable en casos individuales. Está justificada la consulta cardiológica emergente.</p>
+        </div></div>
+      </article>
+
+      <article class="card rel" style="animation-delay: 0.63s">
+        <div class="card-header" onclick="toggleCard(this)">
+          <span class="card-num">12 /</span>
+          <span class="card-title">Trombo auricular o ventricular izquierdo</span>
+          <span class="chevron">▶</span>
+        </div>
+        <div class="card-body"><div class="card-body-inner">
+          <p>La trombólisis IV para pacientes con trombo auricular o ventricular izquierdo conocido que presentan ictus isquémico agudo mayor que probablemente produzca una discapacidad grave puede ser razonable en casos individuales. Está justificada la consulta cardiológica emergente.</p>
+        </div></div>
+      </article>
+
+      <article class="card rel" style="animation-delay: 0.68s">
+        <div class="card-header" onclick="toggleCard(this)">
+          <span class="card-num">13 /</span>
+          <span class="card-title">Malignidad activa sistémica</span>
+          <span class="chevron">▶</span>
+        </div>
+        <div class="card-body"><div class="card-body-inner">
+          <p>Se desconoce la seguridad de la trombólisis IV en pacientes con malignidad activa sistémica. Está justificada la consulta emergente con oncología para evaluar riesgo-beneficio, considerando <em>tipo, estadio y complicaciones activas</em> del cáncer.</p>
+        </div></div>
+      </article>
+
+      <article class="card rel" style="animation-delay: 0.73s">
+        <div class="card-header" onclick="toggleCard(this)">
+          <span class="card-num">14 /</span>
+          <span class="card-title">Embarazo y período posparto</span>
+          <span class="chevron">▶</span>
+        </div>
+        <div class="card-body"><div class="card-body-inner">
+          <p>La trombólisis IV puede considerarse en el embarazo y el período posparto cuando los beneficios de tratar un ictus moderado o grave superan el riesgo anticipado de hemorragia uterina. Está justificada la consulta obstétrica emergente.</p>
+        </div></div>
+      </article>
+
+      <article class="card rel" style="animation-delay: 0.78s">
+        <div class="card-header" onclick="toggleCard(this)">
+          <span class="card-num">15 /</span>
+          <span class="card-title"><span class="window">&lt; 7 días</span>Punción dural lumbar reciente</span>
+          <span class="chevron">▶</span>
+        </div>
+        <div class="card-body"><div class="card-body-inner">
+          <p>La trombólisis IV para pacientes con ictus isquémico agudo pospunción dural puede considerarse en casos individuales, incluso en instancias en las que puedan haberse sometido a una punción dural lumbar en los 7 días anteriores.</p>
+        </div></div>
+      </article>
+
+      <article class="card rel" style="animation-delay: 0.83s">
+        <div class="card-header" onclick="toggleCard(this)">
+          <span class="card-num">16 /</span>
+          <span class="card-title"><span class="window">&lt; 7 días</span>Punción arterial en vaso no compresible</span>
+          <span class="chevron">▶</span>
+        </div>
+        <div class="card-body"><div class="card-body-inner">
+          <p>Se desconoce la seguridad de la trombólisis IV en pacientes con ictus isquémico agudo que han tenido una punción arterial de un <em>vaso sanguíneo no compresible</em> (p. ej., vía arterial subclavia) en los 7 días anteriores a los síntomas del ictus.</p>
+        </div></div>
+      </article>
+
+      <article class="card rel" style="animation-delay: 0.88s">
+        <div class="card-header" onclick="toggleCard(this)">
+          <span class="card-num">17 /</span>
+          <span class="card-title"><span class="window">14 d – 3 m</span>TCE moderado-severo subagudo</span>
+          <span class="chevron">▶</span>
+        </div>
+        <div class="card-body"><div class="card-body-inner">
+          <p>La trombólisis IV puede considerarse en pacientes con ictus isquémico agudo con TCE moderado-severo reciente (entre 14 días y 3 meses). Se debe hacer una consideración cuidadosa basada en el tipo y la gravedad de la lesión traumática y en consulta con los equipos de neurocirugía y cuidados neurocríticos.</p>
+        </div></div>
+      </article>
+
+      <article class="card rel" style="animation-delay: 0.93s">
+        <div class="card-header" onclick="toggleCard(this)">
+          <span class="card-num">18 /</span>
+          <span class="card-title"><span class="window">14 d – 3 m</span>Neurocirugía subaguda</span>
+          <span class="chevron">▶</span>
+        </div>
+        <div class="card-body"><div class="card-body-inner">
+          <p>Para pacientes con ictus isquémico agudo y antecedentes de cirugía intracraneal o espinal entre 14 días y 3 meses, la trombólisis IV puede considerarse de forma individual. Se recomienda la consulta con los miembros del equipo neuroquirúrgico.</p>
+        </div></div>
+      </article>
+
+    </section>
+  </div>
+
+  <footer>
+    <div class="footer-cite">Primum non nocere.</div>
+    <div class="footer-meta">
+      NEUROTOOLS · v. 2026.05<br>
+      © Dr. Juan Carlos Navarro García
+    </div>
+    <div class="footer-ref">
+      <strong>Fuente</strong>
+      2026 Guideline for the Early Management of Patients With Acute Ischemic Stroke: A Guideline From the American Heart Association / American Stroke Association.
+    </div>
+  </footer>
+
+</div>
+
+<script>
+  function toggleCard(headerEl) {
+    const card = headerEl.parentElement;
+    const body = card.querySelector('.card-body');
+    const isOpen = card.classList.contains('open');
+    if (isOpen) {
+      body.style.maxHeight = '0px';
+      card.classList.remove('open');
+    } else {
+      body.style.maxHeight = body.scrollHeight + 'px';
+      card.classList.add('open');
+    }
+  }
+
+  function toggleAll(open) {
+    document.querySelectorAll('.card').forEach(card => {
+      const body = card.querySelector('.card-body');
+      if (open) {
+        card.classList.add('open');
+        body.style.maxHeight = body.scrollHeight + 'px';
+      } else {
+        card.classList.remove('open');
+        body.style.maxHeight = '0px';
+      }
+    });
+  }
+
+  window.addEventListener('resize', () => {
+    document.querySelectorAll('.card.open .card-body').forEach(body => {
+      body.style.maxHeight = body.scrollHeight + 'px';
+    });
+  });
+</script>
+
+</body>
+</html>

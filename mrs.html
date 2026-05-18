@@ -1,0 +1,1019 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>mRS · Escala de Rankin modificada · NEUROTOOLS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,300;1,9..144,400&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #f4efe4;
+    --paper-deep: #ebe4d3;
+    --paper-card: #faf6ec;
+    --ink: #1a1614;
+    --ink-soft: #4a3f38;
+    --ink-muted: #8a7d72;
+    --accent: #7a1f2b;
+    --accent-soft: #a64a3a;
+    --hairline: #cfc4ad;
+    --green: #4a6741;
+    --amber: #b8862f;
+    --red: #962934;
+
+    /* Escala de color por grado (de claro a oscuro) */
+    --g0: #e8e4d2;
+    --g1: #d9ccb0;
+    --g2: #c3a784;
+    --g3: #b87760;
+    --g4: #9e4b3f;
+    --g5: #762936;
+    --g6: #2a1818;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Instrument Sans', system-ui, sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    min-height: 100vh;
+    background-image:
+      radial-gradient(at 15% 8%, rgba(122, 31, 43, 0.04) 0%, transparent 45%),
+      radial-gradient(at 85% 95%, rgba(166, 74, 58, 0.05) 0%, transparent 40%);
+  }
+
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.3;
+    z-index: 1;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.18'/%3E%3C/svg%3E");
+  }
+
+  .container {
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 3rem 1.5rem 5rem;
+    position: relative;
+    z-index: 2;
+  }
+
+  /* ─── HEADER ─── */
+  .breadcrumb {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+    margin-bottom: 1.5rem;
+  }
+  .breadcrumb a {
+    color: var(--ink-muted);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .breadcrumb a:hover { color: var(--accent); }
+  .breadcrumb .sep { margin: 0 0.5rem; opacity: 0.5; }
+
+  header.hero {
+    border-bottom: 1px solid var(--hairline);
+    padding-bottom: 2.5rem;
+    margin-bottom: 3rem;
+    animation: fadeUp 0.6s cubic-bezier(.2,.7,.3,1);
+  }
+
+  h1 {
+    font-family: 'Fraunces', serif;
+    font-weight: 400;
+    font-size: clamp(2.6rem, 6vw, 4rem);
+    line-height: 1;
+    letter-spacing: -0.025em;
+    margin-bottom: 0.6rem;
+  }
+  h1 em {
+    font-style: italic;
+    font-weight: 300;
+    color: var(--accent);
+  }
+
+  .subtitle {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-weight: 300;
+    font-size: 1.1rem;
+    color: var(--ink-soft);
+    max-width: 56ch;
+  }
+
+  /* ─── ESPECTRO mRS (always visible) ─── */
+  .spectrum {
+    margin: 2rem 0 2.5rem;
+    animation: fadeUp 0.6s cubic-bezier(.2,.7,.3,1) 0.1s both;
+  }
+
+  .spectrum-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+    margin-bottom: 0.8rem;
+    display: flex;
+    justify-content: space-between;
+  }
+  .spectrum-label .end { font-style: italic; }
+
+  .spectrum-bar {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+    height: 14px;
+    margin-bottom: 0.6rem;
+  }
+  .spectrum-segment {
+    border-radius: 2px;
+    transition: all 0.4s cubic-bezier(.2,.7,.3,1);
+    position: relative;
+    cursor: default;
+  }
+  .spectrum-segment[data-grade="0"] { background: var(--g0); }
+  .spectrum-segment[data-grade="1"] { background: var(--g1); }
+  .spectrum-segment[data-grade="2"] { background: var(--g2); }
+  .spectrum-segment[data-grade="3"] { background: var(--g3); }
+  .spectrum-segment[data-grade="4"] { background: var(--g4); }
+  .spectrum-segment[data-grade="5"] { background: var(--g5); }
+  .spectrum-segment[data-grade="6"] { background: var(--g6); }
+
+  .spectrum-segment.dimmed { opacity: 0.25; }
+  .spectrum-segment.active {
+    transform: scaleY(1.6);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.18);
+  }
+
+  .spectrum-numbers {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--ink-muted);
+  }
+  .spectrum-numbers span {
+    text-align: center;
+  }
+
+  /* ─── MODE TOGGLE ─── */
+  .mode-toggle {
+    display: inline-flex;
+    background: var(--paper-deep);
+    border-radius: 999px;
+    padding: 4px;
+    margin-bottom: 2rem;
+    animation: fadeUp 0.6s cubic-bezier(.2,.7,.3,1) 0.15s both;
+  }
+  .mode-btn {
+    background: transparent;
+    border: 0;
+    padding: 0.5rem 1.1rem;
+    font-family: 'Instrument Sans', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--ink-muted);
+    cursor: pointer;
+    border-radius: 999px;
+    transition: all 0.25s;
+    letter-spacing: 0.01em;
+  }
+  .mode-btn.active {
+    background: var(--ink);
+    color: var(--paper);
+  }
+  .mode-btn:not(.active):hover { color: var(--ink); }
+
+  /* ─── INTERVIEW MODE ─── */
+  .interview {
+    animation: fadeUp 0.5s cubic-bezier(.2,.7,.3,1);
+  }
+
+  .question-card {
+    background: var(--paper-card);
+    border: 1px solid var(--hairline);
+    border-radius: 4px;
+    padding: 1.75rem;
+    margin-bottom: 1rem;
+    transition: all 0.4s cubic-bezier(.2,.7,.3,1);
+    position: relative;
+  }
+  .question-card.answered {
+    opacity: 0.55;
+    background: transparent;
+  }
+  .question-card.answered:hover { opacity: 0.85; }
+
+  .question-card.current {
+    border-color: var(--accent);
+    box-shadow: 0 6px 24px rgba(122, 31, 43, 0.08);
+  }
+
+  .question-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--accent);
+    letter-spacing: 0.1em;
+    margin-bottom: 0.6rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+  }
+  .question-num .level {
+    color: var(--ink-muted);
+    font-style: italic;
+  }
+
+  .question-text {
+    font-family: 'Fraunces', serif;
+    font-size: 1.15rem;
+    font-weight: 400;
+    line-height: 1.45;
+    color: var(--ink);
+    margin-bottom: 0.6rem;
+    letter-spacing: -0.005em;
+  }
+
+  .question-detail {
+    font-size: 0.88rem;
+    color: var(--ink-soft);
+    margin-bottom: 1.25rem;
+    font-style: italic;
+    line-height: 1.5;
+  }
+
+  .answer-row {
+    display: flex;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+  }
+  .answer-btn {
+    flex: 1;
+    min-width: 120px;
+    padding: 0.75rem 1.2rem;
+    background: var(--paper);
+    border: 1px solid var(--hairline);
+    border-radius: 3px;
+    font-family: 'Instrument Sans', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--ink);
+    cursor: pointer;
+    transition: all 0.22s cubic-bezier(.2,.7,.3,1);
+    letter-spacing: 0.005em;
+  }
+  .answer-btn:hover {
+    border-color: var(--accent);
+    background: var(--paper-card);
+    transform: translateY(-1px);
+  }
+  .answer-btn.selected {
+    background: var(--ink);
+    color: var(--paper);
+    border-color: var(--ink);
+  }
+  .answer-btn .key {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    opacity: 0.5;
+    margin-left: 0.4rem;
+  }
+
+  /* ─── DIRECT MODE ─── */
+  .direct-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    animation: fadeUp 0.5s cubic-bezier(.2,.7,.3,1);
+  }
+  .grade-card {
+    background: var(--paper-card);
+    border: 1px solid var(--hairline);
+    border-radius: 4px;
+    padding: 1.1rem 1.4rem;
+    cursor: pointer;
+    transition: all 0.22s cubic-bezier(.2,.7,.3,1);
+    display: flex;
+    gap: 1.2rem;
+    align-items: flex-start;
+    text-align: left;
+    width: 100%;
+    font-family: inherit;
+    color: inherit;
+  }
+  .grade-card:hover {
+    border-color: var(--accent);
+    transform: translateX(4px);
+  }
+  .grade-card.selected {
+    border-color: var(--accent);
+    background: rgba(122, 31, 43, 0.04);
+    border-width: 1px;
+    box-shadow: 0 4px 16px rgba(122, 31, 43, 0.08);
+  }
+  .grade-marker {
+    width: 44px;
+    height: 44px;
+    flex-shrink: 0;
+    border-radius: 3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Fraunces', serif;
+    font-size: 1.4rem;
+    font-weight: 500;
+    color: var(--paper);
+  }
+  .grade-marker[data-grade="0"] { background: var(--g0); color: var(--ink); }
+  .grade-marker[data-grade="1"] { background: var(--g1); color: var(--ink); }
+  .grade-marker[data-grade="2"] { background: var(--g2); color: var(--paper); }
+  .grade-marker[data-grade="3"] { background: var(--g3); }
+  .grade-marker[data-grade="4"] { background: var(--g4); }
+  .grade-marker[data-grade="5"] { background: var(--g5); }
+  .grade-marker[data-grade="6"] { background: var(--g6); }
+
+  .grade-info { flex: 1; min-width: 0; }
+  .grade-title {
+    font-family: 'Fraunces', serif;
+    font-size: 1.08rem;
+    font-weight: 500;
+    color: var(--ink);
+    margin-bottom: 0.2rem;
+    letter-spacing: -0.005em;
+  }
+  .grade-desc {
+    font-size: 0.85rem;
+    color: var(--ink-soft);
+    line-height: 1.45;
+  }
+
+  /* ─── RESULT ─── */
+  .result {
+    margin-top: 2.5rem;
+    padding: 2rem;
+    background: var(--paper-card);
+    border: 1px solid var(--hairline);
+    border-radius: 4px;
+    animation: resultAppear 0.6s cubic-bezier(.2,.7,.3,1);
+    position: relative;
+    overflow: hidden;
+  }
+  .result::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: var(--accent);
+  }
+
+  @keyframes resultAppear {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .result-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 1rem;
+  }
+
+  .result-grade {
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+    margin-bottom: 0.6rem;
+  }
+  .result-num {
+    font-family: 'Fraunces', serif;
+    font-size: 5rem;
+    font-weight: 300;
+    line-height: 0.9;
+    color: var(--accent);
+    letter-spacing: -0.04em;
+  }
+  .result-of {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--ink-muted);
+    letter-spacing: 0.1em;
+  }
+
+  .result-title {
+    font-family: 'Fraunces', serif;
+    font-size: 1.5rem;
+    font-weight: 500;
+    color: var(--ink);
+    margin-bottom: 0.8rem;
+    letter-spacing: -0.015em;
+  }
+
+  .result-desc {
+    font-size: 0.95rem;
+    color: var(--ink-soft);
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+    max-width: 60ch;
+  }
+
+  .result-interp {
+    padding: 1rem 1.2rem;
+    border-left: 2px solid var(--hairline);
+    margin: 1.5rem 0;
+    background: rgba(0,0,0,0.02);
+    font-size: 0.9rem;
+    color: var(--ink-soft);
+    line-height: 1.55;
+  }
+  .result-interp strong { color: var(--ink); font-weight: 500; }
+
+  .interp-tag {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.2rem 0.6rem;
+    border-radius: 2px;
+    margin-bottom: 0.6rem;
+  }
+  .interp-tag.favorable { background: rgba(74, 103, 65, 0.12); color: var(--green); }
+  .interp-tag.intermediate { background: rgba(184, 134, 47, 0.14); color: var(--amber); }
+  .interp-tag.unfavorable { background: rgba(150, 41, 52, 0.1); color: var(--red); }
+
+  .actions {
+    display: flex;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+    margin-top: 1.5rem;
+  }
+  .btn {
+    padding: 0.7rem 1.3rem;
+    font-family: 'Instrument Sans', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 500;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: all 0.22s;
+    border: 1px solid;
+    letter-spacing: 0.005em;
+  }
+  .btn-primary {
+    background: var(--ink);
+    color: var(--paper);
+    border-color: var(--ink);
+  }
+  .btn-primary:hover { background: var(--accent); border-color: var(--accent); }
+  .btn-secondary {
+    background: transparent;
+    color: var(--ink);
+    border-color: var(--hairline);
+  }
+  .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+
+  .toast {
+    position: fixed;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    background: var(--ink);
+    color: var(--paper);
+    padding: 0.75rem 1.3rem;
+    border-radius: 4px;
+    font-family: 'Instrument Sans', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 500;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+    opacity: 0;
+    transition: all 0.35s cubic-bezier(.2,.7,.3,1);
+    z-index: 100;
+    pointer-events: none;
+  }
+  .toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  /* ─── FOOTER ─── */
+  footer.foot {
+    margin-top: 4rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--hairline);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--ink-muted);
+    line-height: 1.7;
+  }
+  footer.foot p { margin-bottom: 0.5rem; }
+  footer.foot .ref {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 0.82rem;
+    color: var(--ink-soft);
+  }
+
+  /* ─── MOBILE ─── */
+  @media (max-width: 600px) {
+    .container { padding: 2rem 1.1rem 4rem; }
+    .result-num { font-size: 4rem; }
+    .grade-card { padding: 0.95rem 1.1rem; }
+    .grade-marker { width: 38px; height: 38px; font-size: 1.2rem; }
+    .question-card { padding: 1.3rem; }
+    .question-text { font-size: 1.05rem; }
+    .actions { flex-direction: column; }
+    .btn { width: 100%; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <div class="breadcrumb">
+    <a href="index.html" style="color: var(--accent); font-weight: 600;">← VOLVER AL ÍNDICE</a>
+    <span class="sep">/</span>
+    <span>Escalas</span>
+    <span class="sep">/</span>
+    <span>mRS</span>
+  </div>
+
+  <header class="hero">
+    <h1>m<em>RS</em></h1>
+    <p class="subtitle">
+      Escala de Rankin modificada · valoración funcional tras ictus
+    </p>
+
+    <!-- Espectro siempre visible -->
+    <div class="spectrum">
+      <div class="spectrum-label">
+        <span class="end">← Asintomático</span>
+        <span class="end">Exitus →</span>
+      </div>
+      <div class="spectrum-bar" id="spectrumBar">
+        <div class="spectrum-segment" data-grade="0"></div>
+        <div class="spectrum-segment" data-grade="1"></div>
+        <div class="spectrum-segment" data-grade="2"></div>
+        <div class="spectrum-segment" data-grade="3"></div>
+        <div class="spectrum-segment" data-grade="4"></div>
+        <div class="spectrum-segment" data-grade="5"></div>
+        <div class="spectrum-segment" data-grade="6"></div>
+      </div>
+      <div class="spectrum-numbers">
+        <span>0</span><span>1</span><span>2</span><span>3</span>
+        <span>4</span><span>5</span><span>6</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Toggle de modo -->
+  <div class="mode-toggle">
+    <button class="mode-btn active" data-mode="interview">Entrevista estructurada</button>
+    <button class="mode-btn" data-mode="direct">Asignación directa</button>
+  </div>
+
+  <!-- Contenedor de modos -->
+  <div id="modeContainer"></div>
+
+  <!-- Contenedor de resultado -->
+  <div id="resultContainer"></div>
+
+  <footer class="foot">
+    <p class="ref">van Swieten JC et al. <i>Stroke</i> 1988 · Bruno A et al. <i>Stroke</i> 2010 · Wilson JTL et al. <i>Stroke</i> 2002</p>
+    <p>Banks JL, Marotta CA. Outcomes validity and reliability of the modified Rankin scale. <i>Stroke</i> 2007;38:1091-6.</p>
+    <p style="margin-top:1rem; opacity:0.7;">El grado mRS final debe basarse en el juicio clínico integrado; esta herramienta es de apoyo y no sustituye la entrevista directa con paciente y/o cuidador.</p>
+  </footer>
+
+</div>
+
+<div class="toast" id="toast">Copiado al portapapeles</div>
+
+<script>
+  // ════════════════════════════════════════════════════════════════
+  //  DATOS — Definición de los grados
+  // ════════════════════════════════════════════════════════════════
+  const GRADES = [
+    {
+      n: 0,
+      title: "Asintomático",
+      short: "Sin síntomas residuales",
+      desc: "Capacidad funcional normal. El paciente no presenta síntomas residuales tras el ictus.",
+      band: "favorable"
+    },
+    {
+      n: 1,
+      title: "Discapacidad muy leve",
+      short: "Síntomas sin limitación funcional",
+      desc: "El paciente presenta algunos síntomas residuales pero puede realizar sus actividades y tareas habituales sin limitaciones.",
+      band: "favorable"
+    },
+    {
+      n: 2,
+      title: "Discapacidad leve",
+      short: "Limitación de actividades previas, ABVD conservadas",
+      desc: "Limitación en actividades habituales y laborales previas, pero conserva independencia para las actividades básicas de la vida diaria (ABVD).",
+      band: "favorable"
+    },
+    {
+      n: 3,
+      title: "Discapacidad moderada",
+      short: "Requiere ayuda para AIVD",
+      desc: "Necesita asistencia para alguna actividad instrumental, pero no para las ABVD. Camina sin ayuda.",
+      band: "intermediate"
+    },
+    {
+      n: 4,
+      title: "Discapacidad moderadamente grave",
+      short: "Requiere ayuda para ABVD",
+      desc: "Necesita asistencia para las actividades básicas (comer, baño, higiene, deambulación), pero no precisa supervisión continuada.",
+      band: "unfavorable"
+    },
+    {
+      n: 5,
+      title: "Discapacidad grave",
+      short: "Encamado · dependencia total",
+      desc: "Paciente totalmente dependiente que requiere cuidados de enfermería las 24 horas del día.",
+      band: "unfavorable"
+    },
+    {
+      n: 6,
+      title: "Éxitus",
+      short: "Fallecimiento",
+      desc: "Paciente fallecido.",
+      band: "unfavorable"
+    }
+  ];
+
+  // ════════════════════════════════════════════════════════════════
+  //  ALGORITMO DE ENTREVISTA ESTRUCTURADA (Bruno/Wilson, top-down)
+  // ════════════════════════════════════════════════════════════════
+  const QUESTIONS = [
+    {
+      id: "q1",
+      level: "Grado 0 vs 1+",
+      text: "¿Presenta el paciente algún síntoma residual del ictus?",
+      detail: "Dificultad para leer o escribir, hablar o encontrar la palabra correcta, problemas de equilibrio o coordinación, molestias visuales, adormecimiento o pérdida de movilidad (cara, brazos, piernas, manos, pies), disfagia u otros síntomas.",
+      ifNo: 0,
+      ifYesNext: "q2"
+    },
+    {
+      id: "q2",
+      level: "Grado 1 vs 2+",
+      text: "¿Ha habido algún cambio en su capacidad para actividades laborales, sociales o relaciones, en comparación con la situación previa al ictus?",
+      detail: "Cambio en el trabajo o cuidado, en actividades sociales o de ocio, o problemas en relaciones personales o aislamiento social.",
+      ifNo: 1,
+      ifYesNext: "q3"
+    },
+    {
+      id: "q3",
+      level: "Grado 2 vs 3+",
+      text: "¿Necesita ayuda para actividades instrumentales (AIVD)?",
+      detail: "Preparar la comida, cuidado del hogar, manejo del dinero, realizar compras o uso del transporte público.",
+      ifNo: 2,
+      ifYesNext: "q4"
+    },
+    {
+      id: "q4",
+      level: "Grado 3 vs 4+",
+      text: "¿Necesita ayuda para las actividades básicas de la vida diaria (ABVD)?",
+      detail: "Comer, usar el baño, higiene diaria o caminar.",
+      ifNo: 3,
+      ifYesNext: "q5"
+    },
+    {
+      id: "q5",
+      level: "Grado 4 vs 5+",
+      text: "¿Requiere el paciente cuidados constantes las 24 horas?",
+      detail: "Dependencia total con necesidad de asistencia continuada (profesional o no).",
+      ifNo: 4,
+      ifYesNext: "q6"
+    },
+    {
+      id: "q6",
+      level: "Grado 5 vs 6",
+      text: "¿Ha fallecido el paciente?",
+      detail: "",
+      ifNo: 5,
+      ifYesGrade: 6
+    }
+  ];
+
+  // ════════════════════════════════════════════════════════════════
+  //  ESTADO
+  // ════════════════════════════════════════════════════════════════
+  let state = {
+    mode: "interview",       // "interview" | "direct"
+    answers: {},             // { q1: "yes"/"no", ... }
+    currentQ: "q1",
+    finalGrade: null,
+    method: null             // "interview" | "direct"
+  };
+
+  // ════════════════════════════════════════════════════════════════
+  //  RENDERIZADO
+  // ════════════════════════════════════════════════════════════════
+  const modeContainer = document.getElementById('modeContainer');
+  const resultContainer = document.getElementById('resultContainer');
+  const spectrumBar = document.getElementById('spectrumBar');
+  const toast = document.getElementById('toast');
+
+  function renderMode() {
+    if (state.mode === "interview") renderInterview();
+    else renderDirect();
+  }
+
+  function renderInterview() {
+    let html = '<div class="interview">';
+    const orderedAnswered = [];
+    let stopHere = false;
+
+    for (const q of QUESTIONS) {
+      if (stopHere) break;
+
+      const answer = state.answers[q.id];
+      const isCurrent = !answer && (state.currentQ === q.id);
+      const isAnswered = answer !== undefined;
+
+      if (!isAnswered && !isCurrent) break; // no mostrar futuras
+
+      const cls = isAnswered ? 'answered' : (isCurrent ? 'current' : '');
+
+      html += `
+        <div class="question-card ${cls}" data-qid="${q.id}">
+          <div class="question-num">
+            <span>${q.id.toUpperCase()}</span>
+            <span class="level">${q.level}</span>
+          </div>
+          <div class="question-text">${q.text}</div>
+          ${q.detail ? `<div class="question-detail">${q.detail}</div>` : ''}
+          <div class="answer-row">
+            <button class="answer-btn ${answer === 'no' ? 'selected' : ''}" data-q="${q.id}" data-a="no">No <span class="key">N</span></button>
+            <button class="answer-btn ${answer === 'yes' ? 'selected' : ''}" data-q="${q.id}" data-a="yes">Sí <span class="key">S</span></button>
+          </div>
+        </div>
+      `;
+
+      if (isAnswered) {
+        // si la respuesta termina aquí, parar
+        if (answer === 'no') stopHere = true;
+        if (answer === 'yes' && q.ifYesGrade !== undefined) stopHere = true;
+      } else {
+        stopHere = true; // current is shown but stop
+      }
+    }
+
+    html += '</div>';
+    modeContainer.innerHTML = html;
+
+    // Listeners
+    modeContainer.querySelectorAll('.answer-btn').forEach(b => {
+      b.addEventListener('click', () => handleAnswer(b.dataset.q, b.dataset.a));
+    });
+
+    // Si el usuario quiere modificar una respuesta previa, click en la tarjeta answered
+    modeContainer.querySelectorAll('.question-card.answered').forEach(card => {
+      card.addEventListener('click', (e) => {
+        // si han clicado un botón, no entrar aquí
+        if (e.target.classList.contains('answer-btn')) return;
+        const qid = card.dataset.qid;
+        rewindTo(qid);
+      });
+    });
+  }
+
+  function handleAnswer(qid, answer) {
+    // Si modifican una respuesta previa, hay que limpiar las posteriores
+    const qIndex = QUESTIONS.findIndex(q => q.id === qid);
+    // Limpiar respuestas posteriores
+    for (let i = qIndex + 1; i < QUESTIONS.length; i++) {
+      delete state.answers[QUESTIONS[i].id];
+    }
+
+    state.answers[qid] = answer;
+    const q = QUESTIONS[qIndex];
+
+    if (answer === 'no') {
+      // Respuesta NO → grado asignado
+      state.finalGrade = q.ifNo;
+      state.currentQ = null;
+      state.method = "interview";
+    } else {
+      // Respuesta SÍ
+      if (q.ifYesGrade !== undefined) {
+        state.finalGrade = q.ifYesGrade;
+        state.currentQ = null;
+        state.method = "interview";
+      } else {
+        state.finalGrade = null;
+        state.currentQ = q.ifYesNext;
+      }
+    }
+
+    renderMode();
+    renderResult();
+    updateSpectrum();
+  }
+
+  function rewindTo(qid) {
+    const qIndex = QUESTIONS.findIndex(q => q.id === qid);
+    // Eliminar la respuesta de esta y posteriores
+    for (let i = qIndex; i < QUESTIONS.length; i++) {
+      delete state.answers[QUESTIONS[i].id];
+    }
+    state.currentQ = qid;
+    state.finalGrade = null;
+    renderMode();
+    renderResult();
+    updateSpectrum();
+  }
+
+  function renderDirect() {
+    let html = '<div class="direct-grid">';
+    for (const g of GRADES) {
+      const selected = (state.finalGrade === g.n && state.method === 'direct') ? 'selected' : '';
+      html += `
+        <button class="grade-card ${selected}" data-g="${g.n}">
+          <div class="grade-marker" data-grade="${g.n}">${g.n}</div>
+          <div class="grade-info">
+            <div class="grade-title">${g.title}</div>
+            <div class="grade-desc">${g.short}</div>
+          </div>
+        </button>
+      `;
+    }
+    html += '</div>';
+    modeContainer.innerHTML = html;
+
+    modeContainer.querySelectorAll('.grade-card').forEach(c => {
+      c.addEventListener('click', () => {
+        state.finalGrade = parseInt(c.dataset.g);
+        state.method = "direct";
+        renderDirect();
+        renderResult();
+        updateSpectrum();
+      });
+    });
+  }
+
+  function updateSpectrum() {
+    const segments = spectrumBar.querySelectorAll('.spectrum-segment');
+    segments.forEach(s => {
+      s.classList.remove('active', 'dimmed');
+      if (state.finalGrade !== null) {
+        const g = parseInt(s.dataset.grade);
+        if (g === state.finalGrade) s.classList.add('active');
+        else s.classList.add('dimmed');
+      }
+    });
+  }
+
+  function renderResult() {
+    if (state.finalGrade === null) {
+      resultContainer.innerHTML = '';
+      return;
+    }
+
+    const g = GRADES[state.finalGrade];
+    const bandLabel = {
+      favorable: "Outcome favorable",
+      intermediate: "Outcome intermedio",
+      unfavorable: "Outcome desfavorable"
+    }[g.band];
+
+    let interpHtml = '';
+    if (g.n <= 2) {
+      interpHtml = `
+        <div class="result-interp">
+          <span class="interp-tag favorable">${bandLabel}</span>
+          <strong>mRS 0–2</strong> es el criterio estándar de evolución funcional favorable en los grandes ensayos clínicos de ictus (NINDS, ECASS, MR CLEAN, REVASCAT, DAWN, DEFUSE-3). El paciente conserva su independencia funcional para las actividades básicas.
+        </div>
+      `;
+    } else if (g.n === 3) {
+      interpHtml = `
+        <div class="result-interp">
+          <span class="interp-tag intermediate">${bandLabel}</span>
+          <strong>mRS 3</strong> representa el umbral funcional clave: el paciente conserva la deambulación pero requiere apoyo para actividades instrumentales. Suele clasificarse como discapacidad significativa pero compatible con vida en domicilio con soporte.
+        </div>
+      `;
+    } else if (g.n >= 4 && g.n <= 5) {
+      interpHtml = `
+        <div class="result-interp">
+          <span class="interp-tag unfavorable">${bandLabel}</span>
+          <strong>mRS ${g.n}</strong> implica dependencia para actividades básicas. Conviene valorar recursos de apoyo, rehabilitación intensiva si procede, y planificación de cuidados a medio-largo plazo.
+        </div>
+      `;
+    } else if (g.n === 6) {
+      interpHtml = `
+        <div class="result-interp">
+          <span class="interp-tag unfavorable">${bandLabel}</span>
+          <strong>mRS 6</strong> · Exitus. Registrar fecha y causa en los datos del episodio cuando aplique a análisis de outcomes.
+        </div>
+      `;
+    }
+
+    resultContainer.innerHTML = `
+      <div class="result">
+        <div class="result-label">Resultado · mRS</div>
+        <div class="result-grade">
+          <div class="result-num">${g.n}</div>
+          <div class="result-of">/ 6</div>
+        </div>
+        <div class="result-title">${g.title}</div>
+        <div class="result-desc">${g.desc}</div>
+        ${interpHtml}
+        <div class="actions">
+          <button class="btn btn-primary" id="copyBtn">Copiar para HC</button>
+          <button class="btn btn-secondary" id="resetBtn">Reiniciar</button>
+        </div>
+      </div>
+    `;
+
+    document.getElementById('copyBtn').addEventListener('click', copyToClipboard);
+    document.getElementById('resetBtn').addEventListener('click', reset);
+  }
+
+  function copyToClipboard() {
+    const g = GRADES[state.finalGrade];
+    const today = new Date().toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' });
+    const methodTxt = state.method === 'interview'
+      ? 'mediante entrevista estructurada'
+      : 'mediante valoración clínica directa';
+
+    const text = `Escala de Rankin modificada (mRS): ${g.n} — ${g.title}. ${g.desc} Evaluación realizada el ${today} ${methodTxt}.`;
+
+    navigator.clipboard.writeText(text).then(() => {
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2200);
+    }).catch(() => {
+      // Fallback
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2200);
+    });
+  }
+
+  function reset() {
+    state.answers = {};
+    state.currentQ = "q1";
+    state.finalGrade = null;
+    state.method = null;
+    renderMode();
+    renderResult();
+    updateSpectrum();
+  }
+
+  // ════════════════════════════════════════════════════════════════
+  //  TOGGLE DE MODO
+  // ════════════════════════════════════════════════════════════════
+  document.querySelectorAll('.mode-btn').forEach(b => {
+    b.addEventListener('click', () => {
+      document.querySelectorAll('.mode-btn').forEach(x => x.classList.remove('active'));
+      b.classList.add('active');
+      state.mode = b.dataset.mode;
+      // Al cambiar de modo, reseteamos para no mezclar
+      reset();
+    });
+  });
+
+  // ════════════════════════════════════════════════════════════════
+  //  ATAJOS DE TECLADO
+  // ════════════════════════════════════════════════════════════════
+  document.addEventListener('keydown', (e) => {
+    if (state.mode !== 'interview') return;
+    if (state.currentQ === null) return;
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+
+    if (e.key === 's' || e.key === 'S' || e.key === 'y' || e.key === 'Y') {
+      handleAnswer(state.currentQ, 'yes');
+    } else if (e.key === 'n' || e.key === 'N') {
+      handleAnswer(state.currentQ, 'no');
+    }
+  });
+
+  // Inicializar
+  renderMode();
+</script>
+
+</body>
+</html>
