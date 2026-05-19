@@ -1,0 +1,1264 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FAB-E · Batería de Evaluación Frontal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f6f1e8;
+    --bg-alt: #efe7d7;
+    --paper: #fdfbf6;
+    --ink: #1a1f2e;
+    --ink-soft: #4a5468;
+    --ink-mute: #7a8294;
+    --rule: #e1d8c4;
+    --rule-soft: #ece4d2;
+    --accent: #2d5f5d;
+    --accent-deep: #1f4644;
+    --accent-soft: #d5e5e3;
+    --warn: #b06028;
+    --warn-soft: #f5e3d1;
+    --err: #8b2c2c;
+    --err-soft: #f0d8d3;
+    --ok: #4f6e2f;
+    --ok-soft: #dde6cb;
+    --gold: #8a6d2e;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: var(--bg); color: var(--ink); font-family: 'DM Sans', sans-serif; font-size: 16px; line-height: 1.55; -webkit-font-smoothing: antialiased; }
+  body { min-height: 100vh; padding: 24px 16px 64px; background-image: radial-gradient(circle at 20% 0%, #ede3cd 0%, transparent 40%), radial-gradient(circle at 100% 100%, #e8e0cd 0%, transparent 40%); background-attachment: fixed; }
+  ::selection { background: var(--accent); color: var(--paper); }
+
+  .app { max-width: 880px; margin: 0 auto; }
+
+  /* ---------- Header ---------- */
+  header.app-header { display: flex; align-items: flex-end; justify-content: space-between; padding-bottom: 18px; border-bottom: 1px solid var(--rule); margin-bottom: 24px; }
+  .brand { display: flex; flex-direction: column; gap: 2px; }
+  .brand-eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.16em; color: var(--ink-mute); text-transform: uppercase; }
+  .brand-title { font-family: 'Fraunces', serif; font-weight: 600; font-size: 34px; letter-spacing: -0.02em; line-height: 1; color: var(--ink); font-variation-settings: 'opsz' 144; }
+  .brand-title em { font-style: italic; color: var(--accent); font-weight: 500; }
+  .brand-sub { font-size: 13px; color: var(--ink-soft); margin-top: 4px; }
+  .header-meta { text-align: right; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--ink-mute); letter-spacing: 0.04em; }
+  .header-meta strong { display: block; color: var(--ink-soft); font-weight: 500; font-size: 12px; letter-spacing: 0.08em; }
+
+  /* ---------- Progress bar ---------- */
+  .progress { display: flex; gap: 4px; margin-bottom: 28px; }
+  .progress-step { flex: 1; height: 4px; background: var(--rule); border-radius: 2px; transition: background .3s; position: relative; }
+  .progress-step.active { background: var(--accent); }
+  .progress-step.done { background: var(--accent-deep); }
+  .progress-labels { display: flex; gap: 4px; margin-top: 8px; font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--ink-mute); letter-spacing: 0.05em; }
+  .progress-labels span { flex: 1; text-align: center; }
+  .progress-labels span.active { color: var(--accent-deep); font-weight: 500; }
+
+  /* ---------- Cards ---------- */
+  .card { background: var(--paper); border: 1px solid var(--rule); border-radius: 4px; padding: 36px 40px; box-shadow: 0 1px 0 rgba(0,0,0,0.02), 0 8px 24px -16px rgba(60, 50, 30, 0.15); }
+  .screen { display: none; animation: fadeIn .4s ease; }
+  .screen.visible { display: block; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px);} to { opacity: 1; transform: translateY(0);} }
+
+  /* ---------- Typography ---------- */
+  h2.section-title { font-family: 'Fraunces', serif; font-weight: 500; font-size: 28px; letter-spacing: -0.015em; line-height: 1.15; color: var(--ink); margin-bottom: 4px; font-variation-settings: 'opsz' 72; }
+  .section-eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.18em; color: var(--accent); text-transform: uppercase; margin-bottom: 12px; }
+  .section-subtitle { color: var(--ink-soft); font-size: 14.5px; margin-bottom: 28px; max-width: 60ch; }
+  h3 { font-family: 'Fraunces', serif; font-weight: 500; font-size: 19px; color: var(--ink); margin: 24px 0 10px; letter-spacing: -0.01em; }
+  h4 { font-size: 13px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-mute); margin-bottom: 8px; font-weight: 600; }
+  p { color: var(--ink-soft); }
+  em.italic { font-style: italic; color: var(--accent-deep); font-family: 'Fraunces', serif; font-weight: 500; font-size: 1.02em; }
+
+  /* ---------- Form ---------- */
+  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px 24px; margin-bottom: 20px; }
+  .field { display: flex; flex-direction: column; gap: 5px; }
+  .field.full { grid-column: 1 / -1; }
+  label { font-size: 12px; letter-spacing: 0.05em; color: var(--ink-mute); text-transform: uppercase; font-weight: 600; }
+  input[type="text"], input[type="number"], input[type="date"], select, textarea {
+    font-family: 'DM Sans', sans-serif; font-size: 15px; color: var(--ink);
+    background: var(--bg-alt); border: 1px solid var(--rule); border-radius: 3px;
+    padding: 10px 12px; transition: border .15s, background .15s;
+  }
+  input:focus, select:focus, textarea:focus { outline: none; border-color: var(--accent); background: var(--paper); }
+  select { cursor: pointer; }
+  textarea { font-family: 'DM Sans', sans-serif; resize: vertical; min-height: 80px; }
+
+  /* ---------- Buttons ---------- */
+  .btn { font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 14px; letter-spacing: 0.01em;
+    padding: 11px 22px; border-radius: 3px; cursor: pointer; transition: all .15s;
+    border: 1px solid transparent; display: inline-flex; align-items: center; gap: 8px; }
+  .btn-primary { background: var(--accent); color: var(--paper); border-color: var(--accent); }
+  .btn-primary:hover { background: var(--accent-deep); border-color: var(--accent-deep); }
+  .btn-ghost { background: transparent; color: var(--ink-soft); border-color: var(--rule); }
+  .btn-ghost:hover { background: var(--bg-alt); border-color: var(--ink-mute); color: var(--ink); }
+  .btn-small { padding: 7px 14px; font-size: 13px; }
+  .btn-icon { padding: 8px 10px; font-size: 13px; }
+  .actions { display: flex; justify-content: space-between; align-items: center; margin-top: 36px; padding-top: 24px; border-top: 1px solid var(--rule); }
+  .actions .btn { min-width: 110px; justify-content: center; }
+
+  /* ---------- Instructions box ---------- */
+  .instruction-block {
+    background: linear-gradient(180deg, var(--bg-alt) 0%, #ebe1cb 100%);
+    border-left: 3px solid var(--accent);
+    padding: 18px 22px; margin: 16px 0 22px; border-radius: 0 4px 4px 0;
+  }
+  .instruction-block h4 { color: var(--accent-deep); margin-bottom: 10px; }
+  .instruction-block p { color: var(--ink); font-size: 14.5px; }
+  .instruction-block .examiner-says {
+    font-family: 'Fraunces', serif; font-style: italic; font-size: 16px;
+    color: var(--accent-deep); display: block; padding: 8px 0;
+    border-top: 1px dashed var(--rule); border-bottom: 1px dashed var(--rule);
+    margin: 10px 0; font-weight: 500;
+  }
+  .help-note { font-size: 13px; color: var(--ink-mute); margin-top: 8px; font-style: italic; }
+  .help-note::before { content: "↳ "; color: var(--accent); font-style: normal; }
+
+  /* ---------- Scoring radios ---------- */
+  .score-options { display: flex; flex-direction: column; gap: 8px; margin: 18px 0; }
+  .score-option {
+    display: flex; align-items: flex-start; gap: 14px; padding: 14px 18px;
+    border: 1px solid var(--rule); border-radius: 3px; cursor: pointer;
+    background: var(--paper); transition: all .15s;
+  }
+  .score-option:hover { border-color: var(--accent); background: var(--bg-alt); }
+  .score-option.selected { border-color: var(--accent); background: var(--accent-soft); }
+  .score-option input { position: absolute; opacity: 0; }
+  .score-badge {
+    font-family: 'Fraunces', serif; font-weight: 600; font-size: 22px; line-height: 1;
+    color: var(--accent); min-width: 28px; padding-top: 2px;
+  }
+  .score-option.selected .score-badge { color: var(--accent-deep); }
+  .score-text { color: var(--ink-soft); font-size: 14.5px; line-height: 1.45; }
+  .score-option.selected .score-text { color: var(--ink); }
+
+  /* ---------- Test 1 similarity items ---------- */
+  .sim-item {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 18px; border: 1px solid var(--rule); border-radius: 3px;
+    margin-bottom: 10px; background: var(--paper);
+  }
+  .sim-pair { display: flex; flex-direction: column; gap: 4px; }
+  .sim-pair-label { font-family: 'Fraunces', serif; font-weight: 500; font-size: 17px; color: var(--ink); font-style: italic; }
+  .sim-pair-cat { font-size: 12px; color: var(--ink-mute); letter-spacing: 0.04em; }
+  .toggle-group { display: flex; gap: 4px; }
+  .toggle-btn {
+    font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500;
+    padding: 8px 14px; border-radius: 3px; cursor: pointer; transition: all .15s;
+    border: 1px solid var(--rule); background: var(--paper); color: var(--ink-soft);
+  }
+  .toggle-btn:hover { border-color: var(--ink-mute); }
+  .toggle-btn.active-correct { background: var(--ok-soft); border-color: var(--ok); color: var(--ok); }
+  .toggle-btn.active-wrong { background: var(--err-soft); border-color: var(--err); color: var(--err); }
+
+  /* ---------- Test 2 timer & counter ---------- */
+  .fluidez-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: stretch; margin: 20px 0; }
+  .timer-card, .counter-card { background: var(--bg-alt); border: 1px solid var(--rule); border-radius: 4px; padding: 22px; display: flex; flex-direction: column; align-items: center; gap: 12px; }
+  .timer-display { font-family: 'Fraunces', serif; font-weight: 600; font-size: 56px; line-height: 1; color: var(--accent-deep); letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+  .timer-display.running { color: var(--accent); }
+  .timer-display.warn { color: var(--warn); animation: pulse 1s infinite; }
+  .timer-display.done { color: var(--err); }
+  @keyframes pulse { 0%, 100% { opacity: 1;} 50% { opacity: .55;} }
+  .timer-controls { display: flex; gap: 8px; }
+  .counter-display { font-family: 'Fraunces', serif; font-weight: 600; font-size: 56px; line-height: 1; color: var(--accent-deep); font-variant-numeric: tabular-nums; }
+  .counter-controls { display: flex; gap: 8px; align-items: center; }
+  .word-input-wrap { margin-top: 10px; padding: 14px; border-top: 1px dashed var(--rule); }
+  .word-input-wrap input { width: 100%; }
+  .word-list { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+  .word-chip { background: var(--paper); border: 1px solid var(--rule); padding: 4px 10px 4px 12px; border-radius: 20px; font-size: 12.5px; color: var(--ink-soft); display: flex; align-items: center; gap: 6px; }
+  .word-chip button { background: none; border: none; cursor: pointer; color: var(--ink-mute); font-size: 14px; padding: 0; line-height: 1; }
+  .word-chip button:hover { color: var(--err); }
+
+  /* ---------- Test 3 motor series ---------- */
+  .luria-diagram { display: flex; justify-content: center; gap: 22px; margin: 18px 0 26px; padding: 18px; background: var(--bg-alt); border-radius: 4px; border: 1px solid var(--rule); }
+  .luria-step { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+  .luria-glyph { width: 70px; height: 70px; border: 1.5px solid var(--accent); border-radius: 4px; display: flex; align-items: center; justify-content: center; background: var(--paper); }
+  .luria-label { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.08em; color: var(--accent-deep); text-transform: uppercase; }
+  .luria-arrow { color: var(--ink-mute); align-self: center; font-size: 18px; }
+
+  /* ---------- Test 4 & 5 sequence player ---------- */
+  .sequencer { background: var(--bg-alt); border: 1px solid var(--rule); border-radius: 4px; padding: 24px; margin: 18px 0; }
+  .seq-row { display: flex; gap: 6px; justify-content: center; margin: 18px 0; flex-wrap: wrap; }
+  .seq-tap { width: 44px; height: 44px; border-radius: 4px; border: 1.5px solid var(--rule); background: var(--paper); display: flex; align-items: center; justify-content: center; font-family: 'Fraunces', serif; font-weight: 600; font-size: 18px; color: var(--ink-mute); transition: all .25s; }
+  .seq-tap.active { background: var(--accent); color: var(--paper); border-color: var(--accent); transform: scale(1.12); box-shadow: 0 4px 12px -2px rgba(45, 95, 93, 0.4); }
+  .seq-tap.past { background: var(--rule-soft); color: var(--ink-soft); }
+  .seq-controls { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; align-items: center; }
+  .seq-speed { display: flex; gap: 8px; align-items: center; font-size: 13px; color: var(--ink-soft); }
+  .seq-speed select { padding: 6px 10px; font-size: 13px; }
+  .err-counter { background: var(--paper); border: 1px solid var(--rule); border-radius: 4px; padding: 16px; margin-top: 14px; display: flex; justify-content: space-between; align-items: center; }
+  .err-counter-label { font-size: 13px; color: var(--ink-mute); letter-spacing: 0.04em; text-transform: uppercase; font-weight: 600; }
+  .err-counter-value { font-family: 'Fraunces', serif; font-size: 36px; font-weight: 600; color: var(--err); line-height: 1; }
+  .err-controls { display: flex; gap: 6px; }
+  .seq-indicator { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--ink-mute); text-align: center; margin-top: 8px; min-height: 18px; }
+  .seq-current-cue { font-family: 'Fraunces', serif; font-size: 14px; color: var(--accent); font-style: italic; }
+
+  /* ---------- Results ---------- */
+  .result-hero { text-align: center; padding: 30px 0 36px; border-bottom: 1px solid var(--rule); margin-bottom: 28px; position: relative; }
+  .result-eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.18em; color: var(--ink-mute); text-transform: uppercase; margin-bottom: 12px; }
+  .result-score { font-family: 'Fraunces', serif; font-weight: 600; font-size: 90px; line-height: 1; color: var(--accent-deep); letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
+  .result-score-max { font-size: 36px; color: var(--ink-mute); font-weight: 400; }
+  .result-verdict { display: inline-block; padding: 8px 22px; border-radius: 22px; font-size: 13px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; margin-top: 18px; }
+  .result-verdict.normal { background: var(--ok-soft); color: var(--ok); border: 1px solid var(--ok); }
+  .result-verdict.pathological { background: var(--err-soft); color: var(--err); border: 1px solid var(--err); }
+  .result-cutoff { font-size: 13.5px; color: var(--ink-soft); margin-top: 16px; }
+  .result-cutoff strong { color: var(--ink); }
+
+  .domain-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 18px 0; }
+  .domain-card { background: var(--paper); border: 1px solid var(--rule); border-radius: 4px; padding: 16px; display: flex; flex-direction: column; gap: 6px; }
+  .domain-card.impaired { border-left: 3px solid var(--err); background: linear-gradient(90deg, var(--err-soft) 0%, var(--paper) 30%); }
+  .domain-card.borderline { border-left: 3px solid var(--warn); background: linear-gradient(90deg, var(--warn-soft) 0%, var(--paper) 30%); }
+  .domain-card.intact { border-left: 3px solid var(--ok); }
+  .domain-header { display: flex; justify-content: space-between; align-items: baseline; }
+  .domain-name { font-family: 'Fraunces', serif; font-weight: 500; font-size: 15.5px; color: var(--ink); }
+  .domain-score { font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--ink-soft); font-weight: 500; }
+  .domain-function { font-size: 12.5px; color: var(--ink-mute); }
+  .domain-anatomy { font-size: 11.5px; color: var(--accent); letter-spacing: 0.02em; font-style: italic; margin-top: 4px; font-family: 'Fraunces', serif; }
+
+  .interpretation-block { background: var(--bg-alt); padding: 22px; border-radius: 4px; margin: 24px 0; border: 1px solid var(--rule); }
+  .interpretation-block h3 { margin-top: 0; }
+  .interpretation-block p { font-size: 14.5px; color: var(--ink); margin-bottom: 8px; }
+  .interpretation-block ul { margin-left: 18px; color: var(--ink-soft); font-size: 14px; }
+  .interpretation-block li { margin-bottom: 4px; }
+
+  .clinical-note-wrap { margin-top: 24px; }
+  .clinical-note { font-family: 'JetBrains Mono', monospace; font-size: 12.5px; line-height: 1.6; background: var(--ink); color: #ddd1b5; padding: 22px; border-radius: 4px; white-space: pre-wrap; max-height: 320px; overflow-y: auto; }
+  .copy-row { display: flex; justify-content: flex-end; gap: 8px; margin-top: 10px; }
+
+  /* ---------- Footer ---------- */
+  footer.app-footer { margin-top: 32px; padding: 18px 12px; text-align: center; font-size: 11.5px; color: var(--ink-mute); line-height: 1.6; }
+  footer.app-footer a { color: var(--accent); text-decoration: none; }
+  footer.app-footer strong { color: var(--ink-soft); }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width: 680px) {
+    body { padding: 16px 10px 40px; }
+    .card { padding: 24px 20px; }
+    .brand-title { font-size: 26px; }
+    h2.section-title { font-size: 22px; }
+    .field-row { grid-template-columns: 1fr; }
+    .fluidez-wrap { grid-template-columns: 1fr; }
+    .domain-grid { grid-template-columns: 1fr; }
+    .result-score { font-size: 64px; }
+    .actions { flex-direction: column-reverse; gap: 10px; }
+    .actions .btn { width: 100%; }
+    header.app-header { flex-direction: column; align-items: flex-start; gap: 10px; }
+    .header-meta { text-align: left; }
+    .luria-glyph { width: 56px; height: 56px; }
+    .luria-glyph svg { width: 36px; height: 36px; }
+  }
+
+  /* ---------- Print ---------- */
+  @media print {
+    body { background: white; padding: 0; }
+    .actions, .copy-row, header.app-header .header-meta { display: none; }
+    .card { border: none; box-shadow: none; padding: 0; }
+    .screen { display: none; }
+    .screen.print-show { display: block !important; }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <header class="app-header">
+    <div class="brand">
+      <span class="brand-eyebrow">Frontal Assessment Battery</span>
+      <h1 class="brand-title">FAB<em>-E</em></h1>
+      <span class="brand-sub">Batería de evaluación de funciones ejecutivas · versión española</span>
+    </div>
+    <div class="header-meta">
+      <strong>Tiempo estimado</strong>
+      ≈ 10 minutos
+    </div>
+  </header>
+
+  <!-- Progress bar -->
+  <div id="progressBar" class="progress"></div>
+  <div id="progressLabels" class="progress-labels"></div>
+
+  <main class="card" style="margin-top: 24px;">
+
+    <!-- ============= WELCOME ============= -->
+    <section class="screen visible" id="screen-welcome">
+      <div class="section-eyebrow">Registro · paso previo</div>
+      <h2 class="section-title">Datos del paciente y del examen</h2>
+      <p class="section-subtitle">Complete los datos básicos antes de iniciar la batería. La edad y el nivel de estudios son necesarios para calcular el punto de corte ajustado según los datos normativos en población española (Hurtado-Pomares et al., <em class="italic">Neurología</em> 2024).</p>
+
+      <div class="field-row">
+        <div class="field full">
+          <label for="ptName">Nombre y apellidos</label>
+          <input type="text" id="ptName" placeholder="Opcional">
+        </div>
+        <div class="field">
+          <label for="ptAge">Edad (años) *</label>
+          <input type="number" id="ptAge" min="18" max="110" placeholder="Ej. 68">
+        </div>
+        <div class="field">
+          <label for="ptEdu">Nivel de estudios *</label>
+          <select id="ptEdu">
+            <option value="">Seleccionar...</option>
+            <option value="P">Estudios primarios o inferiores</option>
+            <option value="S">Estudios secundarios</option>
+            <option value="U">Estudios universitarios</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="ptSex">Sexo</label>
+          <select id="ptSex">
+            <option value="">—</option>
+            <option value="F">Femenino</option>
+            <option value="M">Masculino</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="ptHand">Lateralidad</label>
+          <select id="ptHand">
+            <option value="">—</option>
+            <option value="D">Diestro</option>
+            <option value="Z">Zurdo</option>
+          </select>
+        </div>
+        <div class="field full">
+          <label for="ptDx">Diagnóstico / motivo de la exploración</label>
+          <input type="text" id="ptDx" placeholder="Ej. deterioro cognitivo en estudio, EP, sospecha DFT...">
+        </div>
+        <div class="field">
+          <label for="examiner">Explorador</label>
+          <input type="text" id="examiner" placeholder="Dr./Dra. ...">
+        </div>
+        <div class="field">
+          <label for="examDate">Fecha de exploración</label>
+          <input type="date" id="examDate">
+        </div>
+      </div>
+
+      <div class="actions">
+        <span></span>
+        <button class="btn btn-primary" onclick="startTest()">Iniciar batería →</button>
+      </div>
+    </section>
+
+    <!-- ============= TEST 1 · SIMILITUDES ============= -->
+    <section class="screen" id="screen-1">
+      <div class="section-eyebrow">Prueba 1 de 6 · Conceptualización</div>
+      <h2 class="section-title">Similitudes</h2>
+      <p class="section-subtitle">Evalúa el razonamiento abstracto. Sólo se consideran correctas las respuestas que mencionen la categoría: <strong>frutas</strong>, <strong>muebles</strong>, <strong>flores</strong>.</p>
+
+      <div class="instruction-block">
+        <h4>Consigna al paciente</h4>
+        <span class="examiner-says">«¿En qué se parecen…?»</span>
+        <p class="help-note">Si el paciente falla totalmente («no se parecen») o parcialmente («ambos tienen piel») en el primer ítem, ayúdele diciendo «<em>el plátano y la naranja son…</em>», pero <strong>puntúe 0 en ese ítem</strong>. No ayude en los dos ítems siguientes.</p>
+      </div>
+
+      <h4 style="margin-top: 24px;">Respuestas del paciente</h4>
+      <div id="sim-items">
+        <div class="sim-item">
+          <div class="sim-pair">
+            <span class="sim-pair-label">un plátano y una naranja</span>
+            <span class="sim-pair-cat">categoría correcta: frutas</span>
+          </div>
+          <div class="toggle-group" data-sim="0">
+            <button class="toggle-btn" onclick="setSim(0, true)">✓ Correcta</button>
+            <button class="toggle-btn" onclick="setSim(0, false)">✗ Incorrecta</button>
+          </div>
+        </div>
+        <div class="sim-item">
+          <div class="sim-pair">
+            <span class="sim-pair-label">una mesa y una silla</span>
+            <span class="sim-pair-cat">categoría correcta: muebles</span>
+          </div>
+          <div class="toggle-group" data-sim="1">
+            <button class="toggle-btn" onclick="setSim(1, true)">✓ Correcta</button>
+            <button class="toggle-btn" onclick="setSim(1, false)">✗ Incorrecta</button>
+          </div>
+        </div>
+        <div class="sim-item">
+          <div class="sim-pair">
+            <span class="sim-pair-label">un clavel, una rosa y una margarita</span>
+            <span class="sim-pair-cat">categoría correcta: flores</span>
+          </div>
+          <div class="toggle-group" data-sim="2">
+            <button class="toggle-btn" onclick="setSim(2, true)">✓ Correcta</button>
+            <button class="toggle-btn" onclick="setSim(2, false)">✗ Incorrecta</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="instruction-block" style="margin-top: 24px;">
+        <h4>Puntuación automática</h4>
+        <p>Correctas: <strong id="sim-correct">0</strong> de 3 · Puntuación de esta prueba: <strong id="sim-score" style="font-size: 22px; color: var(--accent-deep); font-family: 'Fraunces', serif;">—</strong> / 3</p>
+      </div>
+
+      <div class="actions">
+        <button class="btn btn-ghost" onclick="goPrev()">← Atrás</button>
+        <button class="btn btn-primary" onclick="goNext()">Siguiente →</button>
+      </div>
+    </section>
+
+    <!-- ============= TEST 2 · FLUIDEZ LÉXICA ============= -->
+    <section class="screen" id="screen-2">
+      <div class="section-eyebrow">Prueba 2 de 6 · Flexibilidad mental</div>
+      <h2 class="section-title">Fluidez léxica</h2>
+      <p class="section-subtitle">Palabras que empiecen por la letra <em class="italic">S</em>, durante 1 minuto. Excluya apellidos, nombres propios, repeticiones y derivadas (sal/salero).</p>
+
+      <div class="instruction-block">
+        <h4>Consigna al paciente</h4>
+        <span class="examiner-says">«Diga tantas palabras como pueda que empiecen por la letra <strong>S</strong>, cualquier palabra excepto apellidos o nombres de personas»</span>
+        <p class="help-note">A los 5 segundos sin respuesta: «<em>por ejemplo, serpiente</em>». A los 10 segundos en silencio: «<em>cualquier palabra que empiece por la letra S</em>».</p>
+      </div>
+
+      <div class="fluidez-wrap">
+        <div class="timer-card">
+          <h4>Tiempo</h4>
+          <div class="timer-display" id="timerDisplay">60</div>
+          <div class="timer-controls">
+            <button class="btn btn-primary btn-small" id="timerStart" onclick="startTimer()">▶ Iniciar</button>
+            <button class="btn btn-ghost btn-small" onclick="resetTimer()">Reiniciar</button>
+          </div>
+        </div>
+        <div class="counter-card">
+          <h4>Palabras válidas</h4>
+          <div class="counter-display" id="counterDisplay">0</div>
+          <div class="counter-controls">
+            <button class="btn btn-ghost btn-icon" onclick="adjustCount(-1)">−</button>
+            <button class="btn btn-primary btn-small" onclick="adjustCount(1)">+1 palabra</button>
+            <button class="btn btn-ghost btn-icon" onclick="adjustCount(1)">+</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="word-input-wrap">
+        <label for="wordEntry" style="display: block; margin-bottom: 8px;">Registro opcional de palabras (Enter para añadir)</label>
+        <input type="text" id="wordEntry" placeholder="escribir palabra y pulsar Enter..." onkeypress="if(event.key==='Enter'){addWord();}">
+        <div class="word-list" id="wordList"></div>
+      </div>
+
+      <div class="instruction-block" style="margin-top: 16px;">
+        <h4>Puntuación automática</h4>
+        <p>Palabras válidas: <strong id="flu-count">0</strong> · Puntuación: <strong id="flu-score" style="font-size: 22px; color: var(--accent-deep); font-family: 'Fraunces', serif;">—</strong> / 3 <span style="color: var(--ink-mute); font-size: 12px; margin-left: 10px;">(&lt;3→0 · 3-5→1 · 6-9→2 · &gt;9→3)</span></p>
+      </div>
+
+      <div class="actions">
+        <button class="btn btn-ghost" onclick="goPrev()">← Atrás</button>
+        <button class="btn btn-primary" onclick="goNext()">Siguiente →</button>
+      </div>
+    </section>
+
+    <!-- ============= TEST 3 · SERIE MOTORA ============= -->
+    <section class="screen" id="screen-3">
+      <div class="section-eyebrow">Prueba 3 de 6 · Programación motora</div>
+      <h2 class="section-title">Serie motora de Luria</h2>
+      <p class="section-subtitle">Secuencia <em class="italic">puño – borde – palma</em>. Demostración previa con la mano izquierda del examinador.</p>
+
+      <div class="instruction-block">
+        <h4>Procedimiento</h4>
+        <span class="examiner-says">«Mire atentamente lo que estoy haciendo»</span>
+        <p>Sentado frente al paciente, el examinador realiza <strong>3 veces</strong> con su mano izquierda la serie de Luria: puño → borde → palma. Después:</p>
+        <span class="examiner-says">«Ahora, con su mano derecha, haga los mismos movimientos, primero conmigo y luego usted solo/a»</span>
+        <p>Realice la serie 3 veces <strong>con</strong> el paciente y luego:</p>
+        <span class="examiner-says">«Ahora, hágalo usted solo/a»</span>
+      </div>
+
+      <div class="luria-diagram">
+        <div class="luria-step">
+          <div class="luria-glyph">
+            <svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.5" style="color: var(--accent);">
+              <rect x="10" y="14" width="20" height="14" rx="4"/>
+              <path d="M12 18 L28 18 M12 22 L28 22"/>
+            </svg>
+          </div>
+          <span class="luria-label">Puño</span>
+        </div>
+        <span class="luria-arrow">→</span>
+        <div class="luria-step">
+          <div class="luria-glyph">
+            <svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.5" style="color: var(--accent);">
+              <path d="M8 28 L32 12 M8 28 L18 28 M8 28 L8 24"/>
+            </svg>
+          </div>
+          <span class="luria-label">Borde</span>
+        </div>
+        <span class="luria-arrow">→</span>
+        <div class="luria-step">
+          <div class="luria-glyph">
+            <svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.5" style="color: var(--accent);">
+              <rect x="10" y="12" width="20" height="16" rx="2"/>
+              <path d="M14 18 L26 18 M14 22 L26 22"/>
+            </svg>
+          </div>
+          <span class="luria-label">Palma</span>
+        </div>
+      </div>
+
+      <h4>Puntuación</h4>
+      <div class="score-options" data-test="motora">
+        <label class="score-option" onclick="setScore('motora', 0)">
+          <span class="score-badge">0</span>
+          <span class="score-text">No logra realizar correctamente tres series consecutivas <strong>con</strong> el examinador.</span>
+        </label>
+        <label class="score-option" onclick="setScore('motora', 1)">
+          <span class="score-badge">1</span>
+          <span class="score-text">No logra hacer las series él solo, pero hace bien tres series consecutivas <strong>con</strong> el examinador.</span>
+        </label>
+        <label class="score-option" onclick="setScore('motora', 2)">
+          <span class="score-badge">2</span>
+          <span class="score-text">Realiza correctamente al menos <strong>tres</strong> series consecutivas <strong>él solo</strong>.</span>
+        </label>
+        <label class="score-option" onclick="setScore('motora', 3)">
+          <span class="score-badge">3</span>
+          <span class="score-text">Realiza correctamente <strong>seis</strong> series consecutivas él solo.</span>
+        </label>
+      </div>
+
+      <div class="actions">
+        <button class="btn btn-ghost" onclick="goPrev()">← Atrás</button>
+        <button class="btn btn-primary" onclick="goNext()">Siguiente →</button>
+      </div>
+    </section>
+
+    <!-- ============= TEST 4 · INSTRUCCIONES CONTRADICTORIAS ============= -->
+    <section class="screen" id="screen-4">
+      <div class="section-eyebrow">Prueba 4 de 6 · Sensibilidad a la interferencia</div>
+      <h2 class="section-title">Instrucciones contradictorias</h2>
+      <p class="section-subtitle">El paciente debe invertir la respuesta motora a los estímulos del examinador.</p>
+
+      <div class="instruction-block">
+        <h4>Procedimiento</h4>
+        <span class="examiner-says">«Dé <strong>dos</strong> golpes con los dedos cuando yo dé <strong>uno</strong>»</span>
+        <p>Ensayo de comprensión: <strong>1 – 1 – 1</strong> (el paciente debe responder 2-2-2)</p>
+        <span class="examiner-says">«Dé <strong>un</strong> golpe cuando yo dé <strong>dos</strong>»</span>
+        <p>Ensayo de comprensión: <strong>2 – 2 – 2</strong> (el paciente debe responder 1-1-1)</p>
+        <p style="margin-top: 10px;"><strong>Serie de evaluación:</strong> use el secuenciador para reproducir la serie 1-1-2-1-2-2-2-1-1-2. Lleve el conteo de errores.</p>
+      </div>
+
+      <div class="sequencer">
+        <div class="seq-controls">
+          <button class="btn btn-primary btn-small" onclick="playSequence('seq4')">▶ Reproducir secuencia</button>
+          <button class="btn btn-ghost btn-small" onclick="stopSequence('seq4')">■ Detener</button>
+          <button class="btn btn-ghost btn-small" onclick="resetSequence('seq4')">↻ Reiniciar</button>
+          <div class="seq-speed">
+            Intervalo: <select id="speed4" onchange="updateSpeed()">
+              <option value="1500">1,5 s</option>
+              <option value="2000" selected>2 s</option>
+              <option value="2500">2,5 s</option>
+              <option value="3000">3 s</option>
+            </select>
+          </div>
+        </div>
+        <div class="seq-row" id="seq4-row"></div>
+        <div class="seq-indicator" id="seq4-cue">Pulse <em class="italic">Reproducir</em> para iniciar la serie de evaluación</div>
+
+        <div class="err-counter">
+          <div>
+            <div class="err-counter-label">Errores cometidos por el paciente</div>
+            <div style="font-size: 11.5px; color: var(--ink-mute); margin-top: 4px;">cuente cada vez que el paciente da el mismo número de golpes que usted</div>
+          </div>
+          <div style="display: flex; align-items: center; gap: 14px;">
+            <div class="err-counter-value" id="err4">0</div>
+            <div class="err-controls">
+              <button class="btn btn-ghost btn-icon" onclick="adjustErr(4, -1)">−</button>
+              <button class="btn btn-ghost btn-icon" onclick="adjustErr(4, 1)">+</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="instruction-block">
+        <h4>Puntuación automática</h4>
+        <p>Errores: <strong id="err4-display">0</strong> · Puntuación: <strong id="int-score" style="font-size: 22px; color: var(--accent-deep); font-family: 'Fraunces', serif;">—</strong> / 3 <span style="color: var(--ink-mute); font-size: 12px;">(0 err→3 · 1-2 err→2 · &gt;2 err→1 · ≥4 mismos golpes consecutivos→0)</span></p>
+        <div class="score-options" data-test="interferencia" style="margin-top: 10px;">
+          <label class="score-option" onclick="setScore('interferencia', 0); document.getElementById('int-manual').checked = true;">
+            <span class="score-badge">0</span>
+            <span class="score-text">Da los mismos golpes que el examinador al menos <strong>cuatro veces consecutivas</strong> <em>(forzar manualmente)</em></span>
+          </label>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="btn btn-ghost" onclick="goPrev()">← Atrás</button>
+        <button class="btn btn-primary" onclick="goNext()">Siguiente →</button>
+      </div>
+    </section>
+
+    <!-- ============= TEST 5 · GO/NO-GO ============= -->
+    <section class="screen" id="screen-5">
+      <div class="section-eyebrow">Prueba 5 de 6 · Control inhibitorio</div>
+      <h2 class="section-title">GO / NO-GO</h2>
+      <p class="section-subtitle">El paciente debe inhibir la respuesta motora cuando el examinador da <strong>dos</strong> golpes.</p>
+
+      <div class="instruction-block">
+        <h4>Procedimiento</h4>
+        <span class="examiner-says">«Dé <strong>un</strong> golpe con los dedos cuando yo dé <strong>un</strong> golpe»</span>
+        <p>Ensayo: <strong>1 – 1 – 1</strong> (paciente responde 1-1-1)</p>
+        <span class="examiner-says">«<strong>No</strong> dé ningún golpe cuando yo dé <strong>dos</strong> golpes»</span>
+        <p>Ensayo: <strong>2 – 2 – 2</strong> (paciente no responde)</p>
+        <p style="margin-top: 10px;"><strong>Serie de evaluación:</strong> misma serie 1-1-2-1-2-2-2-1-1-2.</p>
+      </div>
+
+      <div class="sequencer">
+        <div class="seq-controls">
+          <button class="btn btn-primary btn-small" onclick="playSequence('seq5')">▶ Reproducir secuencia</button>
+          <button class="btn btn-ghost btn-small" onclick="stopSequence('seq5')">■ Detener</button>
+          <button class="btn btn-ghost btn-small" onclick="resetSequence('seq5')">↻ Reiniciar</button>
+          <div class="seq-speed">
+            Intervalo: <select id="speed5" onchange="updateSpeed()">
+              <option value="1500">1,5 s</option>
+              <option value="2000" selected>2 s</option>
+              <option value="2500">2,5 s</option>
+              <option value="3000">3 s</option>
+            </select>
+          </div>
+        </div>
+        <div class="seq-row" id="seq5-row"></div>
+        <div class="seq-indicator" id="seq5-cue">Pulse <em class="italic">Reproducir</em> para iniciar la serie de evaluación</div>
+
+        <div class="err-counter">
+          <div>
+            <div class="err-counter-label">Errores cometidos por el paciente</div>
+            <div style="font-size: 11.5px; color: var(--ink-mute); margin-top: 4px;">cuente cada vez que el paciente golpea cuando usted da dos golpes</div>
+          </div>
+          <div style="display: flex; align-items: center; gap: 14px;">
+            <div class="err-counter-value" id="err5">0</div>
+            <div class="err-controls">
+              <button class="btn btn-ghost btn-icon" onclick="adjustErr(5, -1)">−</button>
+              <button class="btn btn-ghost btn-icon" onclick="adjustErr(5, 1)">+</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="instruction-block">
+        <h4>Puntuación automática</h4>
+        <p>Errores: <strong id="err5-display">0</strong> · Puntuación: <strong id="gng-score" style="font-size: 22px; color: var(--accent-deep); font-family: 'Fraunces', serif;">—</strong> / 3</p>
+        <div class="score-options" data-test="gonogo" style="margin-top: 10px;">
+          <label class="score-option" onclick="setScore('gonogo', 0); document.getElementById('gng-manual').checked = true;">
+            <span class="score-badge">0</span>
+            <span class="score-text">Da los mismos golpes que el examinador al menos <strong>cuatro veces consecutivas</strong> <em>(forzar manualmente)</em></span>
+          </label>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="btn btn-ghost" onclick="goPrev()">← Atrás</button>
+        <button class="btn btn-primary" onclick="goNext()">Siguiente →</button>
+      </div>
+    </section>
+
+    <!-- ============= TEST 6 · CONDUCTA DE PRENSIÓN ============= -->
+    <section class="screen" id="screen-6">
+      <div class="section-eyebrow">Prueba 6 de 6 · Autonomía del entorno</div>
+      <h2 class="section-title">Conducta de prensión</h2>
+      <p class="section-subtitle">Signo de liberación frontal: el paciente coge espontáneamente las manos del examinador.</p>
+
+      <div class="instruction-block">
+        <h4>Procedimiento</h4>
+        <p>El examinador, sentado enfrente del paciente, coloca las manos del paciente con las <strong>palmas hacia arriba</strong> sobre sus rodillas. Sin decir nada ni mirar al paciente, el examinador acerca sus propias manos a las del paciente y <strong>toca las palmas</strong> de ambas manos para ver si las coge espontáneamente.</p>
+        <p style="margin-top: 10px;">Si el paciente coge las manos, repita el intento diciendo:</p>
+        <span class="examiner-says">«Ahora no me coja las manos»</span>
+      </div>
+
+      <h4>Puntuación</h4>
+      <div class="score-options" data-test="prension">
+        <label class="score-option" onclick="setScore('prension', 0)">
+          <span class="score-badge">0</span>
+          <span class="score-text">El paciente coge las manos del examinador <strong>incluso después</strong> de haberle dicho que no lo haga.</span>
+        </label>
+        <label class="score-option" onclick="setScore('prension', 1)">
+          <span class="score-badge">1</span>
+          <span class="score-text">El paciente coge las manos <strong>sin dudar</strong>.</span>
+        </label>
+        <label class="score-option" onclick="setScore('prension', 2)">
+          <span class="score-badge">2</span>
+          <span class="score-text">El paciente <strong>duda</strong> y pregunta lo que tiene que hacer.</span>
+        </label>
+        <label class="score-option" onclick="setScore('prension', 3)">
+          <span class="score-badge">3</span>
+          <span class="score-text">El paciente <strong>no coge</strong> las manos del examinador.</span>
+        </label>
+      </div>
+
+      <div class="actions">
+        <button class="btn btn-ghost" onclick="goPrev()">← Atrás</button>
+        <button class="btn btn-primary" onclick="finishTest()">Ver resultados →</button>
+      </div>
+    </section>
+
+    <!-- ============= RESULTS ============= -->
+    <section class="screen" id="screen-results">
+      <div class="section-eyebrow">Resultados · FAB-E</div>
+
+      <div class="result-hero">
+        <div class="result-eyebrow">Puntuación total</div>
+        <div>
+          <span class="result-score" id="totalScore">—</span><span class="result-score-max"> / 18</span>
+        </div>
+        <div class="result-verdict" id="verdictBadge">—</div>
+        <div class="result-cutoff" id="cutoffInfo">—</div>
+      </div>
+
+      <h3 style="margin-top: 0;">Análisis por dominios</h3>
+      <p style="font-size: 13.5px; color: var(--ink-mute); margin-bottom: 14px;">Subpruebas con puntuación ≤1 se señalan como deficitarias; con puntuación 2 como borderline.</p>
+      <div class="domain-grid" id="domainGrid"></div>
+
+      <div class="interpretation-block" id="interpretationBlock">
+        <h3>Interpretación clínica</h3>
+        <div id="interpretationText"></div>
+      </div>
+
+      <div class="clinical-note-wrap">
+        <h3>Informe clínico</h3>
+        <p style="font-size: 13.5px; color: var(--ink-mute); margin-bottom: 10px;">Listo para copiar a la historia clínica.</p>
+        <pre class="clinical-note" id="clinicalNote"></pre>
+        <div class="copy-row">
+          <button class="btn btn-ghost btn-small" onclick="window.print()">🖶 Imprimir</button>
+          <button class="btn btn-primary btn-small" onclick="copyNote()" id="copyBtn">⧉ Copiar informe</button>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="btn btn-ghost" onclick="goPrev()">← Atrás</button>
+        <button class="btn btn-ghost" onclick="resetAll()">↻ Nueva evaluación</button>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="app-footer">
+    <p><strong>FAB-E · Batería de Evaluación Frontal · versión española</strong></p>
+    <p>Cuestionario registrado en la ley de propiedad intelectual por Miriam Hurtado-Pomares. Adaptación española: Hurtado-Pomares M, Valera-Gran D, Sánchez-Pérez A, et al. <em>Med Clin (Barc)</em> 2021;156:229-32.</p>
+    <p>Datos normativos: Hurtado-Pomares M, et al. Psychometric properties of the Spanish version of the FAB (FAB-E) and normative values in a representative adult population sample. <em>Neurología</em> 2024;39:694-700.</p>
+    <p>Test original: Dubois B, Slachevsky A, Litvan I, Pillon B. The FAB: a Frontal Assessment Battery at bedside. <em>Neurology</em> 2000;55:1621-6.</p>
+    <p style="margin-top: 10px; color: var(--ink-mute);">Herramienta de apoyo clínico. No sustituye al juicio clínico ni a una evaluación neuropsicológica completa.</p>
+  </footer>
+
+</div>
+
+<script>
+/* =========================================================
+   STATE
+========================================================= */
+const state = {
+  screen: 'welcome',
+  patient: { name:'', age:null, edu:'', sex:'', hand:'', dx:'', examiner:'', date:'' },
+  scores: {
+    similitudes: null,
+    fluidez: null,
+    motora: null,
+    interferencia: null,
+    gonogo: null,
+    prension: null
+  },
+  sim: [null, null, null],   // similarities per item
+  fluencyCount: 0,
+  fluencyTime: 60,
+  fluencyTimerId: null,
+  fluencyRunning: false,
+  words: [],
+  errors: { 4: 0, 5: 0 },
+  intManualZero: false,
+  gngManualZero: false,
+  sequencer: { 4: { idx: -1, timer: null }, 5: { idx: -1, timer: null } }
+};
+
+const SCREENS = ['welcome', '1', '2', '3', '4', '5', '6', 'results'];
+const SCREEN_LABELS = ['Datos', 'P1', 'P2', 'P3', 'P4', 'P5', 'P6', 'Resultados'];
+
+/* =========================================================
+   NORMATIVE DATA (Hurtado-Pomares et al. 2024, Table 4, 5th percentile)
+========================================================= */
+const CUTOFFS = {
+  // age band -> {P: primary, S: secondary, U: university, total: combined}
+  '≤29':   { S: 16, U: 16, total: 16 },
+  '30-39': { P: 14, S: 15, U: 17, total: 15 },
+  '40-49': { P: 14, S: 14, U: 16, total: 14 },
+  '50-59': { P: 13, S: 15, U: 14, total: 14 },
+  '60-69': { P: 11, S: 14, U: 13, total: 12 },
+  '≥70':   { P: 9,  S: 12, U: 14, total: 10 }
+};
+
+function getAgeBand(age) {
+  if (age <= 29) return '≤29';
+  if (age <= 39) return '30-39';
+  if (age <= 49) return '40-49';
+  if (age <= 59) return '50-59';
+  if (age <= 69) return '60-69';
+  return '≥70';
+}
+
+function getCutoff(age, edu) {
+  const band = getAgeBand(age);
+  const data = CUTOFFS[band];
+  // For ≤29, there's no primary-only data — fall back to S
+  if (band === '≤29' && edu === 'P') return { value: data.S, band, source: 'secundarios (no hay datos para primarios en ≤29 años)' };
+  if (edu && data[edu] !== undefined) {
+    const eduName = edu === 'P' ? 'primarios' : edu === 'S' ? 'secundarios' : 'universitarios';
+    return { value: data[edu], band, source: `edad ${band} años y estudios ${eduName}` };
+  }
+  return { value: data.total, band, source: `edad ${band} años (combinado)` };
+}
+
+/* =========================================================
+   NAVIGATION
+========================================================= */
+function renderProgress() {
+  const bar = document.getElementById('progressBar');
+  const labels = document.getElementById('progressLabels');
+  const idx = SCREENS.indexOf(state.screen);
+  bar.innerHTML = SCREENS.map((s, i) => {
+    const cls = i < idx ? 'done' : i === idx ? 'active' : '';
+    return `<div class="progress-step ${cls}"></div>`;
+  }).join('');
+  labels.innerHTML = SCREEN_LABELS.map((l, i) => `<span class="${i === idx ? 'active' : ''}">${l}</span>`).join('');
+}
+
+function showScreen(name) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('visible'));
+  document.getElementById('screen-' + name).classList.add('visible');
+  state.screen = name;
+  renderProgress();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function startTest() {
+  // Validate
+  const age = parseInt(document.getElementById('ptAge').value);
+  const edu = document.getElementById('ptEdu').value;
+  if (!age || age < 18) { alert('Por favor, introduzca una edad válida (≥18 años).'); return; }
+  if (!edu) { alert('Por favor, seleccione el nivel de estudios — es necesario para calcular el punto de corte.'); return; }
+
+  state.patient.name = document.getElementById('ptName').value.trim();
+  state.patient.age = age;
+  state.patient.edu = edu;
+  state.patient.sex = document.getElementById('ptSex').value;
+  state.patient.hand = document.getElementById('ptHand').value;
+  state.patient.dx = document.getElementById('ptDx').value.trim();
+  state.patient.examiner = document.getElementById('examiner').value.trim();
+  state.patient.date = document.getElementById('examDate').value;
+
+  showScreen('1');
+}
+
+function goNext() {
+  const idx = SCREENS.indexOf(state.screen);
+  if (idx < SCREENS.length - 1) showScreen(SCREENS[idx + 1]);
+}
+function goPrev() {
+  const idx = SCREENS.indexOf(state.screen);
+  if (idx > 0) showScreen(SCREENS[idx - 1]);
+}
+
+function finishTest() {
+  // Ensure all scores computed
+  computeSimScore();
+  computeFluencyScore();
+  computeInterferenceScore();
+  computeGoNoGoScore();
+  showScreen('results');
+  renderResults();
+}
+
+function resetAll() {
+  if (!confirm('¿Reiniciar la evaluación? Se perderán todos los datos.')) return;
+  location.reload();
+}
+
+/* =========================================================
+   TEST 1 · SIMILITUDES
+========================================================= */
+function setSim(idx, correct) {
+  state.sim[idx] = correct;
+  const group = document.querySelector(`.toggle-group[data-sim="${idx}"]`);
+  const [okBtn, badBtn] = group.querySelectorAll('.toggle-btn');
+  okBtn.classList.toggle('active-correct', correct === true);
+  badBtn.classList.toggle('active-wrong', correct === false);
+  computeSimScore();
+}
+
+function computeSimScore() {
+  const correct = state.sim.filter(x => x === true).length;
+  document.getElementById('sim-correct').textContent = correct;
+  state.scores.similitudes = correct;
+  document.getElementById('sim-score').textContent = correct;
+}
+
+/* =========================================================
+   TEST 2 · FLUIDEZ LÉXICA
+========================================================= */
+function startTimer() {
+  if (state.fluencyRunning) {
+    // pause
+    clearInterval(state.fluencyTimerId);
+    state.fluencyRunning = false;
+    document.getElementById('timerStart').textContent = '▶ Reanudar';
+    document.getElementById('timerDisplay').classList.remove('running');
+    return;
+  }
+  state.fluencyRunning = true;
+  document.getElementById('timerStart').textContent = '⏸ Pausar';
+  document.getElementById('timerDisplay').classList.add('running');
+  state.fluencyTimerId = setInterval(() => {
+    state.fluencyTime--;
+    const disp = document.getElementById('timerDisplay');
+    disp.textContent = state.fluencyTime;
+    disp.classList.toggle('warn', state.fluencyTime <= 10 && state.fluencyTime > 0);
+    if (state.fluencyTime <= 0) {
+      clearInterval(state.fluencyTimerId);
+      state.fluencyRunning = false;
+      disp.textContent = '0';
+      disp.classList.remove('running', 'warn');
+      disp.classList.add('done');
+      document.getElementById('timerStart').textContent = '▶ Iniciar';
+      // beep
+      try { playBeep(880, 0.4); } catch(e){}
+    }
+  }, 1000);
+}
+
+function resetTimer() {
+  clearInterval(state.fluencyTimerId);
+  state.fluencyTime = 60;
+  state.fluencyRunning = false;
+  const disp = document.getElementById('timerDisplay');
+  disp.textContent = '60';
+  disp.classList.remove('running', 'warn', 'done');
+  document.getElementById('timerStart').textContent = '▶ Iniciar';
+}
+
+function adjustCount(delta) {
+  state.fluencyCount = Math.max(0, state.fluencyCount + delta);
+  document.getElementById('counterDisplay').textContent = state.fluencyCount;
+  computeFluencyScore();
+}
+
+function addWord() {
+  const input = document.getElementById('wordEntry');
+  const w = input.value.trim().toLowerCase();
+  if (!w) return;
+  state.words.push(w);
+  input.value = '';
+  state.fluencyCount = state.words.length;
+  document.getElementById('counterDisplay').textContent = state.fluencyCount;
+  renderWords();
+  computeFluencyScore();
+}
+
+function removeWord(idx) {
+  state.words.splice(idx, 1);
+  state.fluencyCount = state.words.length;
+  document.getElementById('counterDisplay').textContent = state.fluencyCount;
+  renderWords();
+  computeFluencyScore();
+}
+
+function renderWords() {
+  const list = document.getElementById('wordList');
+  list.innerHTML = state.words.map((w, i) => `<span class="word-chip">${w}<button onclick="removeWord(${i})">×</button></span>`).join('');
+}
+
+function computeFluencyScore() {
+  const n = state.fluencyCount;
+  let score;
+  if (n < 3) score = 0;
+  else if (n <= 5) score = 1;
+  else if (n <= 9) score = 2;
+  else score = 3;
+  state.scores.fluidez = score;
+  document.getElementById('flu-count').textContent = n;
+  document.getElementById('flu-score').textContent = score;
+}
+
+/* Audio beep */
+let audioCtx;
+function playBeep(freq=600, dur=0.12) {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  osc.frequency.value = freq;
+  osc.type = 'sine';
+  gain.gain.setValueAtTime(0.001, audioCtx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.18, audioCtx.currentTime + 0.01);
+  gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + dur);
+  osc.connect(gain).connect(audioCtx.destination);
+  osc.start();
+  osc.stop(audioCtx.currentTime + dur);
+}
+
+/* =========================================================
+   TESTS 3, 6 · GENERIC SCORE OPTIONS
+========================================================= */
+function setScore(test, value) {
+  state.scores[test] = value;
+  if (test === 'interferencia') state.intManualZero = (value === 0);
+  if (test === 'gonogo') state.gngManualZero = (value === 0);
+  // Update UI for the group
+  const group = document.querySelector(`.score-options[data-test="${test}"]`);
+  if (group) {
+    group.querySelectorAll('.score-option').forEach(opt => {
+      const badge = opt.querySelector('.score-badge');
+      opt.classList.toggle('selected', parseInt(badge.textContent) === value);
+    });
+  }
+}
+
+/* =========================================================
+   TESTS 4 & 5 · SEQUENCER 1-1-2-1-2-2-2-1-1-2
+========================================================= */
+const SEQUENCE = [1, 1, 2, 1, 2, 2, 2, 1, 1, 2];
+
+function buildSequence(rowId) {
+  const row = document.getElementById(rowId);
+  row.innerHTML = SEQUENCE.map((v, i) => `<div class="seq-tap" data-i="${i}">${v}</div>`).join('');
+}
+
+function playSequence(key) {
+  const num = key === 'seq4' ? 4 : 5;
+  stopSequence(key);
+  const interval = parseInt(document.getElementById('speed' + num).value);
+  state.sequencer[num].idx = -1;
+  const taps = document.querySelectorAll(`#${key}-row .seq-tap`);
+  const cueEl = document.getElementById(`${key}-cue`);
+  taps.forEach(t => t.classList.remove('active', 'past'));
+
+  function step() {
+    state.sequencer[num].idx++;
+    const i = state.sequencer[num].idx;
+    if (i >= SEQUENCE.length) {
+      cueEl.innerHTML = `<span class="seq-current-cue">Serie completada</span>`;
+      stopSequence(key);
+      return;
+    }
+    taps.forEach((t, k) => {
+      t.classList.toggle('active', k === i);
+      t.classList.toggle('past', k < i);
+    });
+    const v = SEQUENCE[i];
+    cueEl.innerHTML = `<span class="seq-current-cue">Posición ${i+1} de ${SEQUENCE.length}: dar ${v} golpe${v>1?'s':''}</span>`;
+    try { playBeep(v === 1 ? 540 : 720, 0.1); if(v===2) setTimeout(()=>playBeep(720,0.1), 140);} catch(e){}
+  }
+  step();
+  state.sequencer[num].timer = setInterval(step, interval);
+}
+
+function stopSequence(key) {
+  const num = key === 'seq4' ? 4 : 5;
+  if (state.sequencer[num].timer) {
+    clearInterval(state.sequencer[num].timer);
+    state.sequencer[num].timer = null;
+  }
+}
+
+function resetSequence(key) {
+  stopSequence(key);
+  const num = key === 'seq4' ? 4 : 5;
+  state.sequencer[num].idx = -1;
+  const taps = document.querySelectorAll(`#${key}-row .seq-tap`);
+  taps.forEach(t => t.classList.remove('active', 'past'));
+  document.getElementById(`${key}-cue`).innerHTML = 'Pulse <em class="italic">Reproducir</em> para iniciar la serie de evaluación';
+}
+
+function updateSpeed() {
+  // No-op; speed will apply on next play
+}
+
+function adjustErr(testNum, delta) {
+  state.errors[testNum] = Math.max(0, state.errors[testNum] + delta);
+  document.getElementById('err' + testNum).textContent = state.errors[testNum];
+  document.getElementById(`err${testNum}-display`).textContent = state.errors[testNum];
+  if (testNum === 4) computeInterferenceScore();
+  else computeGoNoGoScore();
+}
+
+function computeInterferenceScore() {
+  if (state.intManualZero) { state.scores.interferencia = 0; document.getElementById('int-score').textContent = 0; return; }
+  const e = state.errors[4];
+  let s;
+  if (e === 0) s = 3;
+  else if (e <= 2) s = 2;
+  else s = 1; // >2 errors
+  state.scores.interferencia = s;
+  document.getElementById('int-score').textContent = s;
+}
+
+function computeGoNoGoScore() {
+  if (state.gngManualZero) { state.scores.gonogo = 0; document.getElementById('gng-score').textContent = 0; return; }
+  const e = state.errors[5];
+  let s;
+  if (e === 0) s = 3;
+  else if (e <= 2) s = 2;
+  else s = 1;
+  state.scores.gonogo = s;
+  document.getElementById('gng-score').textContent = s;
+}
+
+/* =========================================================
+   RESULTS
+========================================================= */
+const DOMAINS = [
+  { key: 'similitudes',   name: 'Similitudes',                func: 'Conceptualización / razonamiento abstracto', anat: 'Córtex prefrontal dorsolateral' },
+  { key: 'fluidez',       name: 'Fluidez léxica',             func: 'Flexibilidad mental / iniciación verbal',      anat: 'Córtex prefrontal dorsolateral izquierdo' },
+  { key: 'motora',        name: 'Serie motora de Luria',      func: 'Programación motora secuencial',                anat: 'Córtex premotor y prefrontal' },
+  { key: 'interferencia', name: 'Instrucciones contradictorias', func: 'Sensibilidad a la interferencia',           anat: 'Córtex prefrontal medial' },
+  { key: 'gonogo',        name: 'GO / NO-GO',                  func: 'Control inhibitorio',                          anat: 'Córtex orbitofrontal / cingulado anterior' },
+  { key: 'prension',      name: 'Conducta de prensión',        func: 'Autonomía del entorno / signo de liberación frontal', anat: 'Córtex prefrontal medial' }
+];
+
+function renderResults() {
+  // Default missing scores to 0
+  Object.keys(state.scores).forEach(k => { if (state.scores[k] === null) state.scores[k] = 0; });
+
+  const total = Object.values(state.scores).reduce((a, b) => a + b, 0);
+  document.getElementById('totalScore').textContent = total;
+
+  const { value: cutoff, band, source } = getCutoff(state.patient.age, state.patient.edu);
+  const pathological = total < cutoff;
+
+  const badge = document.getElementById('verdictBadge');
+  if (pathological) {
+    badge.textContent = '⚠ Patológico — sugiere disfunción ejecutiva';
+    badge.className = 'result-verdict pathological';
+  } else {
+    badge.textContent = '✓ Dentro de la normalidad';
+    badge.className = 'result-verdict normal';
+  }
+
+  document.getElementById('cutoffInfo').innerHTML = `Punto de corte (5.º percentil): <strong>${cutoff}</strong> · referencia: ${source}`;
+
+  // Domain grid
+  const grid = document.getElementById('domainGrid');
+  grid.innerHTML = DOMAINS.map(d => {
+    const score = state.scores[d.key];
+    let cls = 'intact';
+    if (score <= 1) cls = 'impaired';
+    else if (score === 2) cls = 'borderline';
+    return `
+      <div class="domain-card ${cls}">
+        <div class="domain-header">
+          <div class="domain-name">${d.name}</div>
+          <div class="domain-score">${score}/3</div>
+        </div>
+        <div class="domain-function">${d.func}</div>
+        <div class="domain-anatomy">${d.anat}</div>
+      </div>
+    `;
+  }).join('');
+
+  // Interpretation
+  renderInterpretation(total, cutoff, pathological);
+
+  // Clinical note
+  renderClinicalNote(total, cutoff, source, pathological);
+}
+
+function renderInterpretation(total, cutoff, pathological) {
+  const impaired = DOMAINS.filter(d => state.scores[d.key] <= 1);
+  const borderline = DOMAINS.filter(d => state.scores[d.key] === 2);
+
+  let html = '';
+
+  if (!pathological && impaired.length === 0 && borderline.length === 0) {
+    html += `<p>Rendimiento ejecutivo conservado, con puntuación total (${total}) por encima del punto de corte (${cutoff}) ajustado por edad y nivel educativo. Todos los subdominios alcanzan la puntuación máxima.</p>`;
+  } else if (!pathological && (impaired.length > 0 || borderline.length > 0)) {
+    html += `<p>Puntuación total (${total}) <strong>por encima</strong> del punto de corte (${cutoff}), pero con afectación selectiva en algún subdominio que merece consideración.</p>`;
+  } else {
+    html += `<p>Puntuación total (${total}) <strong>por debajo</strong> del punto de corte (${cutoff}), compatible con <strong>disfunción ejecutiva</strong> en población adulta española según los datos normativos del 5.º percentil (Hurtado-Pomares 2024).</p>`;
+  }
+
+  if (impaired.length > 0) {
+    html += `<p style="margin-top: 12px;"><strong>Dominios claramente deficitarios</strong> (puntuación ≤1):</p><ul>`;
+    impaired.forEach(d => {
+      html += `<li><strong>${d.name}</strong> (${state.scores[d.key]}/3) — ${d.func}. Correlato anatómico: ${d.anat}.</li>`;
+    });
+    html += `</ul>`;
+  }
+
+  if (borderline.length > 0) {
+    html += `<p style="margin-top: 12px;"><strong>Dominios en rango borderline</strong> (puntuación 2/3):</p><ul>`;
+    borderline.forEach(d => {
+      html += `<li><strong>${d.name}</strong> — ${d.func}.</li>`;
+    });
+    html += `</ul>`;
+  }
+
+  // Clinical recommendations
+  if (pathological || impaired.length > 0) {
+    html += `<p style="margin-top: 14px;"><strong>Consideraciones clínicas:</strong></p><ul>`;
+    if (state.scores.fluidez <= 1) html += `<li>El déficit en fluidez léxica orienta a afectación de córtex prefrontal dorsolateral izquierdo. Frecuente en DFT variante conductual, EP, ictus frontal izquierdo y deterioro vascular subcortical.</li>`;
+    if (state.scores.similitudes <= 1) html += `<li>El déficit en conceptualización sugiere alteración del pensamiento abstracto, característico de afectación frontal bilateral o DFT.</li>`;
+    if (state.scores.motora <= 1) html += `<li>La afectación de la serie motora orienta a disfunción premotora; valorar perseveraciones, signos extrapiramidales y apraxia.</li>`;
+    if (state.scores.interferencia <= 1) html += `<li>Sensibilidad a la interferencia alterada — característico de afectación prefrontal medial y cingulado.</li>`;
+    if (state.scores.gonogo <= 1) html += `<li>Déficit en control inhibitorio — sugestivo de afectación orbitofrontal/cingulado. Considerar DFT variante conductual, lesiones orbitofrontales, intoxicaciones.</li>`;
+    if (state.scores.prension <= 1) html += `<li>Conducta de prensión positiva — signo de liberación frontal, suele asociarse a afectación bilateral del lóbulo frontal (especialmente prefrontal medial).</li>`;
+    html += `<li>Se recomienda valoración neuropsicológica formal complementaria, especialmente si hay sospecha de DFT o afectación frontal selectiva (el FAB tiene buena sensibilidad pero la batería neuropsicológica completa caracteriza el perfil cognitivo).</li>`;
+    html += `<li>Considerar la corrección por nivel educativo: en este paciente, el punto de corte es de <strong>${cutoff}</strong>.</li>`;
+    html += `</ul>`;
+  }
+
+  html += `<p style="margin-top: 14px; font-size: 12.5px; color: var(--ink-mute); font-style: italic;">⚠ La FAB es un cribado breve; no sustituye una evaluación neuropsicológica formal. Los puntos de corte derivan del estudio de Hurtado-Pomares et al. 2024 en muestra española sana (n=798).</p>`;
+
+  document.getElementById('interpretationText').innerHTML = html;
+}
+
+function renderClinicalNote(total, cutoff, source, pathological) {
+  const p = state.patient;
+  const date = p.date ? new Date(p.date).toLocaleDateString('es-ES') : new Date().toLocaleDateString('es-ES');
+  const eduText = { P: 'estudios primarios', S: 'estudios secundarios', U: 'estudios universitarios' }[p.edu] || '—';
+
+  let txt = `BATERÍA DE EVALUACIÓN FRONTAL (FAB-E)
+═══════════════════════════════════════════════════════════
+Fecha: ${date}
+${p.name ? `Paciente: ${p.name}\n` : ''}Edad: ${p.age} años · ${eduText}${p.sex ? ` · ${p.sex === 'F' ? 'mujer' : 'varón'}`:''}${p.hand ? ` · ${p.hand === 'D' ? 'diestro' : 'zurdo'}`:''}
+${p.dx ? `Motivo: ${p.dx}\n` : ''}${p.examiner ? `Explorador: ${p.examiner}\n` : ''}
+PUNTUACIONES POR SUBPRUEBA
+───────────────────────────────────────────────────────────
+1. Similitudes (conceptualización)         ${state.scores.similitudes}/3
+2. Fluidez léxica (flexibilidad)           ${state.scores.fluidez}/3${state.words.length ? `   [${state.words.length} palabras: ${state.words.join(', ')}]` : ''}
+3. Serie motora de Luria (programación)    ${state.scores.motora}/3
+4. Instrucciones contradictorias           ${state.scores.interferencia}/3   [${state.errors[4]} errores]
+5. GO/NO-GO (control inhibitorio)          ${state.scores.gonogo}/3   [${state.errors[5]} errores]
+6. Conducta de prensión                    ${state.scores.prension}/3
+                                           ─────
+PUNTUACIÓN TOTAL                            ${total}/18
+
+INTERPRETACIÓN
+───────────────────────────────────────────────────────────
+Punto de corte (5.º percentil) para ${source}: ${cutoff}/18.
+Resultado: ${pathological ? 'PATOLÓGICO — sugiere disfunción ejecutiva' : 'DENTRO DE LA NORMALIDAD'}.
+`;
+
+  const impaired = DOMAINS.filter(d => state.scores[d.key] <= 1);
+  if (impaired.length > 0) {
+    txt += `\nDominios con afectación clara (≤1/3):\n`;
+    impaired.forEach(d => txt += `  · ${d.name} — ${d.func}\n`);
+  }
+  const borderline = DOMAINS.filter(d => state.scores[d.key] === 2);
+  if (borderline.length > 0) {
+    txt += `\nDominios en rango borderline (2/3):\n`;
+    borderline.forEach(d => txt += `  · ${d.name}\n`);
+  }
+
+  txt += `\nReferencia normativa: Hurtado-Pomares M, et al. Neurología 2024;39:694-700.`;
+
+  document.getElementById('clinicalNote').textContent = txt;
+}
+
+function copyNote() {
+  const txt = document.getElementById('clinicalNote').textContent;
+  navigator.clipboard.writeText(txt).then(() => {
+    const btn = document.getElementById('copyBtn');
+    const orig = btn.textContent;
+    btn.textContent = '✓ Copiado';
+    setTimeout(() => btn.textContent = orig, 2000);
+  }).catch(() => {
+    alert('No se pudo copiar automáticamente. Selecciona el texto manualmente.');
+  });
+}
+
+/* =========================================================
+   INIT
+========================================================= */
+document.getElementById('examDate').valueAsDate = new Date();
+buildSequence('seq4-row');
+buildSequence('seq5-row');
+renderProgress();
+</script>
+</body>
+</html>
