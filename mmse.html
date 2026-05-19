@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MMSE — Evaluación Neuropsicológica</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background: #f4efe4;
+    font-family: Georgia, serif;
+    padding: 24px 16px;
+    color: #1a1614;
+  }
+  .wrap { max-width: 720px; margin: 0 auto; }
+
+  /* Header */
+  .header {
+    text-align: center;
+    margin-bottom: 24px;
+    padding: 28px 24px;
+    background: linear-gradient(135deg, #1e3a5f, #2d6a9f);
+    border-radius: 20px;
+    box-shadow: 0 8px 32px #1e3a5f40;
+    color: #fff;
+  }
+  .header .sub { font-size: 11px; letter-spacing: 4px; opacity: .7; margin-bottom: 6px; font-family: monospace; }
+  .header h1 { margin: 0 0 4px; font-size: 26px; font-weight: 900; letter-spacing: 1px; }
+  .header .desc { font-size: 13px; opacity: .8; }
+  .header .ref { font-size: 11px; opacity: .5; margin-top: 4px; }
+
+  /* Score bar */
+  #score-bar {
+    border: 2px solid #e8e1ce;
+    border-radius: 16px;
+    padding: 16px 24px;
+    margin-bottom: 24px;
+    background: #f4efe4;
+    transition: background .3s, border-color .3s;
+  }
+  #score-bar .top { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  #score-bar .lbl { font-size: 11px; color: #8a7d72; letter-spacing: 2px; font-family: monospace; }
+  #total-num { font-size: 48px; font-weight: 900; line-height: 1.1; font-family: monospace; color: #1a1614; }
+  #total-num span { font-size: 18px; opacity: .5; }
+  #adj-label { border-radius: 20px; padding: 7px 18px; font-weight: 700; font-size: 15px; margin-bottom: 6px; display: inline-block; }
+  #adj-cutoff { font-size: 11px; color: #8a7d72; }
+  #adj-hint { font-size: 12px; color: #a89a86; max-width: 200px; text-align: right; }
+  #level-chips { margin-top: 12px; border-top: 1px solid #e8e1ce; padding-top: 10px; display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+  .level-chip { font-size: 12px; padding: 3px 10px; border-radius: 12px; background: #e8e1ce; color: #a89a86; font-weight: 400; transition: background .2s, color .2s; }
+  .level-chip.active { color: #fff; font-weight: 700; }
+  #group-label { margin-left: auto; font-size: 11px; color: #8a7d72; }
+
+  /* Card / Section */
+  .card {
+    background: #faf6ec;
+    border-radius: 16px;
+    box-shadow: 0 1px 4px #0001, 0 4px 24px #0002;
+    margin-bottom: 20px;
+    overflow: hidden;
+  }
+  .card-head {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 20px;
+    border-bottom: 2px solid transparent;
+  }
+  .card-head .left { display: flex; align-items: center; gap: 10px; }
+  .card-head h3 { margin: 0; font-size: 15px; font-weight: 800; color: #1a1614; letter-spacing: .3px; }
+  .card-body { padding: 12px 20px; }
+
+  /* Score chip */
+  .chip {
+    border-radius: 20px; padding: 2px 10px;
+    font-size: 13px; font-weight: 700; font-family: monospace;
+    min-width: 48px; display: inline-block; text-align: center;
+    border: 1px solid transparent;
+  }
+
+  /* Row item */
+  .row {
+    display: flex; align-items: center; gap: 10px;
+    padding: 6px 0; border-bottom: 1px solid #ebe4d3;
+  }
+  .row:last-child { border-bottom: none; }
+  .row .row-lbl { flex: 1; font-size: 14px; color: #4a3f38; }
+  .row .row-sub { font-size: 11px; color: #a89a86; margin-top: 1px; }
+  .row-btns { display: flex; gap: 6px; }
+
+  /* Buttons */
+  button { font-family: Georgia, serif; cursor: pointer; transition: all .15s; }
+  .btn-01 {
+    padding: 4px 14px; border-radius: 8px; border: 1.5px solid #e8e1ce;
+    background: #faf6ec; color: #a89a86; font-weight: 700; font-size: 13px;
+  }
+  .btn-01.active-ok { border-color: #22c55e; background: #22c55e15; color: #16a34a; }
+  .btn-01.active-no { border-color: #ef4444; background: #ef444415; color: #dc2626; }
+  .btn-eval {
+    padding: 5px 14px; border-radius: 8px; border: 1.5px solid #e8e1ce;
+    background: #faf6ec; color: #a89a86; font-weight: 700; font-size: 13px; white-space: nowrap;
+  }
+  .btn-eval.active-ok { border-color: #22c55e; background: #22c55e15; color: #16a34a; }
+  .btn-eval.active-no { border-color: #ef4444; background: #ef444415; color: #dc2626; }
+  .btn-mode {
+    flex: 1; padding: 6px; border-radius: 8px; border: 1.5px solid #e8e1ce;
+    background: #faf6ec; color: #a89a86; font-weight: 700; font-size: 13px;
+  }
+  .btn-circle {
+    width: 30px; height: 30px; border-radius: 50%; border: 1.5px solid #e8e1ce;
+    background: #faf6ec; color: #a89a86; font-weight: 700; font-size: 13px; padding: 0;
+  }
+  .btn-sex, .btn-wordset, .btn-edu {
+    padding: 6px 14px; border-radius: 8px; border: 1.5px solid #e8e1ce;
+    background: #faf6ec; color: #8a7d72; font-weight: 400; font-size: 13px;
+  }
+
+  /* Info box */
+  .info-box {
+    background: #f4efe4; border-radius: 10px; padding: 8px 12px;
+    margin-bottom: 10px; font-size: 13px; color: #4a3f38;
+  }
+
+  /* Subhead label */
+  .sublabel {
+    font-size: 12px; color: #a89a86; letter-spacing: 1px;
+    font-family: monospace; padding: 10px 0 4px; display: block;
+  }
+
+  /* Eval feedback */
+  .eval-fb {
+    border-radius: 8px; padding: 8px 12px;
+    font-size: 12px; margin-top: 6px;
+  }
+  .eval-fb.ok { background: #f0fdf4; border: 1px solid #86efac; color: #166534; }
+  .eval-fb.ko { background: #fef2f2; border: 1px solid #fca5a5; color: #991b1b; }
+
+  /* Input */
+  input[type=text], input[type=number] {
+    width: 100%; border: 1.5px solid #e8e1ce; border-radius: 8px;
+    padding: 7px 10px; font-size: 14px; outline: none;
+    font-family: Georgia, serif; background: #faf6ec;
+  }
+  input[type=number] { font-family: monospace; }
+  textarea {
+    width: 100%; border: 1.5px solid #e8d5c5; border-radius: 8px;
+    padding: 7px 10px; font-size: 13px; outline: none; resize: vertical;
+    font-family: Georgia, serif; background: #faf6ec; color: #4a3f38;
+  }
+
+  /* Patient grid */
+  .patient-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .patient-grid .full { grid-column: 1 / -1; }
+  .field-label {
+    display: block; font-size: 11px; color: #a89a86;
+    margin-bottom: 4px; letter-spacing: 1px; font-family: monospace;
+  }
+
+  /* RD row */
+  .rd-row {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 0; border-bottom: 1px solid #ebe4d3;
+  }
+  .rd-word { flex: 1; font-size: 14px; color: #4a3f38; font-weight: 600; }
+  .btn-rd {
+    padding: 5px 11px; border-radius: 8px; border: 1.5px solid #e8e1ce;
+    background: #faf6ec; color: #a89a86; font-weight: 400; font-size: 12px; white-space: nowrap;
+  }
+
+  /* Chips summary */
+  .chips-row { margin-top: 10px; display: flex; gap: 8px; flex-wrap: wrap; }
+  .rd-chip {
+    font-size: 12px; padding: 3px 10px; border-radius: 12px;
+    font-weight: 700; font-family: monospace; border: 1px solid transparent;
+  }
+
+  /* Pistas box */
+  .pistas-box {
+    margin-top: 16px;
+    background: linear-gradient(135deg, #f0f9ff, #ebe4d3);
+    border: 1.5px solid #e8d5c5;
+    border-radius: 12px; padding: 16px;
+  }
+  .pistas-head { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+  .pistas-title { font-size: 13px; font-weight: 800; color: #5a1414; letter-spacing: .5px; font-family: monospace; }
+  .pistas-sub { font-size: 12px; color: #7a1f2b; margin-bottom: 6px; }
+  .pistas-interp {
+    background: #faf6ec; border: 1px solid #e8d5c5; border-radius: 8px;
+    padding: 10px 12px; font-size: 12px; color: #5a1414; line-height: 1.65; margin-bottom: 12px;
+  }
+
+  /* Summary block */
+  .summary {
+    background: linear-gradient(135deg, #1e3a5f, #2d6a9f);
+    border-radius: 16px; padding: 24px; color: #fff; margin-bottom: 20px;
+  }
+  .summary h3 { margin: 0 0 16px; font-size: 14px; letter-spacing: 3px; opacity: .7; font-family: monospace; }
+  .sum-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+  .sum-cell { background: #ffffff15; border-radius: 10px; padding: 10px 14px; }
+  .sum-cell .sc-lbl { font-size: 11px; opacity: .7; margin-bottom: 4px; }
+  .sum-cell .sc-val { font-family: monospace; font-weight: 900; font-size: 20px; }
+  .sum-cell .sc-val span { font-size: 12px; opacity: .5; }
+  .sum-bottom { margin-top: 20px; border-top: 1px solid #ffffff30; padding-top: 16px; display: flex; justify-content: space-between; align-items: center; }
+  .sum-total-lbl { font-size: 11px; opacity: .6; letter-spacing: 2px; font-family: monospace; }
+  .sum-total-num { font-size: 48px; font-weight: 900; font-family: monospace; line-height: 1; }
+  .sum-total-num span { font-size: 20px; opacity: .5; }
+  #sum-badge { border-radius: 12px; padding: 10px 20px; font-weight: 800; font-size: 16px; }
+
+  /* Conclusion */
+  .concl-card { background: #faf6ec; border-radius: 16px; box-shadow: 0 1px 4px #0001, 0 4px 24px #0002; margin-bottom: 40px; overflow: hidden; }
+  .concl-head { background: linear-gradient(135deg, #1a1614, #4a3f38); padding: 14px 20px; display: flex; align-items: center; justify-content: space-between; }
+  .concl-head-left { display: flex; align-items: center; gap: 10px; }
+  .concl-head h3 { margin: 0; font-size: 15px; font-weight: 800; color: #fff; }
+  #copy-btn { padding: 7px 18px; border-radius: 10px; background: #faf6ec; color: #1a1614; border: none; font-weight: 700; font-size: 13px; transition: all .2s; }
+  #copy-btn.copied { background: #22c55e; color: #fff; }
+  #concl-pre {
+    margin: 0; padding: 16px 20px;
+    font-size: 13px; line-height: 1.8;
+    color: #1a1614; font-family: 'Courier New', monospace;
+    background: #f4efe4;
+    white-space: pre-wrap; word-break: break-word;
+    border-top: 1px solid #e8e1ce;
+  }
+
+  @media (max-width: 520px) {
+    .patient-grid { grid-template-columns: 1fr; }
+    .patient-grid .full { grid-column: auto; }
+    .sum-grid { grid-template-columns: 1fr 1fr; }
+    .rd-row { flex-wrap: wrap; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="sub">EVALUACIÓN NEUROPSICOLÓGICA</div>
+    <h1>MMSE</h1>
+    <div class="desc">Mini Mental State Examination</div>
+    <div class="ref">Folstein et al. (1975) · Lobo et al. (1979)</div>
+  </div>
+
+  <!-- SCORE BAR -->
+  <div id="score-bar">
+    <div class="top">
+      <div>
+        <div class="lbl">PUNTUACIÓN TOTAL</div>
+        <div id="total-num">0<span>/30</span></div>
+      </div>
+      <div style="text-align:right">
+        <div id="adj-label" style="display:none"></div>
+        <div id="adj-cutoff" style="display:none"></div>
+        <div id="adj-hint">Introduce edad y nivel de estudios para ver la clasificación ajustada</div>
+      </div>
+    </div>
+    <div id="level-chips" style="display:none">
+      <span class="level-chip" id="lc-normal">Normal</span>
+      <span class="level-chip" id="lc-leve">Leve</span>
+      <span class="level-chip" id="lc-mod">Moderado</span>
+      <span class="level-chip" id="lc-grave">Grave</span>
+      <span id="group-label"></span>
+    </div>
+  </div>
+
+  <!-- DATOS PACIENTE -->
+  <div class="card">
+    <div class="card-head" style="background:linear-gradient(135deg,#a89a8615,#a89a8608);border-bottom-color:#a89a8630">
+      <div class="left"><span style="font-size:20px">👤</span><h3>Datos del paciente</h3></div>
+    </div>
+    <div class="card-body">
+      <div class="patient-grid">
+        <div class="full">
+          <label class="field-label">NOMBRE COMPLETO</label>
+          <input type="text" id="p-nombre" placeholder="Nombre y apellidos">
+        </div>
+        <div>
+          <label class="field-label">FECHA DE EVALUACIÓN</label>
+          <input type="text" id="p-fecha" placeholder="dd/mm/aaaa">
+        </div>
+        <div>
+          <label class="field-label">F. NACIMIENTO</label>
+          <input type="text" id="p-nacimiento" placeholder="dd/mm/aaaa">
+        </div>
+        <div>
+          <label class="field-label">PROFESIÓN</label>
+          <input type="text" id="p-profesion">
+        </div>
+        <div>
+          <label class="field-label">EDAD (AÑOS) *</label>
+          <input type="number" id="p-edad" min="0" max="120" placeholder="ej. 74">
+        </div>
+        <div>
+          <label class="field-label">SEXO</label>
+          <div style="display:flex;gap:8px;margin-top:2px">
+            <button class="btn-sex" id="sex-V" onclick="setSex('V')" style="border-color:#2d6a9f;background:#2d6a9f15;color:#1e3a5f;font-weight:700">Varón</button>
+            <button class="btn-sex" id="sex-M" onclick="setSex('M')">Mujer</button>
+          </div>
+        </div>
+        <div class="full">
+          <label class="field-label">NIVEL DE ESTUDIOS * <span style="color:#f59e0b;font-weight:700">(necesario para ajuste)</span></label>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px" id="edu-btns">
+            <button class="btn-edu" onclick="setEdu(0)">Sin estudios</button>
+            <button class="btn-edu" onclick="setEdu(1)">Primaria</button>
+            <button class="btn-edu" onclick="setEdu(2)">Secundaria / FP</button>
+            <button class="btn-edu" onclick="setEdu(3)">Universidad</button>
+          </div>
+          <div style="font-size:11px;color:#a89a86;margin-top:5px">P.c. ajustados por edad y escolaridad · Ref.: Lobo et al. (1999), normativa española</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ORIENTACIÓN TEMPORAL -->
+  <div class="card">
+    <div class="card-head" style="background:linear-gradient(135deg,#6366f115,#6366f108);border-bottom-color:#6366f130">
+      <div class="left"><span style="font-size:20px">🕐</span><h3>Orientación Temporal</h3></div>
+      <span class="chip" id="chip-OT">0/5</span>
+    </div>
+    <div class="card-body" id="body-OT">
+      <!-- built by JS -->
+    </div>
+  </div>
+
+  <!-- ORIENTACIÓN ESPACIAL -->
+  <div class="card">
+    <div class="card-head" style="background:linear-gradient(135deg,#8b5cf615,#8b5cf608);border-bottom-color:#8b5cf630">
+      <div class="left"><span style="font-size:20px">📍</span><h3>Orientación Espacial</h3></div>
+      <span class="chip" id="chip-OE">0/5</span>
+    </div>
+    <div class="card-body" id="body-OE"></div>
+  </div>
+
+  <!-- FIJACIÓN -->
+  <div class="card">
+    <div class="card-head" style="background:linear-gradient(135deg,#10b98115,#10b98108);border-bottom-color:#10b98130">
+      <div class="left"><span style="font-size:20px">🧠</span><h3>Fijación — Recuerdo Inmediato</h3></div>
+      <span class="chip" id="chip-FIJ">0/3</span>
+    </div>
+    <div class="card-body">
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">
+        <button class="btn-wordset" id="ws-A" onclick="setWordSet('A')" style="border-color:#10b981;background:#10b98115;color:#065f46;font-weight:700">A: Peseta-Caballo-Manzana</button>
+        <button class="btn-wordset" id="ws-B" onclick="setWordSet('B')">B: Balón-Bandera-Árbol</button>
+      </div>
+      <div class="info-box"><em>Nombre las palabras a razón de 1/seg. La primera repetición otorga la puntuación. Continúe hasta que las repita todas (máx. 6 veces).</em></div>
+      <div id="body-FIJ"></div>
+      <div style="display:flex;align-items:center;gap:10px;margin-top:10px;flex-wrap:wrap">
+        <span style="font-size:13px;color:#8a7d72">N.º de repeticiones necesarias:</span>
+        <div style="display:flex;gap:6px" id="reps-btns"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ATENCIÓN-CÁLCULO -->
+  <div class="card">
+    <div class="card-head" style="background:linear-gradient(135deg,#f59e0b15,#f59e0b08);border-bottom-color:#f59e0b30">
+      <div class="left"><span style="font-size:20px">🔢</span><h3>Atención y Cálculo</h3></div>
+      <span class="chip" id="chip-CALC">0/5</span>
+    </div>
+    <div class="card-body">
+      <div style="display:flex;gap:8px;margin-bottom:12px">
+        <button class="btn-mode" id="calc-mode-calc" onclick="setCalcMode('calc')" style="border-color:#f59e0b;background:#f59e0b15;color:#92400e">Resta (30 de 3 en 3)</button>
+        <button class="btn-mode" id="calc-mode-mundo" onclick="setCalcMode('mundo')">Deletrear MUNDO al revés</button>
+      </div>
+      <div id="body-CALC"></div>
+    </div>
+  </div>
+
+  <!-- RECUERDO DIFERIDO -->
+  <div class="card">
+    <div class="card-head" style="background:linear-gradient(135deg,#06b6d415,#06b6d408);border-bottom-color:#06b6d430">
+      <div class="left"><span style="font-size:20px">🔁</span><h3>Recuerdo Diferido</h3></div>
+      <span class="chip" id="chip-RD">0/3</span>
+    </div>
+    <div class="card-body">
+      <div class="info-box"><em>Preguntar por las tres palabras. Marcar si recuerda libremente, solo con pista, o no recuerda.</em></div>
+      <div id="body-RD"></div>
+      <div class="chips-row" id="rd-chips-row"></div>
+      <div style="margin-top:12px">
+        <div class="pistas-sub" style="margin-bottom:4px">Observaciones:</div>
+        <textarea id="rec-obs" rows="2" placeholder="Ej: confabulaciones, intrusiones, errores semánticos..."></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- LENGUAJE -->
+  <div class="card">
+    <div class="card-head" style="background:linear-gradient(135deg,#ec489915,#ec489908);border-bottom-color:#ec489930">
+      <div class="left"><span style="font-size:20px">🗣️</span><h3>Lenguaje</h3></div>
+      <span class="chip" id="chip-LANG">0/9</span>
+    </div>
+    <div class="card-body">
+      <span class="sublabel">DENOMINACIÓN</span>
+      <div id="body-DENOM"></div>
+      <span class="sublabel">REPETICIÓN</span>
+      <div id="body-REPET"></div>
+      <span class="sublabel">ÓRDENES</span>
+      <div class="info-box"><em>"Coja un papel con la mano derecha, dóblelo por la mitad, y póngalo en el suelo."</em></div>
+      <div id="body-ORDENES"></div>
+      <span class="sublabel">LECTURA</span>
+      <div id="body-LECTURA"></div>
+      <span class="sublabel">ESCRITURA</span>
+      <div id="body-ESCRITURA"></div>
+      <div id="fb-escritura"></div>
+      <span class="sublabel">COPIA</span>
+      <div id="body-COPIA"></div>
+      <div id="fb-copia"></div>
+    </div>
+  </div>
+
+  <!-- RESUMEN -->
+  <div class="summary">
+    <h3>RESUMEN DE PUNTUACIONES</h3>
+    <div class="sum-grid">
+      <div class="sum-cell"><div class="sc-lbl">Orient. Temporal</div><div class="sc-val"><span id="s-OT">0</span><span>/5</span></div></div>
+      <div class="sum-cell"><div class="sc-lbl">Orient. Espacial</div><div class="sc-val"><span id="s-OE">0</span><span>/5</span></div></div>
+      <div class="sum-cell"><div class="sc-lbl">Fijación</div><div class="sc-val"><span id="s-FIJ">0</span><span>/3</span></div></div>
+      <div class="sum-cell"><div class="sc-lbl">Atención-Cálculo</div><div class="sc-val"><span id="s-CALC">0</span><span>/5</span></div></div>
+      <div class="sum-cell"><div class="sc-lbl">Recuerdo Diferido</div><div class="sc-val"><span id="s-RD">0</span><span>/3</span></div></div>
+      <div class="sum-cell"><div class="sc-lbl">Lenguaje</div><div class="sc-val"><span id="s-LANG">0</span><span>/9</span></div></div>
+    </div>
+    <div class="sum-bottom">
+      <div>
+        <div class="sum-total-lbl">PUNTUACIÓN TOTAL</div>
+        <div class="sum-total-num"><span id="s-TOTAL">0</span><span>/30</span></div>
+      </div>
+      <div id="sum-badge" style="display:none"></div>
+    </div>
+  </div>
+
+  <!-- CONCLUSIÓN COPIABLE -->
+  <div class="concl-card">
+    <div class="concl-head">
+      <div class="concl-head-left">
+        <span style="font-size:18px">📋</span>
+        <h3>Resumen clínico</h3>
+      </div>
+      <button id="copy-btn" onclick="copyConclusion()">⎘ Copiar</button>
+    </div>
+    <pre id="concl-pre"></pre>
+  </div>
+
+</div>
+
+<script>
+// ── STATE ──────────────────────────────────────────────────────
+const WORDS_A = ['Peseta','Caballo','Manzana'];
+const WORDS_B = ['Balón','Bandera','Árbol'];
+const CUTOFFS = { '<65':[23,26,27,28], '65-74':[21,24,26,27], '75-84':[19,22,24,25], '≥85':[17,20,22,24] };
+const EDU_LABELS = ['Sin estudios','Primaria','Secundaria / FP','Universidad'];
+const OT_KEYS = ['anyo','estacion','dia','mes','semana'];
+const OT_NAMES = { anyo:'año', estacion:'estación', dia:'día (fecha)', mes:'mes', semana:'día de la semana' };
+const OE_KEYS = ['lugar','piso','pueblo','provincia','pais'];
+const OE_NAMES = { lugar:'lugar/hospital', piso:'piso/planta', pueblo:'pueblo/ciudad', provincia:'provincia', pais:'país' };
+
+let state = {
+  wordSet: 'A',
+  sexo: 'V',
+  eduIdx: null,
+  ot: { anyo:null, estacion:null, dia:null, mes:null, semana:null },
+  oe: { lugar:null, piso:null, pueblo:null, provincia:null, pais:null },
+  fij: [null,null,null],
+  fijReps: 1,
+  calcMode: 'calc',
+  calc: [null,null,null,null,null],
+  mundo: [null,null,null,null,null],
+  rec: [null,null,null],   // 'libre'|'pista'|'no'|null
+  denom: { lapiz:null, reloj:null },
+  repet: null,
+  ordenes: { mano:null, dobla:null, suelo:null },
+  lectura: null,
+  escritura: null,
+  copia: null,
+};
+
+function words() { return state.wordSet === 'A' ? WORDS_A : WORDS_B; }
+
+// ── HELPERS ───────────────────────────────────────────────────
+function getAgeGroup(age) {
+  const n = parseInt(age);
+  if (isNaN(n)) return null;
+  if (n < 65) return '<65';
+  if (n < 75) return '65-74';
+  if (n < 85) return '75-84';
+  return '≥85';
+}
+function getAdj(total, ageGroup, eduIdx) {
+  if (!ageGroup || eduIdx === null) return null;
+  const cutoff = CUTOFFS[ageGroup][eduIdx];
+  let label, color, bg;
+  if (total >= cutoff)          { label='Normal';           color='#16a34a'; bg='#f0fdf4'; }
+  else if (total >= cutoff - 3) { label='Deterioro leve';   color='#d97706'; bg='#fffbeb'; }
+  else if (total >= 10)         { label='Deterioro moderado'; color='#dc2626'; bg='#fef2f2'; }
+  else                          { label='Deterioro grave';  color='#7f1d1d'; bg='#fef2f2'; }
+  return { label, color, bg, cutoff };
+}
+function chipColor(score, max) {
+  const p = max > 0 ? score/max : 0;
+  return p===1 ? '#22c55e' : p>=0.5 ? '#f59e0b' : p>0 ? '#ef4444' : '#a89a86';
+}
+function setChip(id, score, max) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const c = chipColor(score, max);
+  el.textContent = `${score}/${max}`;
+  el.style.background = c+'20';
+  el.style.color = c;
+  el.style.borderColor = c+'40';
+}
+
+// ── SCORES ────────────────────────────────────────────────────
+function sOT()   { return Object.values(state.ot).reduce((a,v) => a+(v??0), 0); }
+function sOE()   { return Object.values(state.oe).reduce((a,v) => a+(v??0), 0); }
+function sFIJ()  { return state.fij.reduce((a,v) => a+(v??0), 0); }
+function sCALC() { return (state.calcMode==='calc' ? state.calc : state.mundo).reduce((a,v) => a+(v??0), 0); }
+function sRD()   { return state.rec.filter(v => v==='libre').length; }
+function sLANG() {
+  return (state.denom.lapiz??0)+(state.denom.reloj??0)+(state.repet??0)+
+    Object.values(state.ordenes).reduce((a,v)=>a+(v??0),0)+
+    (state.lectura??0)+(state.escritura??0)+(state.copia??0);
+}
+function total() { return sOT()+sOE()+sFIJ()+sCALC()+sRD()+sLANG(); }
+
+// ── RENDER HELPERS ─────────────────────────────────────────────
+function makeToggleRow(label, val, onchange, sublabel) {
+  const d = document.createElement('div');
+  d.className = 'row';
+  d.innerHTML = `
+    <div class="row-lbl">${label}${sublabel ? `<div class="row-sub">${sublabel}</div>` : ''}</div>
+    <div class="row-btns">
+      <button class="btn-01 ${val===1?'active-ok':''}" data-v="1">${val===1?'✓ 1':'✓ 1'}</button>
+      <button class="btn-01 ${val===0?'active-no':''}" data-v="0">✗ 0</button>
+    </div>`;
+  d.querySelectorAll('.btn-01').forEach(b => {
+    b.addEventListener('click', () => onchange(parseInt(b.dataset.v)));
+  });
+  return d;
+}
+function makeEvalRow(label, val, onchange, sublabel) {
+  const d = document.createElement('div');
+  d.className = 'row';
+  d.style.alignItems = 'flex-start';
+  d.innerHTML = `
+    <div class="row-lbl">${label}${sublabel ? `<div class="row-sub">${sublabel}</div>` : ''}</div>
+    <div class="row-btns">
+      <button class="btn-eval ${val===1?'active-ok':''}" data-v="1">✓ Correcto</button>
+      <button class="btn-eval ${val===0?'active-no':''}" data-v="0">✗ Incorrecto</button>
+    </div>`;
+  d.querySelectorAll('.btn-eval').forEach(b => {
+    b.addEventListener('click', () => onchange(parseInt(b.dataset.v)));
+  });
+  return d;
+}
+
+// ── RENDER SECTIONS ───────────────────────────────────────────
+function renderOT() {
+  const el = document.getElementById('body-OT');
+  el.innerHTML = '';
+  OT_KEYS.forEach(k => {
+    const name = OT_NAMES[k];
+    el.appendChild(makeToggleRow(`¿${name.charAt(0).toUpperCase()+name.slice(1)}?`, state.ot[k], v => {
+      state.ot[k] = v; update();
+    }));
+  });
+}
+function renderOE() {
+  const el = document.getElementById('body-OE');
+  el.innerHTML = '';
+  OE_KEYS.forEach(k => {
+    const name = OE_NAMES[k];
+    el.appendChild(makeToggleRow(`¿${name.charAt(0).toUpperCase()+name.slice(1)}?`, state.oe[k], v => {
+      state.oe[k] = v; update();
+    }));
+  });
+}
+function renderFIJ() {
+  const el = document.getElementById('body-FIJ');
+  el.innerHTML = '';
+  words().forEach((w, i) => {
+    el.appendChild(makeToggleRow(w, state.fij[i], v => {
+      state.fij[i] = v; update();
+    }));
+  });
+  // Reps
+  const reps = document.getElementById('reps-btns');
+  reps.innerHTML = '';
+  [1,2,3,4,5,6].forEach(n => {
+    const b = document.createElement('button');
+    b.className = 'btn-circle';
+    b.textContent = n;
+    if (state.fijReps === n) { b.style.borderColor='#10b981'; b.style.background='#10b98115'; b.style.color='#065f46'; }
+    b.onclick = () => { state.fijReps = n; renderFIJ(); updateConclusion(); };
+    reps.appendChild(b);
+  });
+}
+function renderCALC() {
+  const el = document.getElementById('body-CALC');
+  el.innerHTML = '';
+  const calcBtn = document.getElementById('calc-mode-calc');
+  const mundoBtn = document.getElementById('calc-mode-mundo');
+  if (state.calcMode === 'calc') {
+    calcBtn.style.cssText += ';border-color:#f59e0b;background:#f59e0b15;color:#92400e';
+    mundoBtn.style.cssText += ';border-color:#e8e1ce;background: #faf6ec;color:#a89a86';
+    [30,27,24,21,18].forEach((n,i) => {
+      el.appendChild(makeToggleRow(`${n}`, state.calc[i], v => { state.calc[i]=v; update(); }));
+    });
+  } else {
+    mundoBtn.style.cssText += ';border-color:#f59e0b;background:#f59e0b15;color:#92400e';
+    calcBtn.style.cssText += ';border-color:#e8e1ce;background: #faf6ec;color:#a89a86';
+    ['O','D','N','U','M'].forEach((l,i) => {
+      el.appendChild(makeToggleRow(l, state.mundo[i], v => { state.mundo[i]=v; update(); }));
+    });
+  }
+}
+function renderRD() {
+  const el = document.getElementById('body-RD');
+  el.innerHTML = '';
+  const opts = [
+    { key:'libre', label:'Libre',      color:'#22c55e', tc:'#16a34a' },
+    { key:'pista', label:'Con pista',  color:'#f59e0b', tc:'#92400e' },
+    { key:'no',    label:'No recuerda',color:'#ef4444', tc:'#dc2626' },
+  ];
+  words().forEach((w, i) => {
+    const row = document.createElement('div');
+    row.className = 'rd-row';
+    row.innerHTML = `<span class="rd-word">${w}</span>`;
+    const btns = document.createElement('div');
+    btns.style.cssText = 'display:flex;gap:6px;flex-wrap:wrap';
+    opts.forEach(({ key, label, color, tc }) => {
+      const b = document.createElement('button');
+      b.className = 'btn-rd';
+      b.textContent = label;
+      if (state.rec[i] === key) {
+        b.style.borderColor = color;
+        b.style.background = color+'18';
+        b.style.color = tc;
+        b.style.fontWeight = '700';
+      }
+      b.onclick = () => { state.rec[i] = key; update(); };
+      btns.appendChild(b);
+    });
+    row.appendChild(btns);
+    el.appendChild(row);
+  });
+  // Chips summary
+  const chipsRow = document.getElementById('rd-chips-row');
+  chipsRow.innerHTML = '';
+  opts.forEach(({ key, label, color }) => {
+    const cnt = state.rec.filter(v => v===key).length;
+    if (cnt === 0) return;
+    const s = document.createElement('span');
+    s.className = 'rd-chip';
+    s.textContent = `${label}: ${cnt}/3`;
+    s.style.background = color+'15';
+    s.style.color = color;
+    s.style.borderColor = color+'40';
+    chipsRow.appendChild(s);
+  });
+}
+function renderLANG() {
+  // Denominación
+  const denomEl = document.getElementById('body-DENOM');
+  denomEl.innerHTML = '';
+  denomEl.appendChild(makeToggleRow('Lápiz / bolígrafo', state.denom.lapiz, v => { state.denom.lapiz=v; update(); }, '¿Qué es esto?'));
+  denomEl.appendChild(makeToggleRow('Reloj de pulsera', state.denom.reloj, v => { state.denom.reloj=v; update(); }, '¿Qué es esto?'));
+  // Repetición
+  const repetEl = document.getElementById('body-REPET');
+  repetEl.innerHTML = '';
+  repetEl.appendChild(makeToggleRow('"Ni sí, ni no, ni pero"', state.repet, v => { state.repet=v; update(); }, '(o: "En un trigal había 5 perros")'));
+  // Órdenes
+  const ordenesEl = document.getElementById('body-ORDENES');
+  ordenesEl.innerHTML = '';
+  ordenesEl.appendChild(makeToggleRow('Coge con la mano derecha', state.ordenes.mano, v => { state.ordenes.mano=v; update(); }));
+  ordenesEl.appendChild(makeToggleRow('Dobla por la mitad', state.ordenes.dobla, v => { state.ordenes.dobla=v; update(); }));
+  ordenesEl.appendChild(makeToggleRow('Pone en el suelo', state.ordenes.suelo, v => { state.ordenes.suelo=v; update(); }));
+  // Lectura
+  const lectEl = document.getElementById('body-LECTURA');
+  lectEl.innerHTML = '';
+  lectEl.appendChild(makeEvalRow('Leer y ejecutar: "Cierre los ojos"', state.lectura, v => { state.lectura=v; update(); }, 'Mostrar papel escrito. El paciente debe leerla y cerrar los ojos.'));
+  // Escritura
+  const escEl = document.getElementById('body-ESCRITURA');
+  escEl.innerHTML = '';
+  escEl.appendChild(makeEvalRow('Escribir una frase con sujeto y predicado', state.escritura, v => { state.escritura=v; update(); }, 'La frase debe tener sentido. No se penalizan errores ortográficos.'));
+  const fbEsc = document.getElementById('fb-escritura');
+  if (state.escritura !== null) {
+    fbEsc.className = 'eval-fb '+(state.escritura===1?'ok':'ko');
+    fbEsc.textContent = state.escritura===1
+      ? '✓ Frase válida (sujeto + predicado + coherencia).'
+      : '✗ No cumple los criterios: falta sujeto, predicado o coherencia.';
+  } else { fbEsc.className=''; fbEsc.textContent=''; }
+  // Copia
+  const copEl = document.getElementById('body-COPIA');
+  copEl.innerHTML = '';
+  copEl.appendChild(makeEvalRow('Copiar dos pentágonos intersectados', state.copia, v => { state.copia=v; update(); }, 'Deben apreciarse los 10 ángulos y la intersección entre ambas figuras.'));
+  const fbCop = document.getElementById('fb-copia');
+  if (state.copia !== null) {
+    const ok = state.copia === 1;
+    fbCop.className = 'eval-fb '+(ok?'ok':'ko');
+    const c = ok ? '#22c55e' : '#ef4444';
+    fbCop.innerHTML = (ok
+      ? '✓ Los 10 ángulos y la intersección presentes.'
+      : '✗ Faltan ángulos o intersección no apreciable.')
+    + `<div style="margin-top:8px;display:flex;justify-content:center;opacity:${ok?1:0.3}">
+        <svg width="100" height="60" viewBox="0 0 100 60">
+          <polygon points="25,5 45,15 38,38 12,38 5,15" fill="none" stroke="${c}" stroke-width="2"/>
+          <polygon points="55,5 75,15 68,38 42,38 35,15" fill="none" stroke="${c}" stroke-width="2"/>
+        </svg></div>`;
+  } else { fbCop.className=''; fbCop.innerHTML=''; }
+}
+
+// ── SCORE BAR ─────────────────────────────────────────────────
+function renderScoreBar() {
+  const t = total();
+  const age = document.getElementById('p-edad').value;
+  const ageGroup = getAgeGroup(age);
+  const adj = getAdj(t, ageGroup, state.eduIdx);
+
+  document.getElementById('total-num').innerHTML = `${t}<span>/30</span>`;
+
+  const bar = document.getElementById('score-bar');
+  const adjLabel = document.getElementById('adj-label');
+  const adjCutoff = document.getElementById('adj-cutoff');
+  const adjHint = document.getElementById('adj-hint');
+  const levelChips = document.getElementById('level-chips');
+  const groupLabel = document.getElementById('group-label');
+
+  if (adj) {
+    bar.style.background = adj.bg;
+    bar.style.borderColor = adj.color+'40';
+    document.getElementById('total-num').style.color = adj.color;
+    adjLabel.style.display = 'inline-block';
+    adjLabel.style.background = adj.color;
+    adjLabel.style.color = '#fff';
+    adjLabel.textContent = adj.label;
+    adjCutoff.style.display = 'block';
+    adjCutoff.textContent = `Punto de corte para su grupo: ${adj.cutoff}`;
+    adjHint.style.display = 'none';
+    levelChips.style.display = 'flex';
+    levelChips.style.borderTopColor = adj.color+'20';
+
+    const isNormal  = t >= adj.cutoff;
+    const isLeve    = t >= adj.cutoff-3 && t < adj.cutoff;
+    const isMod     = t >= 10 && t < adj.cutoff-3;
+    const isGrave   = t < 10;
+    [['lc-normal',isNormal],['lc-leve',isLeve],['lc-mod',isMod],['lc-grave',isGrave]].forEach(([id,active]) => {
+      const el = document.getElementById(id);
+      if (active) { el.classList.add('active'); el.style.background=adj.color; }
+      else { el.classList.remove('active'); el.style.background='#e8e1ce'; el.style.color='#a89a86'; }
+    });
+    const edu = state.eduIdx !== null ? EDU_LABELS[state.eduIdx] : '';
+    groupLabel.textContent = ageGroup ? `Grupo: ${ageGroup}${edu ? ', ' + edu : ''}` : '';
+  } else {
+    bar.style.background = '#f4efe4';
+    bar.style.borderColor = '#e8e1ce';
+    document.getElementById('total-num').style.color = '#1a1614';
+    adjLabel.style.display = 'none';
+    adjCutoff.style.display = 'none';
+    adjHint.style.display = 'block';
+    levelChips.style.display = 'none';
+  }
+}
+
+// ── SUMMARY BLOCK ─────────────────────────────────────────────
+function renderSummary() {
+  const t = total();
+  document.getElementById('s-OT').textContent   = sOT();
+  document.getElementById('s-OE').textContent   = sOE();
+  document.getElementById('s-FIJ').textContent  = sFIJ();
+  document.getElementById('s-CALC').textContent = sCALC();
+  document.getElementById('s-RD').textContent   = sRD();
+  document.getElementById('s-LANG').textContent = sLANG();
+  document.getElementById('s-TOTAL').textContent= t;
+
+  const age = document.getElementById('p-edad').value;
+  const adj = getAdj(t, getAgeGroup(age), state.eduIdx);
+  const badge = document.getElementById('sum-badge');
+  if (adj) {
+    badge.style.display = 'block';
+    badge.style.background = adj.color;
+    badge.textContent = adj.label;
+  } else {
+    badge.style.display = 'none';
+  }
+}
+
+// ── CONCLUSION ─────────────────────────────────────────────────
+function buildConclusion() {
+  const t = total();
+  const nombre = document.getElementById('p-nombre').value || 'Sin nombre';
+  const fecha  = document.getElementById('p-fecha').value  || '—';
+  const nacim  = document.getElementById('p-nacimiento').value || '—';
+  const edad   = document.getElementById('p-edad').value;
+  const prof   = document.getElementById('p-profesion').value;
+  const edu    = state.eduIdx !== null ? EDU_LABELS[state.eduIdx] : 'no registrado';
+  const sexo   = state.sexo === 'V' ? 'Varón' : 'Mujer';
+  const ageGroup = getAgeGroup(edad);
+  const adj    = getAdj(t, ageGroup, state.eduIdx);
+  const ws     = words();
+
+  const lines = [];
+  lines.push(`MMSE — ${nombre} | ${fecha}`);
+  lines.push(`Edad: ${edad ? edad+' años' : 'no registrada'} | Estudios: ${edu} | Sexo: ${sexo}${prof ? ' | Profesión: ' + prof : ''}`);
+  lines.push(`Puntuación total: ${t}/30`);
+  if (adj) lines.push(`Clasificación ajustada (p.c. grupo ${ageGroup}, ${edu}: ${adj.cutoff}): ${adj.label.toUpperCase()}`);
+  lines.push('');
+
+  // OT
+  const otFails = OT_KEYS.filter(k => state.ot[k]===0).map(k => OT_NAMES[k]);
+  lines.push(sOT()===5 ? `OT (5/5): correcto` : `OT (${sOT()}/5): falla ${otFails.join(', ')}`);
+
+  // OE
+  const oeFails = OE_KEYS.filter(k => state.oe[k]===0).map(k => OE_NAMES[k]);
+  lines.push(sOE()===5 ? `OE (5/5): correcto` : `OE (${sOE()}/5): falla ${oeFails.join(', ')}`);
+
+  // Fijación
+  const fijFails = ws.filter((_,i) => state.fij[i]===0);
+  const fijNull  = state.fij.filter(v => v===null).length;
+  if (fijNull > 0) lines.push(`Fijación (${sFIJ()}/3): sin registrar`);
+  else if (sFIJ()===3) lines.push(`Fijación (3/3): correcto — ${state.fijReps} repetición(es) necesarias`);
+  else lines.push(`Fijación (${sFIJ()}/3): falla ${fijFails.join(', ')} — ${state.fijReps} repetición(es) necesarias`);
+
+  // Atención
+  lines.push(`Atención/Cálculo (${sCALC()}/5): ${state.calcMode==='calc'?'resta seriada 30-3':'deletreo MUNDO al revés'}`);
+
+  // Recuerdo diferido
+  const recLibre = ws.filter((_,i) => state.rec[i]==='libre');
+  const recPista = ws.filter((_,i) => state.rec[i]==='pista');
+  const recNo    = ws.filter((_,i) => state.rec[i]==='no');
+  const recNull  = state.rec.filter(v => v===null).length;
+  if (recNull > 0) {
+    lines.push(`RD (${sRD()}/3): sin registrar completamente`);
+  } else {
+    const parts = [];
+    if (recLibre.length) parts.push(`recuerdo libre: ${recLibre.join(', ')}`);
+    if (recPista.length) parts.push(`recupera con pista: ${recPista.join(', ')}`);
+    if (recNo.length)    parts.push(`no recupera: ${recNo.join(', ')}`);
+    lines.push(`RD (${sRD()}/3 libre${recPista.length ? `, ${recPista.length}/3 con pista` : ''}): ${parts.join(' | ')}`);
+  }
+  const recObs = document.getElementById('rec-obs').value.trim();
+  if (recObs) lines.push(`  → ${recObs}`);
+
+  // Lenguaje
+  const langFails = [];
+  if (state.denom.lapiz===0) langFails.push('denominación lápiz');
+  if (state.denom.reloj===0) langFails.push('denominación reloj');
+  if (state.repet===0)       langFails.push('repetición');
+  if (state.ordenes.mano===0) langFails.push('orden mano');
+  if (state.ordenes.dobla===0) langFails.push('orden doblar');
+  if (state.ordenes.suelo===0) langFails.push('orden suelo');
+  if (state.lectura===0)     langFails.push('lectura/ejecución');
+  if (state.escritura===0)   langFails.push('escritura espontánea');
+  if (state.copia===0)       langFails.push('copia de pentágonos');
+  lines.push(sLANG()===9 ? `Lenguaje (9/9): correcto` : `Lenguaje (${sLANG()}/9): falla ${langFails.join(', ')}`);
+
+  return lines.join('\n');
+}
+
+function updateConclusion() {
+  document.getElementById('concl-pre').textContent = buildConclusion();
+}
+
+// ── COPY ──────────────────────────────────────────────────────
+function copyConclusion() {
+  const text = document.getElementById('concl-pre').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.getElementById('copy-btn');
+    btn.textContent = '✓ Copiado';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = '⎘ Copiar'; btn.classList.remove('copied'); }, 2000);
+  });
+}
+
+// ── SETTER ACTIONS ─────────────────────────────────────────────
+function setSex(s) {
+  state.sexo = s;
+  ['V','M'].forEach(v => {
+    const b = document.getElementById('sex-'+v);
+    if (v === s) { b.style.borderColor='#2d6a9f'; b.style.background='#2d6a9f15'; b.style.color='#1e3a5f'; b.style.fontWeight='700'; }
+    else { b.style.borderColor='#e8e1ce'; b.style.background='#fff'; b.style.color='#8a7d72'; b.style.fontWeight='400'; }
+  });
+  updateConclusion();
+}
+function setEdu(i) {
+  state.eduIdx = i;
+  document.querySelectorAll('#edu-btns .btn-edu').forEach((b, idx) => {
+    if (idx === i) { b.style.borderColor='#7c3aed'; b.style.background='#7c3aed15'; b.style.color='#4c1d95'; b.style.fontWeight='700'; }
+    else { b.style.borderColor='#e8e1ce'; b.style.background='#fff'; b.style.color='#8a7d72'; b.style.fontWeight='400'; }
+  });
+  update();
+}
+function setWordSet(s) {
+  state.wordSet = s;
+  state.fij = [null,null,null];
+  state.rec = [null,null,null];
+  ['A','B'].forEach(v => {
+    const b = document.getElementById('ws-'+v);
+    if (v===s) { b.style.borderColor='#10b981'; b.style.background='#10b98115'; b.style.color='#065f46'; b.style.fontWeight='700'; }
+    else { b.style.borderColor='#e8e1ce'; b.style.background='#fff'; b.style.color='#a89a86'; b.style.fontWeight='400'; }
+  });
+  renderFIJ(); renderRD(); update();
+}
+function setCalcMode(m) {
+  state.calcMode = m;
+  renderCALC(); update();
+}
+
+// ── MAIN UPDATE ───────────────────────────────────────────────
+function update() {
+  renderOT(); renderOE(); renderFIJ(); renderCALC(); renderRD(); renderLANG();
+  setChip('chip-OT',   sOT(),   5);
+  setChip('chip-OE',   sOE(),   5);
+  setChip('chip-FIJ',  sFIJ(),  3);
+  setChip('chip-CALC', sCALC(), 5);
+  setChip('chip-RD',   sRD(),   3);
+  setChip('chip-LANG', sLANG(), 9);
+  renderScoreBar();
+  renderSummary();
+  updateConclusion();
+}
+
+// ── PATIENT INPUTS ────────────────────────────────────────────
+['p-nombre','p-fecha','p-nacimiento','p-profesion','p-edad','rec-obs'].forEach(id => {
+  const el = document.getElementById(id);
+  if (el) el.addEventListener('input', () => {
+    if (id === 'p-edad') { renderScoreBar(); renderSummary(); }
+    updateConclusion();
+  });
+});
+
+// ── INIT ──────────────────────────────────────────────────────
+update();
+</script>
+</body>
+</html>

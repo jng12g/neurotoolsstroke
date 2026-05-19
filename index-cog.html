@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NEUROTOOLS · Cognitivo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<link rel="apple-touch-icon" href="/icono-app.png">
+<link rel="manifest" href="/manifest.json">
+
+<style>
+  :root {
+    --paper: #f4efe4;
+    --paper-card: #faf6ec;
+    --ink: #1a1614;
+    --ink-soft: #4a3f38;
+    --ink-muted: #8a7d72;
+    --accent: #7a1f2b;
+    --hairline: #cfc4ad;
+    --ease: cubic-bezier(.2,.7,.3,1);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Instrument Sans', system-ui, sans-serif;
+    font-size: 16px;
+    line-height: 1.55;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+    background-image:
+      radial-gradient(at 15% 8%, rgba(122, 31, 43, 0.04) 0%, transparent 45%),
+      radial-gradient(at 85% 95%, rgba(166, 74, 58, 0.05) 0%, transparent 40%);
+  }
+
+  body::before {
+    content: "";
+    position: fixed; inset: 0; pointer-events: none;
+    z-index: 1; opacity: 0.3; mix-blend-mode: multiply;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.1 0 0 0 0 0.08 0 0 0 0 0.07 0 0 0 0.45 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  }
+
+  .container {
+    max-width: 1080px; margin: 0 auto;
+    padding: 80px 32px; position: relative; z-index: 2;
+  }
+
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--ink-muted);
+    text-decoration: none;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 24px;
+    transition: color 0.3s;
+  }
+
+  .back-link:hover { color: var(--accent); }
+  .back-link svg { width: 16px; height: 16px; stroke: currentColor; stroke-width: 2; stroke-linecap: round; fill: none; }
+
+  header { text-align: center; margin-bottom: 72px; }
+  h1 { font-family: 'Fraunces', Georgia, serif; font-size: clamp(3rem, 7vw, 4.5rem); font-weight: 400; line-height: 1.05; letter-spacing: -0.02em; margin-bottom: 16px; color: var(--ink); }
+  h1 em { font-style: italic; color: var(--accent); font-weight: 300; }
+  .subtitle { font-family: 'Fraunces', Georgia, serif; font-style: italic; font-weight: 300; font-size: clamp(1.1rem, 2vw, 1.3rem); color: var(--ink-soft); max-width: 600px; margin: 0 auto; line-height: 1.4; }
+
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 24px; max-width: 900px; margin: 0 auto; }
+  
+  .card {
+    background: var(--paper-card); border: 1px solid var(--hairline); border-radius: 4px; padding: 40px 28px;
+    text-align: center; text-decoration: none; color: inherit; display: flex; flex-direction: column; align-items: center; gap: 20px;
+    transition: all 0.3s var(--ease); position: relative; overflow: hidden;
+  }
+  
+  .card:hover { border-color: var(--accent); transform: translateY(-4px); box-shadow: 0 12px 32px rgba(122, 31, 43, 0.08); background: #fff; }
+  .card::before { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: var(--accent); opacity: 0; transition: opacity 0.3s; }
+  .card:hover::before { opacity: 1; }
+
+  .icon { width: 64px; height: 64px; border-radius: 4px; background: rgba(122, 31, 43, 0.04); border: 1px solid rgba(122, 31, 43, 0.1); display: flex; align-items: center; justify-content: center; color: var(--accent); transition: all 0.3s; }
+  .card:hover .icon { background: var(--accent); color: var(--paper); border-color: var(--accent); }
+  .icon svg { width: 32px; height: 32px; stroke: currentColor; fill: none; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+
+  h3 { font-family: 'Fraunces', Georgia, serif; font-size: 1.5rem; font-weight: 400; color: var(--ink); }
+  p { font-size: 0.95rem; color: var(--ink-soft); line-height: 1.5; }
+
+  footer { margin-top: 80px; text-align: center; font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-muted); }
+
+  /* COMPORTAMIENTO PARA MÓVILES */
+  @media (max-width: 600px) {
+    .container { padding: 40px 16px; }
+    header { margin-bottom: 40px; }
+    h1 { font-size: 2.5rem; }
+    
+    .grid { grid-template-columns: 1fr 1fr; gap: 12px; }
+    .card { padding: 24px 12px; gap: 12px; }
+    .icon { width: 48px; height: 48px; }
+    .icon svg { width: 24px; height: 24px; }
+    
+    h3 { font-size: 1.15rem; }
+    p { font-size: 0.8rem; line-height: 1.35; } 
+    footer { margin-top: 50px; font-size: 9px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <a href="../index.html" class="back-link">
+    <svg viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+    Volver al inicio
+  </a>
+
+  <header>
+    <h1>NEURO<em>TOOLS</em></h1>
+    <p class="subtitle">Herramientas y escalas para trastornos cognitivos y demencias.</p>
+  </header>
+
+  <div class="grid">
+    
+    <a href="mmse.html" class="card">
+      <div class="icon">
+        <svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+      </div>
+      <div>
+        <h3>MMSE</h3>
+        <p>Mini-Mental State Examination con cutoffs estratificados por edad y educación.</p>
+      </div>
+    </a>
+
+    <a href="tam.html" class="card">
+      <div class="icon">
+        <svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+      </div>
+      <div>
+        <h3>T@M</h3>
+        <p>Test de Alteración de Memoria con recuerdo libre y facilitado.</p>
+      </div>
+    </a>
+
+    <a href="testreloj.html" class="card">
+      <div class="icon">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      </div>
+      <div>
+        <h3>Test del Reloj</h3>
+        <p>Versión a la orden con patrón cualitativo de errores y orientación topográfica.</p>
+      </div>
+    </a>
+
+    <a href="gds.html" class="card">
+      <div class="icon">
+        <svg viewBox="0 0 24 24"><polyline points="4 20 10 20 10 14 16 14 16 8 22 8"/></svg>
+      </div>
+      <div>
+        <h3>GDS</h3>
+        <p>Global Deterioration Scale de Reisberg — estadiaje funcional de la demencia.</p>
+      </div>
+    </a>
+
+    <a href="FAB.html" class="card">
+      <div class="icon">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      </div>
+      <div>
+        <h3>FAB-E</h3>
+        <p>Batería de Evaluación Frontal para análisis de la función ejecutiva.</p>
+      </div>
+    </a>
+
+    <a href="mrs.html" class="card">
+      <div class="icon">
+        <svg viewBox="0 0 24 24"><path d="M4 20h4v-4H4v4zm6 0h4v-10h-4v10zm6 0h4V4h-4v16z"/></svg>
+      </div>
+      <div>
+        <h3>mRS</h3>
+        <p>Escala de Rankin modificada para valoración funcional y dependencia.</p>
+      </div>
+    </a>
+
+  </div>
+
+  <footer>
+    NEUROTOOLS · v. 2026.05 · © Dr. Juan Carlos Navarro García · navarroneurologia@gmail.com (MIT License)<br>
+  <a href="../code-of-conduct.html" style="color: var(--ink-muted); text-decoration: underline;">Code of Conduct</a> | 
+  <a href="https://www.netlify.com" target="_blank" style="color: var(--ink-muted); text-decoration: underline;">This site is powered by Netlify</a>
+  </footer>
+</div>
+
+</body>
+</html>

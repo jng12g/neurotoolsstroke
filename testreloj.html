@@ -1,0 +1,1117 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Test del Reloj — Cacho et al. (1999)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #f7f5f0;
+    --paper: #fdfcf9;
+    --ink: #1a1d24;
+    --ink-soft: #4a4e58;
+    --ink-faint: #8a8e98;
+    --line: #e3ddd0;
+    --line-soft: #ede8db;
+    --accent: #2c4a6e;
+    --accent-soft: #e8eef5;
+    --warn: #a13e2b;
+    --warn-soft: #f5e8e4;
+    --ok: #2d5f3f;
+    --ok-soft: #e6efe8;
+    --gold: #8a6d2a;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans',system-ui,sans-serif;font-size:15px;line-height:1.55}
+  body{padding:24px 16px 80px;min-height:100vh}
+
+  .wrap{max-width:880px;margin:0 auto}
+
+  /* Header */
+  header{
+    border-bottom:1px solid var(--line);
+    padding-bottom:22px;
+    margin-bottom:28px;
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-end;
+    gap:24px;
+    flex-wrap:wrap;
+  }
+  .title{
+    font-family:'Fraunces',serif;
+    font-weight:500;
+    font-size:34px;
+    line-height:1.05;
+    letter-spacing:-0.01em;
+    color:var(--ink);
+  }
+  .title em{font-style:italic;font-weight:400;color:var(--ink-soft)}
+  .subtitle{
+    font-size:12px;
+    text-transform:uppercase;
+    letter-spacing:0.18em;
+    color:var(--ink-faint);
+    margin-top:8px;
+    font-weight:500;
+  }
+  .meta-mini{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    color:var(--ink-faint);
+    letter-spacing:0.05em;
+    text-align:right;
+  }
+
+  /* Section */
+  section{
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-radius:4px;
+    margin-bottom:18px;
+    overflow:hidden;
+  }
+  .sec-head{
+    padding:18px 22px 14px;
+    border-bottom:1px solid var(--line-soft);
+    display:flex;
+    align-items:baseline;
+    gap:14px;
+    flex-wrap:wrap;
+  }
+  .sec-num{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    color:var(--ink-faint);
+    letter-spacing:0.1em;
+  }
+  .sec-title{
+    font-family:'Fraunces',serif;
+    font-size:21px;
+    font-weight:500;
+    letter-spacing:-0.005em;
+  }
+  .sec-max{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    color:var(--ink-faint);
+    margin-left:auto;
+  }
+  .sec-body{padding:18px 22px 22px}
+  .sec-instr{
+    font-size:13.5px;
+    color:var(--ink-soft);
+    margin-bottom:14px;
+    font-style:italic;
+    border-left:2px solid var(--line);
+    padding:2px 0 2px 12px;
+  }
+
+  /* Patient strip */
+  .patient-strip{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+    gap:14px;
+  }
+  .field label{
+    display:block;
+    font-size:11px;
+    text-transform:uppercase;
+    letter-spacing:0.1em;
+    color:var(--ink-faint);
+    margin-bottom:5px;
+    font-weight:500;
+  }
+  .field input, .field select{
+    width:100%;
+    padding:9px 11px;
+    border:1px solid var(--line);
+    border-radius:3px;
+    background:var(--bg);
+    font-family:inherit;
+    font-size:14px;
+    color:var(--ink);
+    transition:border-color .15s;
+  }
+  .field input:focus, .field select:focus{
+    outline:none;
+    border-color:var(--accent);
+  }
+
+  /* Score options */
+  .options{
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+  }
+  .opt{
+    display:flex;
+    align-items:flex-start;
+    gap:14px;
+    padding:13px 16px;
+    border:1px solid var(--line);
+    border-radius:3px;
+    background:var(--paper);
+    cursor:pointer;
+    transition:all .15s;
+    user-select:none;
+  }
+  .opt:hover{
+    border-color:var(--accent);
+    background:var(--accent-soft);
+  }
+  .opt.selected{
+    border-color:var(--accent);
+    background:var(--accent-soft);
+    box-shadow:inset 3px 0 0 var(--accent);
+  }
+  .opt-pts{
+    font-family:'Fraunces',serif;
+    font-size:22px;
+    font-weight:600;
+    color:var(--accent);
+    min-width:42px;
+    line-height:1;
+    padding-top:2px;
+  }
+  .opt.selected .opt-pts{color:var(--accent)}
+  .opt-desc{
+    flex:1;
+    font-size:13.5px;
+    line-height:1.5;
+    color:var(--ink-soft);
+  }
+  .opt.selected .opt-desc{color:var(--ink)}
+
+  /* Detail toggle */
+  .detail-toggle{
+    margin-top:16px;
+    font-size:12px;
+    color:var(--ink-faint);
+    text-transform:uppercase;
+    letter-spacing:0.1em;
+    cursor:pointer;
+    background:none;
+    border:none;
+    padding:6px 0;
+    font-family:inherit;
+    border-bottom:1px dotted var(--line);
+  }
+  .detail-toggle:hover{color:var(--accent)}
+  .detail-panel{
+    margin-top:14px;
+    padding:14px 16px;
+    background:var(--bg);
+    border-left:2px solid var(--accent);
+    border-radius:0 3px 3px 0;
+    display:none;
+  }
+  .detail-panel.show{display:block}
+  .detail-panel h4{
+    font-size:11px;
+    text-transform:uppercase;
+    letter-spacing:0.12em;
+    color:var(--ink-faint);
+    margin-bottom:8px;
+    font-weight:600;
+  }
+  .detail-panel ul{padding-left:18px;font-size:13px;color:var(--ink-soft);line-height:1.6}
+  .detail-panel li{margin-bottom:4px}
+
+  /* Result panel */
+  .result-card{
+    background:var(--paper);
+    border:2px solid var(--ink);
+    border-radius:4px;
+    padding:28px 26px;
+    margin-bottom:18px;
+  }
+  .result-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
+    gap:18px;
+    margin-bottom:22px;
+    padding-bottom:22px;
+    border-bottom:1px solid var(--line);
+  }
+  .stat-block{
+    text-align:left;
+  }
+  .stat-label{
+    font-size:10.5px;
+    text-transform:uppercase;
+    letter-spacing:0.14em;
+    color:var(--ink-faint);
+    font-weight:600;
+    margin-bottom:6px;
+  }
+  .stat-value{
+    font-family:'Fraunces',serif;
+    font-size:32px;
+    font-weight:500;
+    line-height:1;
+    color:var(--ink);
+  }
+  .stat-value .of{
+    font-size:16px;
+    color:var(--ink-faint);
+    font-weight:400;
+  }
+  .total-block .stat-value{font-size:44px;color:var(--accent)}
+
+  .verdict{
+    padding:14px 18px;
+    border-radius:3px;
+    font-size:15px;
+    margin-bottom:18px;
+  }
+  .verdict.positive{
+    background:var(--warn-soft);
+    border-left:3px solid var(--warn);
+    color:var(--warn);
+  }
+  .verdict.negative{
+    background:var(--ok-soft);
+    border-left:3px solid var(--ok);
+    color:var(--ok);
+  }
+  .verdict-label{
+    font-size:11px;
+    text-transform:uppercase;
+    letter-spacing:0.14em;
+    font-weight:600;
+    margin-bottom:4px;
+    opacity:.85;
+  }
+  .verdict-text{font-weight:500}
+
+  /* Interpretation */
+  .interp h3{
+    font-family:'Fraunces',serif;
+    font-size:18px;
+    font-weight:500;
+    margin-bottom:12px;
+    margin-top:18px;
+    color:var(--ink);
+  }
+  .interp h3:first-child{margin-top:0}
+  .interp p{
+    font-size:14px;
+    color:var(--ink-soft);
+    margin-bottom:10px;
+    line-height:1.6;
+  }
+  .interp .pattern-tag{
+    display:inline-block;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10.5px;
+    text-transform:uppercase;
+    letter-spacing:0.08em;
+    background:var(--accent-soft);
+    color:var(--accent);
+    padding:3px 8px;
+    border-radius:2px;
+    margin-right:6px;
+    margin-bottom:6px;
+  }
+  .interp ul{
+    padding-left:18px;
+    font-size:13.5px;
+    color:var(--ink-soft);
+    line-height:1.65;
+    margin-bottom:12px;
+  }
+  .interp li{margin-bottom:5px}
+  .interp li strong{color:var(--ink);font-weight:600}
+
+  .clinical-note{
+    background:var(--bg);
+    border:1px dashed var(--line);
+    padding:14px 16px;
+    border-radius:3px;
+    margin-top:14px;
+    font-size:13px;
+    color:var(--ink-soft);
+    font-style:italic;
+  }
+  .clinical-note strong{
+    font-style:normal;
+    color:var(--ink);
+    text-transform:uppercase;
+    font-size:11px;
+    letter-spacing:0.1em;
+    display:block;
+    margin-bottom:6px;
+  }
+
+  /* Buttons */
+  .btn-row{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    margin-top:18px;
+  }
+  button.btn{
+    background:var(--ink);
+    color:var(--paper);
+    border:none;
+    padding:11px 20px;
+    border-radius:3px;
+    font-family:inherit;
+    font-size:13px;
+    font-weight:500;
+    letter-spacing:0.04em;
+    cursor:pointer;
+    transition:background .15s;
+  }
+  button.btn:hover{background:var(--accent)}
+  button.btn.ghost{
+    background:transparent;
+    color:var(--ink);
+    border:1px solid var(--line);
+  }
+  button.btn.ghost:hover{background:var(--bg);border-color:var(--ink)}
+
+  /* Report */
+  .report-block{
+    background:var(--paper);
+    border:1px solid var(--line);
+    padding:22px 24px;
+    margin-top:18px;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12.5px;
+    line-height:1.7;
+    white-space:pre-wrap;
+    color:var(--ink);
+    border-radius:3px;
+    display:none;
+    max-height:500px;
+    overflow-y:auto;
+  }
+  .report-block.show{display:block}
+
+  /* Empty state for result */
+  .empty-result{
+    text-align:center;
+    padding:40px 20px;
+    color:var(--ink-faint);
+    font-size:13.5px;
+    font-style:italic;
+  }
+  .empty-result::before{
+    content:"";
+    display:block;
+    width:32px;
+    height:1px;
+    background:var(--line);
+    margin:0 auto 14px;
+  }
+
+  /* Toast */
+  .toast{
+    position:fixed;
+    bottom:24px;
+    left:50%;
+    transform:translateX(-50%) translateY(80px);
+    background:var(--ink);
+    color:var(--paper);
+    padding:12px 20px;
+    border-radius:3px;
+    font-size:13px;
+    opacity:0;
+    transition:all .25s;
+    pointer-events:none;
+    z-index:100;
+  }
+  .toast.show{
+    opacity:1;
+    transform:translateX(-50%) translateY(0);
+  }
+
+  footer{
+    margin-top:36px;
+    padding-top:18px;
+    border-top:1px solid var(--line);
+    font-size:11.5px;
+    color:var(--ink-faint);
+    line-height:1.6;
+  }
+  footer a{color:var(--ink-soft)}
+
+  /* ── Modality selector ── */
+  .modality-bar{
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-radius:4px;
+    padding:14px 18px;
+    margin-bottom:18px;
+    display:flex;
+    align-items:center;
+    gap:18px;
+    flex-wrap:wrap;
+  }
+  .modality-label{
+    font-size:11px;
+    text-transform:uppercase;
+    letter-spacing:0.14em;
+    color:var(--ink-faint);
+    font-weight:600;
+    flex-shrink:0;
+  }
+  .modality-tabs{
+    display:flex;
+    gap:0;
+    border:1px solid var(--line);
+    border-radius:3px;
+    overflow:hidden;
+    flex:1;
+    min-width:280px;
+  }
+  .mod-tab{
+    flex:1;
+    padding:9px 14px;
+    background:var(--bg);
+    border:none;
+    border-right:1px solid var(--line);
+    cursor:pointer;
+    font-family:inherit;
+    font-size:13px;
+    color:var(--ink-soft);
+    transition:all .15s;
+    text-align:left;
+  }
+  .mod-tab:last-child{border-right:none}
+  .mod-tab:hover{background:var(--accent-soft);color:var(--accent)}
+  .mod-tab.active{
+    background:var(--accent);
+    color:var(--paper);
+    font-weight:600;
+  }
+  .mod-tab .mod-tab-code{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10.5px;
+    letter-spacing:0.08em;
+    opacity:.75;
+    display:block;
+    margin-bottom:2px;
+  }
+  .mod-tab .mod-tab-name{
+    font-size:13px;
+  }
+  .modality-cutoff{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    color:var(--ink-faint);
+    letter-spacing:0.05em;
+    white-space:nowrap;
+  }
+  .modality-cutoff strong{color:var(--accent);font-weight:600}
+
+  @media (max-width:600px){
+    .title{font-size:26px}
+    .sec-body{padding:16px 16px 18px}
+    .sec-head{padding:14px 16px 12px}
+    .meta-mini{text-align:left;width:100%}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div>
+    <h1 class="title">Test del Reloj <em>— Cacho et al.</em></h1>
+    <div class="subtitle" id="header-subtitle">Cribado de deterioro cognitivo · Versión a la orden (TRO)</div>
+  </div>
+  <div class="meta-mini">
+    Rev Neurol 1999;28(7):648–55<br>
+    ESFERA 0–2 · Nº 0–4 · MANEC 0–4
+  </div>
+</header>
+
+<!-- MODALIDAD -->
+<div class="modality-bar">
+  <span class="modality-label">Modalidad</span>
+  <div class="modality-tabs" role="tablist">
+    <button class="mod-tab active" data-modality="TRO" onclick="setModality('TRO')">
+      <span class="mod-tab-code">TRO</span>
+      <span class="mod-tab-name">Test del reloj a la orden</span>
+    </button>
+    <button class="mod-tab" data-modality="TRC" onclick="setModality('TRC')">
+      <span class="mod-tab-code">TRC</span>
+      <span class="mod-tab-name">Test del reloj a la copia</span>
+    </button>
+  </div>
+  <span class="modality-cutoff" id="modality-cutoff">Punto de corte: <strong>≤ 6</strong></span>
+</div>
+
+<!-- 1. PACIENTE -->
+<section>
+  <div class="sec-head">
+    <span class="sec-num">01</span>
+    <span class="sec-title">Datos del paciente</span>
+    <span class="sec-max">opcional</span>
+  </div>
+  <div class="sec-body">
+    <div class="patient-strip">
+      <div class="field">
+        <label for="p-name">Iniciales / NHC</label>
+        <input id="p-name" type="text" placeholder="p. ej. M.G.R.">
+      </div>
+      <div class="field">
+        <label for="p-age">Edad</label>
+        <input id="p-age" type="number" min="0" max="120" placeholder="años">
+      </div>
+      <div class="field">
+        <label for="p-edu">Escolaridad</label>
+        <select id="p-edu">
+          <option value="">—</option>
+          <option>Analfabeto</option>
+          <option>Sin estudios (sabe leer/escribir)</option>
+          <option>Primarios</option>
+          <option>Secundarios</option>
+          <option>Universitarios</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="p-date">Fecha</label>
+        <input id="p-date" type="date">
+      </div>
+    </div>
+    <button class="detail-toggle" onclick="toggleDetail('instr-app')">Instrucciones de aplicación ▾</button>
+    <div id="instr-app" class="detail-panel">
+      <div id="instr-tro">
+        <h4>Test del reloj a la orden (TRO)</h4>
+        <ul>
+          <li>Entregue al paciente un folio en blanco y un bolígrafo.</li>
+          <li>Indique: <em>«Dibuje un reloj redondo y grande, ponga las horas y coloque las manecillas marcando las once y diez»</em>.</li>
+          <li>No límite de tiempo. Permita correcciones espontáneas.</li>
+          <li>No dé pistas ni guíe la ejecución. No repita la hora salvo solicitud expresa del paciente.</li>
+        </ul>
+        <p style="margin-top:10px;font-size:12px;color:var(--ink-faint);font-style:italic">El TRO explora simultáneamente memoria semántica, planificación visuoconstructiva, función ejecutiva y representación abstracta del tiempo. Es la versión más exigente y más utilizada como cribado.</p>
+      </div>
+      <div id="instr-trc" style="display:none">
+        <h4>Test del reloj a la copia (TRC)</h4>
+        <ul>
+          <li>Presente al paciente la lámina con el reloj modelo (esfera circular con números arábigos 1–12 y manecillas marcando las 11:10).</li>
+          <li>Indique: <em>«Copie de la forma más exacta posible este dibujo del reloj»</em>.</li>
+          <li>No límite de tiempo. Permita correcciones espontáneas.</li>
+          <li>No dé pistas ni guíe la ejecución.</li>
+        </ul>
+        <p style="margin-top:10px;font-size:12px;color:var(--ink-faint);font-style:italic">El TRC elimina la carga de memoria semántica y planificación, aislando la capacidad visuoconstructiva pura. Un TRC alterado con TRO también alterado orienta a déficit visuoconstructivo predominante; un TRC normal con TRO alterado sugiere afectación ejecutiva/semántica.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 2. ESFERA -->
+<section>
+  <div class="sec-head">
+    <span class="sec-num">02</span>
+    <span class="sec-title">Esfera</span>
+    <span class="sec-max">/ 2 puntos</span>
+  </div>
+  <div class="sec-body">
+    <div class="sec-instr">¿Cómo describiría el contorno del reloj que ha dibujado el paciente?</div>
+    <div class="options" data-group="esfera">
+      <div class="opt" data-value="2"><div class="opt-pts">2</div><div class="opt-desc"><strong>Dibujo normal.</strong> Esfera circular u ovalada, con pequeñas distorsiones atribuibles a temblor.</div></div>
+      <div class="opt" data-value="1"><div class="opt-pts">1</div><div class="opt-desc"><strong>Incompleto o con alguna distorsión significativa.</strong> Esfera muy asimétrica.</div></div>
+      <div class="opt" data-value="0"><div class="opt-pts">0</div><div class="opt-desc"><strong>Ausencia</strong> o dibujo totalmente distorsionado.</div></div>
+    </div>
+    <button class="detail-toggle" onclick="toggleDetail('det-esfera')">¿Qué evalúa la esfera? ▾</button>
+    <div id="det-esfera" class="detail-panel">
+      <h4>Funciones implicadas</h4>
+      <ul>
+        <li>Habilidades visuoconstructivas básicas (cierre del contorno).</li>
+        <li>Planificación motora gruesa.</li>
+        <li>Control gráfico y simetría espacial.</li>
+      </ul>
+      <h4 style="margin-top:10px">Interpretación clínica</h4>
+      <ul>
+        <li>Esfera muy distorsionada o no cerrada → considerar afectación parietal posterior, apraxia constructiva.</li>
+        <li>Asimetría marcada con compresión hemilateral → hemineglecto (típico de lesiones parietales derechas).</li>
+        <li>Distorsión leve por temblor → no patológico per se (parkinsonismo, temblor esencial).</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- 3. NÚMEROS -->
+<section>
+  <div class="sec-head">
+    <span class="sec-num">03</span>
+    <span class="sec-title">Números</span>
+    <span class="sec-max">/ 4 puntos</span>
+  </div>
+  <div class="sec-body">
+    <div class="sec-instr">Valore presencia, secuencia y localización espacial de los números 1–12.</div>
+    <div class="options" data-group="numeros">
+      <div class="opt" data-value="4"><div class="opt-pts">4</div><div class="opt-desc"><strong>Todos presentes y en el orden correcto.</strong> Localización espacial adecuada.</div></div>
+      <div class="opt" data-value="3.5"><div class="opt-pts">3,5</div><div class="opt-desc">Pequeños errores en la colocación espacial en <strong>4 o más números</strong>.</div></div>
+      <div class="opt" data-value="3"><div class="opt-pts">3</div><div class="opt-desc">Todos presentes con <strong>error significativo en la localización espacial</strong>.</div></div>
+      <div class="opt" data-value="2"><div class="opt-pts">2</div><div class="opt-desc"><strong>Omisión o adición</strong> de algún número, pero sin grandes distorsiones en los restantes.</div></div>
+      <div class="opt" data-value="1"><div class="opt-pts">1</div><div class="opt-desc"><strong>Ausencia o exceso</strong> de números con gran distorsión espacial.</div></div>
+      <div class="opt" data-value="0"><div class="opt-pts">0</div><div class="opt-desc">Ausencia o escasa representación (<strong>menos de 6 números</strong> dibujados).</div></div>
+    </div>
+
+    <div style="margin-top:16px;padding-top:14px;border-top:1px dashed var(--line)">
+      <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.12em;color:var(--ink-faint);margin-bottom:10px;font-weight:600">Patrón cualitativo de errores (selección múltiple)</div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px" id="num-flags">
+        <label class="flag-chk"><input type="checkbox" data-flag="omision"> Omisión de números</label>
+        <label class="flag-chk"><input type="checkbox" data-flag="repeticion"> Repetición / perseveración</label>
+        <label class="flag-chk"><input type="checkbox" data-flag="apilamiento"> Apilamiento en un sector (hemineglecto)</label>
+        <label class="flag-chk"><input type="checkbox" data-flag="contraintuitivo"> Orden invertido / antihorario</label>
+        <label class="flag-chk"><input type="checkbox" data-flag="extraesfera"> Números fuera de la esfera</label>
+        <label class="flag-chk"><input type="checkbox" data-flag="microgr"> Micrografía progresiva</label>
+        <label class="flag-chk"><input type="checkbox" data-flag="sustitucion"> Sustitución por letras o garabatos</label>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 4. MANECILLAS -->
+<section>
+  <div class="sec-head">
+    <span class="sec-num">04</span>
+    <span class="sec-title">Manecillas</span>
+    <span class="sec-max">/ 4 puntos</span>
+  </div>
+  <div class="sec-body">
+    <div class="sec-instr">Valore posición, proporción de tamaño y representación abstracta del tiempo (las 11:10).</div>
+    <div class="options" data-group="manecillas">
+      <div class="opt" data-value="4"><div class="opt-pts">4</div><div class="opt-desc"><strong>Posición correcta</strong> y <strong>proporciones adecuadas</strong> de tamaño (la del minutero más larga).</div></div>
+      <div class="opt" data-value="3.5"><div class="opt-pts">3,5</div><div class="opt-desc">Manecillas en posición correcta pero <strong>ambas de igual tamaño</strong>.</div></div>
+      <div class="opt" data-value="3"><div class="opt-pts">3</div><div class="opt-desc"><strong>Pequeños errores</strong> en la localización de las manecillas.</div></div>
+      <div class="opt" data-value="2"><div class="opt-pts">2</div><div class="opt-desc"><strong>Gran distorsión</strong> en la localización de las manecillas.</div></div>
+      <div class="opt" data-value="1"><div class="opt-pts">1</div><div class="opt-desc">Manecillas <strong>no se juntan</strong> en el punto central y/o marcan <strong>hora incorrecta</strong>.</div></div>
+      <div class="opt" data-value="0"><div class="opt-pts">0</div><div class="opt-desc"><strong>Ausencia</strong> de manecillas o <strong>perseveración</strong> en su dibujo.</div></div>
+    </div>
+
+    <div style="margin-top:16px;padding-top:14px;border-top:1px dashed var(--line)">
+      <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.12em;color:var(--ink-faint);margin-bottom:10px;font-weight:600">Patrón cualitativo de errores (selección múltiple)</div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px" id="man-flags">
+        <label class="flag-chk"><input type="checkbox" data-flag="stim_bound"> <em>Stimulus-bound</em>: apunta al 10 en vez de al 2 (las "11:10" literal)</label>
+        <label class="flag-chk"><input type="checkbox" data-flag="numerica"> Sustituye manecilla por escritura numérica</label>
+        <label class="flag-chk"><input type="checkbox" data-flag="tres_mas"> Tres o más manecillas dibujadas</label>
+        <label class="flag-chk"><input type="checkbox" data-flag="ausencia_min"> Ausencia exclusiva del minutero</label>
+        <label class="flag-chk"><input type="checkbox" data-flag="conceptual"> Error conceptual (flechas, líneas sin dirección al centro)</label>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 5. RESULTADO -->
+<section id="resultado">
+  <div class="sec-head">
+    <span class="sec-num">05</span>
+    <span class="sec-title">Resultado e interpretación</span>
+  </div>
+  <div class="sec-body">
+    <div id="result-content">
+      <div class="empty-result">Complete las puntuaciones de Esfera, Números y Manecillas para obtener la valoración.</div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <strong>Referencias:</strong> Cacho J, García-García R, et al. Una propuesta de aplicación y puntuación del test del reloj en la enfermedad de Alzheimer. <em>Rev Neurol</em> 1999;28(7):648–655.
+  <br><br>
+  <strong>Puntos de corte (Cacho 1999):</strong> TRO (a la orden) suma ≤ 6 · TRC (a la copia) suma ≤ 8 → test positivo (sospecha de deterioro cognitivo). El TRO tiene mayor exigencia ejecutiva y semántica que el TRC.
+</footer>
+
+</div>
+
+<div id="toast" class="toast"></div>
+
+<style>
+  .flag-chk{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    font-size:12.5px;
+    color:var(--ink-soft);
+    background:var(--bg);
+    border:1px solid var(--line);
+    padding:6px 10px;
+    border-radius:14px;
+    cursor:pointer;
+    user-select:none;
+    transition:all .15s;
+  }
+  .flag-chk:has(input:checked){
+    background:var(--accent-soft);
+    border-color:var(--accent);
+    color:var(--accent);
+    font-weight:500;
+  }
+  .flag-chk input{margin:0;cursor:pointer}
+</style>
+
+<script>
+const state = {
+  modality: 'TRO',
+  esfera: null,
+  numeros: null,
+  manecillas: null,
+  numFlags: new Set(),
+  manFlags: new Set()
+};
+
+const CUTOFFS = {
+  TRO: { threshold: 6, label: '≤ 6' },
+  TRC: { threshold: 8, label: '≤ 8' }
+};
+
+function setModality(mode){
+  state.modality = mode;
+  // Tabs
+  document.querySelectorAll('.mod-tab').forEach(t=>{
+    t.classList.toggle('active', t.dataset.modality === mode);
+  });
+  // Subtitle
+  document.getElementById('header-subtitle').textContent =
+    mode === 'TRO'
+      ? 'Cribado de deterioro cognitivo · Versión a la orden (TRO)'
+      : 'Cribado de deterioro cognitivo · Versión a la copia (TRC)';
+  // Cutoff label
+  document.getElementById('modality-cutoff').innerHTML =
+    'Punto de corte: <strong>' + CUTOFFS[mode].label + '</strong>';
+  // Instructions panel
+  document.getElementById('instr-tro').style.display = mode === 'TRO' ? 'block' : 'none';
+  document.getElementById('instr-trc').style.display = mode === 'TRC' ? 'block' : 'none';
+  // Recompute if there are scores
+  computeResult();
+}
+
+// Set today's date
+document.getElementById('p-date').valueAsDate = new Date();
+
+// Option selection
+document.querySelectorAll('.options').forEach(group=>{
+  const groupName = group.dataset.group;
+  group.querySelectorAll('.opt').forEach(opt=>{
+    opt.addEventListener('click', ()=>{
+      group.querySelectorAll('.opt').forEach(o=>o.classList.remove('selected'));
+      opt.classList.add('selected');
+      state[groupName] = parseFloat(opt.dataset.value);
+      computeResult();
+    });
+  });
+});
+
+// Flag chips
+document.querySelectorAll('#num-flags input').forEach(cb=>{
+  cb.addEventListener('change', e=>{
+    const k = e.target.dataset.flag;
+    if(e.target.checked) state.numFlags.add(k); else state.numFlags.delete(k);
+    computeResult();
+  });
+});
+document.querySelectorAll('#man-flags input').forEach(cb=>{
+  cb.addEventListener('change', e=>{
+    const k = e.target.dataset.flag;
+    if(e.target.checked) state.manFlags.add(k); else state.manFlags.delete(k);
+    computeResult();
+  });
+});
+
+function toggleDetail(id){
+  document.getElementById(id).classList.toggle('show');
+}
+
+function computeResult(){
+  const e = state.esfera, n = state.numeros, m = state.manecillas;
+  const ready = e !== null && n !== null && m !== null;
+  if(!ready){
+    document.getElementById('result-content').innerHTML = '<div class="empty-result">Complete las puntuaciones de Esfera, Números y Manecillas para obtener la valoración.</div>';
+    return;
+  }
+  const total = e + n + m;
+  const cutoff = CUTOFFS[state.modality].threshold;
+  const positive = total <= cutoff;
+  const totalLabel = 'Total ' + state.modality;
+  const interp = buildInterpretation();
+  const html = `
+    <div class="result-card">
+      <div class="result-grid">
+        <div class="stat-block"><div class="stat-label">Esfera</div><div class="stat-value">${fmt(e)}<span class="of"> / 2</span></div></div>
+        <div class="stat-block"><div class="stat-label">Números</div><div class="stat-value">${fmt(n)}<span class="of"> / 4</span></div></div>
+        <div class="stat-block"><div class="stat-label">Manecillas</div><div class="stat-value">${fmt(m)}<span class="of"> / 4</span></div></div>
+        <div class="stat-block total-block"><div class="stat-label">${totalLabel}</div><div class="stat-value">${fmt(total)}<span class="of"> / 10</span></div></div>
+      </div>
+      <div class="verdict ${positive?'positive':'negative'}">
+        <div class="verdict-label">${positive?'Test positivo':'Test negativo'}</div>
+        <div class="verdict-text">${positive
+          ? `Suma ≤ ${cutoff} — sospecha de deterioro cognitivo. Indicada exploración neuropsicológica complementaria.`
+          : `Suma > ${cutoff} — rendimiento dentro de rango esperado. No descarta deterioro selectivo no visuoconstructivo.`}</div>
+      </div>
+      <div class="interp">
+        ${interp}
+      </div>
+      <div class="btn-row">
+        <button class="btn" onclick="generateReport()">Generar informe</button>
+        <button class="btn ghost" onclick="copyReport()">Copiar al portapapeles</button>
+        <button class="btn ghost" onclick="resetAll()">Reiniciar</button>
+      </div>
+      <div id="report-block" class="report-block"></div>
+    </div>
+  `;
+  document.getElementById('result-content').innerHTML = html;
+}
+
+function fmt(v){
+  return Number.isInteger(v) ? v : v.toString().replace('.',',');
+}
+
+function buildInterpretation(){
+  const e = state.esfera, n = state.numeros, m = state.manecillas;
+  const numF = state.numFlags, manF = state.manFlags;
+  const total = e + n + m;
+  let html = '';
+
+  // --- Functional analysis ---
+  html += '<h3>Funciones cognitivas implicadas</h3>';
+  html += '<p>El test del reloj es una prueba multidimensional que evalúa simultáneamente: <strong>habilidades visuoespaciales</strong> (esfera), <strong>memoria semántica</strong> y <strong>planificación visuoconstructiva</strong> (números), <strong>función ejecutiva</strong> y <strong>representación abstracta del tiempo</strong> (manecillas). El patrón diferencial de errores aporta orientación topográfica.</p>';
+
+  // --- Component-by-component analysis ---
+  html += '<h3>Análisis por componente</h3>';
+  html += '<ul>';
+
+  // Esfera
+  if(e === 2) html += '<li><strong>Esfera (2/2):</strong> contorno preservado. Sin afectación visuoconstructiva básica ni signos de hemineglecto.</li>';
+  else if(e === 1) html += '<li><strong>Esfera (1/2):</strong> distorsión leve-moderada. Sugiere afectación visuoconstructiva incipiente o asimetría atencional. Si la asimetría es lateralizada, considerar <em>hemineglecto</em>.</li>';
+  else html += '<li><strong>Esfera (0/2):</strong> distorsión grave o ausencia. Apunta a <em>apraxia constructiva</em> y disfunción parietal posterior bilateral; obliga a descartar atrofia cortical posterior si predomina sobre otros déficits.</li>';
+
+  // Números
+  if(n >= 3.5) html += `<li><strong>Números (${fmt(n)}/4):</strong> rendimiento adecuado. Memoria semántica de la secuencia 1–12 y planificación espacial conservadas en lo esencial.</li>`;
+  else if(n >= 2) html += `<li><strong>Números (${fmt(n)}/4):</strong> errores significativos en disposición espacial u omisiones. Sugiere disfunción <em>ejecutiva-planificadora</em> y/o <em>visuoespacial</em>.</li>`;
+  else html += `<li><strong>Números (${fmt(n)}/4):</strong> alteración grave. Compatible con afectación de la memoria semántica numérica, profunda apraxia constructiva o desorganización ejecutiva (típico de fases moderadas-avanzadas).</li>`;
+
+  // Number flags
+  if(numF.has('apilamiento')) html += '<li style="margin-left:18px;font-style:italic">↳ Apilamiento de números en un hemicampo: <strong>signo sugestivo de hemineglecto</strong> (lesión parietal contralateral, habitualmente derecha).</li>';
+  if(numF.has('contraintuitivo')) html += '<li style="margin-left:18px;font-style:italic">↳ Secuencia invertida o antihoraria: alteración del esquema temporal y planificación.</li>';
+  if(numF.has('extraesfera')) html += '<li style="margin-left:18px;font-style:italic">↳ Números fuera de la esfera: pérdida del marco de referencia espacial; <em>closing-in</em> ocasional en EA avanzada.</li>';
+  if(numF.has('repeticion')) html += '<li style="margin-left:18px;font-style:italic">↳ Perseveración: disfunción frontal/ejecutiva, considerar también daño basal o subcortical.</li>';
+  if(numF.has('omision')) html += '<li style="margin-left:18px;font-style:italic">↳ Omisión de números: pérdida de planificación o de la representación semántica del reloj.</li>';
+  if(numF.has('microgr')) html += '<li style="margin-left:18px;font-style:italic">↳ Micrografía progresiva: signo extrapiramidal; valorar parkinsonismo.</li>';
+  if(numF.has('sustitucion')) html += '<li style="margin-left:18px;font-style:italic">↳ Sustitución por letras/garabatos: alteración semántica grave, propio de fases avanzadas.</li>';
+
+  // Manecillas
+  if(m >= 3.5) html += `<li><strong>Manecillas (${fmt(m)}/4):</strong> conserva la representación abstracta de la hora. Si es 3,5 (ambas iguales): pérdida sutil de la jerarquía hora/minuto.</li>`;
+  else if(m === 3) html += `<li><strong>Manecillas (3/4):</strong> pequeños errores de localización. Disfunción ejecutiva leve o conceptual incipiente.</li>`;
+  else if(m === 2) html += `<li><strong>Manecillas (2/4):</strong> gran distorsión. <em>Disfunción ejecutiva moderada</em>; falla la traducción del comando verbal a la disposición gráfica.</li>`;
+  else if(m === 1) html += `<li><strong>Manecillas (1/4):</strong> hora incorrecta y/o no convergen al centro. Fallo en la representación temporal abstracta y en la integración visuoespacial.</li>`;
+  else html += `<li><strong>Manecillas (0/4):</strong> ausencia o perseveración. Hallazgo grave: pérdida de la representación conceptual del tiempo, perseveración frontal o anosognosia.</li>`;
+
+  // Manecillas flags
+  if(manF.has('stim_bound')) html += '<li style="margin-left:18px;font-style:italic">↳ Error <em>stimulus-bound</em> (manecilla apunta al "10" en lugar del "2"): <strong>signo clásico de demencia tipo Alzheimer</strong>; refleja pérdida de abstracción y atracción por el estímulo verbal literal.</li>';
+  if(manF.has('numerica')) html += '<li style="margin-left:18px;font-style:italic">↳ Sustitución por escritura numérica ("11:10" escrito): pérdida de representación gráfica abstracta; descrito en EA y demencia semántica.</li>';
+  if(manF.has('tres_mas')) html += '<li style="margin-left:18px;font-style:italic">↳ Múltiples manecillas: perseveración / fallo del control ejecutivo.</li>';
+  if(manF.has('conceptual')) html += '<li style="margin-left:18px;font-style:italic">↳ Error conceptual: fallo en la categoría semántica "manecilla de reloj".</li>';
+  if(manF.has('ausencia_min')) html += '<li style="margin-left:18px;font-style:italic">↳ Ausencia exclusiva del minutero: olvido del segundo elemento de la instrucción (memoria de trabajo).</li>';
+
+  html += '</ul>';
+
+  // --- Topographic / etiologic orientation ---
+  html += '<h3>Orientación topográfico-clínica</h3>';
+  const tags = [];
+  // EA típica
+  const eaTipica = (n <= 3 || m <= 2) && manF.has('stim_bound');
+  // ACP
+  const acp = e <= 1 && n <= 2;
+  // DLB
+  const dlb = e <= 1 && n <= 2 && m <= 1;
+  // Hemineglecto
+  const hn = numF.has('apilamiento');
+  // DFT/disejecutiva
+  const dej = m <= 2 && e === 2 && (numF.has('repeticion') || manF.has('tres_mas'));
+  // Vascular subcortical
+  const vasc = total >= 6 && total <= 8 && e === 2;
+
+  if(eaTipica) tags.push('Patrón compatible con EA');
+  if(acp) tags.push('Considerar atrofia cortical posterior');
+  if(dlb) tags.push('Compatible con demencia con cuerpos de Lewy');
+  if(hn) tags.push('Hemineglecto izquierdo');
+  if(dej) tags.push('Patrón disejecutivo / frontal');
+  if(vasc) tags.push('Compatible con perfil subcortical-vascular');
+
+  if(tags.length){
+    html += '<p>' + tags.map(t=>`<span class="pattern-tag">${t}</span>`).join('') + '</p>';
+  }
+
+  html += '<ul>';
+  if(eaTipica){
+    html += '<li><strong>Enfermedad de Alzheimer típica:</strong> el patrón de manecillas literales ("stimulus-bound"), errores semánticos en los números y relativa preservación inicial de la esfera es altamente sugestivo. Considerar MMSE/MEC, T@M, y biomarcadores LCR/PET-amiloide si procede.</li>';
+  }
+  if(acp){
+    html += '<li><strong>Atrofia cortical posterior (variante visual de EA):</strong> afectación visuoconstructiva muy desproporcionada con relativa preservación de memoria episódica verbal sugiere fenotipo de Benson. Solicitar RM con énfasis parieto-occipital y valoración neuro-oftalmológica.</li>';
+  }
+  if(dlb){
+    html += '<li><strong>Demencia con cuerpos de Lewy:</strong> deterioro visuoconstructivo grave es uno de los rasgos cognitivos más característicos. Investigar fluctuaciones, parkinsonismo y trastorno conductual del REM. DaTSCAN si duda diagnóstica.</li>';
+  }
+  if(hn){
+    html += '<li><strong>Hemineglecto:</strong> sugiere lesión parietal derecha (vascular, tumoral, degenerativa). Completar con test de cancelación, líneas de Albert y bisección de líneas.</li>';
+  }
+  if(dej){
+    html += '<li><strong>Patrón disejecutivo:</strong> con esfera preservada pero fallos en manecillas y perseveración, considerar variante conductual de DFT, demencia vascular subcortical o lesiones frontales focales. Útil completar con FAB, Stroop y trail-making.</li>';
+  }
+  if(vasc){
+    html += '<li><strong>Perfil compatible con vascular/subcortical:</strong> rendimiento limítrofe sin gran apraxia constructiva. Investigar factores de riesgo vascular y leucoencefalopatía en RM.</li>';
+  }
+  if(!tags.length){
+    if(total === 10) html += '<li>Rendimiento óptimo. Si la queja cognitiva persiste, valorar pruebas más sensibles a deterioro cognitivo leve (FCSRT, MoCA, función ejecutiva).</li>';
+    else if(total === 9 || total === 9.5) html += '<li>Rendimiento muy próximo al máximo con error mínimo aislado, no necesariamente patológico. Reevaluar en 6–12 meses si hay queja subjetiva o cambio funcional.</li>';
+    else html += '<li>Patrón inespecífico. La interpretación clínica debe integrarse con el resto del examen neuropsicológico, biografía, evolución temporal y neuroimagen.</li>';
+  }
+  html += '</ul>';
+
+  // Caveat
+  html += '<div class="clinical-note"><strong>Nota clínica</strong>El TR es un cribado, no un diagnóstico. La sensibilidad para deterioro cognitivo leve es limitada (≈50–70%) y la interpretación cualitativa exige integrar edad, escolaridad, lateralidad manual, agudeza visual y estado afectivo. En analfabetos o escolaridad muy baja considerar el T@M o MIS como alternativas.</div>';
+
+  return html;
+}
+
+function generateReport(){
+  const e = state.esfera, n = state.numeros, m = state.manecillas;
+  const total = e + n + m;
+  const cutoff = CUTOFFS[state.modality].threshold;
+  const positive = total <= cutoff;
+
+  const numFlagText = formatFlags(state.numFlags, {
+    'omision':'omisión de números',
+    'repeticion':'perseveración',
+    'apilamiento':'apilamiento (sospecha de hemineglecto)',
+    'contraintuitivo':'secuencia antihoraria',
+    'extraesfera':'números fuera de la esfera',
+    'microgr':'micrografía progresiva',
+    'sustitucion':'sustitución por letras/garabatos'
+  });
+  const manFlagText = formatFlags(state.manFlags, {
+    'stim_bound':'error stimulus-bound (apunta al "10")',
+    'numerica':'sustitución por escritura numérica',
+    'tres_mas':'tres o más manecillas',
+    'ausencia_min':'ausencia del minutero',
+    'conceptual':'error conceptual'
+  });
+
+  const cualitativos = [];
+  if(numFlagText) cualitativos.push('en los números, ' + numFlagText);
+  if(manFlagText) cualitativos.push('en las manecillas, ' + manFlagText);
+  const cualLinea = cualitativos.length ? ' Patrón cualitativo: ' + cualitativos.join('; ') + '.' : '';
+
+  const txt =
+`${state.modality}: ${fmt(e)}/${fmt(n)}/${fmt(m)}
+Total: ${fmt(total)}/10 (${positive ? 'positivo, ≤' + cutoff : 'negativo, >' + cutoff})
+Interpretación: ${proseInterpretation()}${cualLinea}`;
+
+  const block = document.getElementById('report-block');
+  block.textContent = txt;
+  block.classList.add('show');
+  block.scrollIntoView({behavior:'smooth', block:'nearest'});
+}
+
+function proseInterpretation(){
+  const e = state.esfera, n = state.numeros, m = state.manecillas;
+  const numF = state.numFlags, manF = state.manFlags;
+  const total = e + n + m;
+
+  // Patrones diagnósticos
+  const eaTipica = (n <= 3 || m <= 2) && manF.has('stim_bound');
+  const acp = e <= 1 && n <= 2;
+  const dlb = e <= 1 && n <= 2 && m <= 1;
+  const hn = numF.has('apilamiento');
+  const dej = m <= 2 && e === 2 && (numF.has('repeticion') || manF.has('tres_mas'));
+  const vasc = total >= 6 && total <= 8 && e === 2;
+
+  // Construcción del párrafo según rendimiento global
+  let frases = [];
+
+  if(total === 10){
+    const modoTxt = state.modality === 'TRO' ? 'a la orden' : 'a la copia';
+    frases.push('rendimiento óptimo en el test del reloj ' + modoTxt + ', sin signos de afectación visuoconstructiva, semántica ni ejecutiva en esta prueba de cribado');
+  } else if(total === 9 || total === 9.5){
+    frases.push('rendimiento muy próximo al máximo con error mínimo aislado, sin valor patológico inequívoco');
+  } else if(total >= 7 && total <= 8.5){
+    frases.push('rendimiento limítrofe-bajo (≤8) compatible con deterioro cognitivo leve');
+  } else if(total >= 4 && total < 7){
+    frases.push('rendimiento claramente patológico que sugiere deterioro cognitivo moderado');
+  } else {
+    frases.push('rendimiento muy bajo, indicativo de deterioro cognitivo avanzado con afectación visuoconstructiva, semántica y ejecutiva');
+  }
+
+  // Análisis por componente afectado
+  const componentes = [];
+  if(e <= 1) componentes.push(e === 0 ? 'apraxia constructiva grave con esfera ausente o muy distorsionada' : 'afectación visuoconstructiva leve-moderada en el contorno');
+  if(n <= 2) componentes.push(n === 0 ? 'desestructuración semántica grave de la secuencia numérica' : 'alteración significativa de la planificación espacial de los números');
+  else if(n === 3) componentes.push('errores en la localización espacial de los números con preservación de la secuencia');
+  if(m <= 1) componentes.push(m === 0 ? 'ausencia o perseveración de manecillas' : 'fallo en la representación abstracta del tiempo con hora incorrecta o manecillas no convergentes al centro');
+  else if(m === 2) componentes.push('gran distorsión en la localización de las manecillas, sugestiva de disfunción ejecutiva');
+  else if(m === 3) componentes.push('pequeños errores en las manecillas');
+
+  if(componentes.length){
+    frases.push('destacan ' + componentes.join(', '));
+  }
+
+  // Orientación topográfica
+  if(eaTipica){
+    frases.push('el error stimulus-bound (atracción literal por el estímulo verbal "11:10" con manecilla apuntando al 10) es un signo clásico de enfermedad de Alzheimer, donde refleja pérdida de abstracción semántica');
+  } else if(dlb){
+    frases.push('la afectación visuoconstructiva tan marcada en proporción al resto del cuadro orienta a demencia con cuerpos de Lewy; conviene investigar fluctuaciones, parkinsonismo y trastorno conductual del REM');
+  } else if(acp){
+    frases.push('el patrón visuoconstructivo desproporcionado puede corresponder a la variante posterior de EA (síndrome de Benson) si se confirma con neuroimagen parieto-occipital');
+  } else if(hn){
+    frases.push('el apilamiento de números en un hemicampo apoya un hemineglecto, sugestivo de lesión parietal contralateral (habitualmente derecha)');
+  } else if(dej){
+    frases.push('con esfera preservada y fallos predominantes en manecillas o perseveración, el patrón es compatible con disfunción frontal-ejecutiva (DFT conductual, vascular subcortical o lesión frontal focal)');
+  } else if(vasc){
+    frases.push('un rendimiento limítrofe sin gran apraxia constructiva es compatible con perfil vascular-subcortical; conviene valorar factores de riesgo y leucoencefalopatía en RM');
+  }
+
+  // Capitaliza primera letra y une con puntos
+  return frases.map((f, i) => i === 0 ? f.charAt(0).toUpperCase() + f.slice(1) : f).join('. ') + '.';
+}
+
+function formatFlags(set, dict){
+  if(!set.size) return '';
+  return Array.from(set).map(k=>dict[k]).filter(Boolean).join('; ');
+}
+
+function formatDate(iso){
+  if(!iso) return '—';
+  const [y,m,d] = iso.split('-');
+  return `${d}/${m}/${y}`;
+}
+
+async function copyReport(){
+  const block = document.getElementById('report-block');
+  if(!block.classList.contains('show')) generateReport();
+  try{
+    await navigator.clipboard.writeText(block.textContent);
+    showToast('Informe copiado al portapapeles');
+  }catch(err){
+    showToast('No se pudo copiar — selecciona y copia manualmente');
+  }
+}
+
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 2400);
+}
+
+function resetAll(){
+  state.esfera = state.numeros = state.manecillas = null;
+  state.numFlags.clear();
+  state.manFlags.clear();
+  document.querySelectorAll('.opt.selected').forEach(o=>o.classList.remove('selected'));
+  document.querySelectorAll('.flag-chk input').forEach(cb=>cb.checked=false);
+  computeResult();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+</script>
+</body>
+</html>

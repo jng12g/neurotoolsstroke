@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>GDS · Estadiaje rápido</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,ital,wght@9..144,0,400;9..144,0,500;9..144,0,600;9..144,1,400;9..144,1,500&family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#f4efe4;
+    --paper-2:#ebe4d3;
+    --ink:#1a1612;
+    --ink-soft:#4a4239;
+    --rule:#cfc4ad;
+    --rule-soft:#e8e1ce;
+    --accent:#7a1d1d;
+    --accent-deep:#5a1414;
+    --accent-soft:#f3e2d8;
+    --good:#3d6b3d;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:'Geist',-apple-system,BlinkMacSystemFont,sans-serif;
+    background:var(--paper);
+    color:var(--ink);
+    font-size:16px;
+    line-height:1.55;
+    min-height:100vh;
+    background-image:
+      radial-gradient(at 12% 8%, rgba(122,29,29,.04) 0, transparent 40%),
+      radial-gradient(at 90% 92%, rgba(122,29,29,.03) 0, transparent 45%);
+  }
+  .grain{
+    position:fixed;inset:0;pointer-events:none;z-index:1;opacity:.35;mix-blend-mode:multiply;
+    background-image:url("data:image/svg+xml;utf8,<svg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/><feColorMatrix values='0 0 0 0 0.1 0 0 0 0 0.08 0 0 0 0 0.06 0 0 0 0.08 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  }
+  .wrap{
+    max-width:760px;
+    margin:0 auto;
+    padding:32px 22px 80px;
+    position:relative;
+    z-index:2;
+  }
+
+  /* Header */
+  header{
+    border-bottom:1px solid var(--ink);
+    padding-bottom:18px;
+    margin-bottom:28px;
+  }
+  .eyebrow{
+    font-family:'Geist Mono',monospace;
+    font-size:11px;
+    letter-spacing:.18em;
+    text-transform:uppercase;
+    color:var(--ink-soft);
+  }
+  h1{
+    font-family:'Fraunces',serif;
+    font-weight:500;
+    font-size:clamp(36px,7vw,52px);
+    line-height:1;
+    margin:14px 0 4px;
+    letter-spacing:-.02em;
+    font-variation-settings:"opsz" 144;
+  }
+  h1 em{font-style:italic;font-weight:400;color:var(--accent)}
+  .subtitle{
+    font-family:'Fraunces',serif;
+    font-style:italic;
+    font-size:16px;
+    color:var(--ink-soft);
+    margin-top:6px;
+  }
+
+  /* Breadcrumb */
+  .crumb{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-bottom:20px;
+    font-family:'Geist Mono',monospace;
+    font-size:10px;
+    letter-spacing:.18em;
+    text-transform:uppercase;
+    color:var(--ink-soft);
+    min-height:18px;
+    flex-wrap:wrap;
+  }
+  .crumb .step{
+    padding:4px 10px;
+    border:1px solid var(--rule);
+    background:var(--paper-2);
+    border-radius:2px;
+  }
+  .crumb .step.active{
+    border-color:var(--accent);
+    background:var(--accent-soft);
+    color:var(--accent);
+  }
+  .crumb .sep{color:var(--rule)}
+
+  /* Screen */
+  .screen{display:none;animation:fadeIn .25s ease}
+  .screen.show{display:block}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+  .question{
+    font-family:'Fraunces',serif;
+    font-size:clamp(22px,4vw,28px);
+    font-weight:500;
+    line-height:1.25;
+    margin-bottom:24px;
+    color:var(--ink);
+    letter-spacing:-.01em;
+  }
+  .question .q-num{
+    font-family:'Geist Mono',monospace;
+    font-size:11px;
+    letter-spacing:.18em;
+    color:var(--accent);
+    text-transform:uppercase;
+    display:block;
+    margin-bottom:8px;
+    font-weight:400;
+  }
+
+  /* Option cards */
+  .options{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+  }
+  .opt{
+    display:flex;
+    align-items:flex-start;
+    gap:16px;
+    padding:18px 20px;
+    background:#fff;
+    border:1px solid var(--rule);
+    border-radius:2px;
+    cursor:pointer;
+    transition:all .15s;
+    text-align:left;
+    width:100%;
+    font-family:inherit;
+    color:inherit;
+    -webkit-appearance:none;
+  }
+  .opt:hover{
+    border-color:var(--accent);
+    background:#fffaf6;
+    transform:translateY(-1px);
+    box-shadow:0 4px 14px -6px rgba(122,29,29,.15);
+  }
+  .opt:active{transform:translateY(0)}
+  .opt .marker{
+    flex-shrink:0;
+    width:32px;
+    height:32px;
+    border:1px solid var(--ink);
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-family:'Fraunces',serif;
+    font-style:italic;
+    font-size:15px;
+    font-weight:500;
+    color:var(--ink);
+    margin-top:1px;
+    transition:background .15s,color .15s;
+  }
+  .opt:hover .marker{
+    background:var(--accent);
+    border-color:var(--accent);
+    color:#fff;
+  }
+  .opt .opt-body{flex:1;min-width:0}
+  .opt .opt-title{
+    font-family:'Fraunces',serif;
+    font-size:17px;
+    font-weight:500;
+    line-height:1.3;
+    margin-bottom:4px;
+    color:var(--ink);
+  }
+  .opt .opt-desc{
+    font-size:14px;
+    line-height:1.5;
+    color:var(--ink-soft);
+  }
+  .opt .opt-arrow{
+    flex-shrink:0;
+    font-family:'Geist Mono',monospace;
+    font-size:10px;
+    letter-spacing:.18em;
+    color:var(--ink-soft);
+    align-self:center;
+    padding-left:8px;
+    text-transform:uppercase;
+    transition:color .15s;
+    white-space:nowrap;
+  }
+  .opt:hover .opt-arrow{color:var(--accent)}
+  .opt .opt-arrow .gds-out{
+    font-family:'Fraunces',serif;
+    font-style:italic;
+    font-size:14px;
+    color:var(--accent);
+    letter-spacing:0;
+    text-transform:none;
+  }
+
+  /* Back */
+  .back-btn{
+    background:transparent;
+    border:none;
+    font-family:'Geist Mono',monospace;
+    font-size:11px;
+    letter-spacing:.16em;
+    text-transform:uppercase;
+    color:var(--ink-soft);
+    cursor:pointer;
+    padding:8px 0;
+    margin-bottom:14px;
+    -webkit-appearance:none;
+  }
+  .back-btn:hover{color:var(--accent)}
+
+  /* Result */
+  .result-screen{padding-top:4px}
+  .result-hero{
+    background:#fff;
+    border:1px solid var(--ink);
+    border-radius:2px;
+    padding:28px 30px;
+    margin-bottom:24px;
+    box-shadow:0 1px 0 rgba(26,22,18,.04), 0 8px 24px -8px rgba(26,22,18,.12);
+  }
+  .result-hero .pre{
+    font-family:'Geist Mono',monospace;
+    font-size:11px;
+    letter-spacing:.2em;
+    text-transform:uppercase;
+    color:var(--ink-soft);
+    margin-bottom:10px;
+  }
+  .result-hero .number{
+    font-family:'Fraunces',serif;
+    font-weight:500;
+    font-size:clamp(80px,16vw,128px);
+    line-height:.85;
+    color:var(--accent);
+    font-variation-settings:"opsz" 144;
+    margin-bottom:14px;
+    letter-spacing:-.04em;
+  }
+  .result-hero .name{
+    font-family:'Fraunces',serif;
+    font-size:clamp(22px,4vw,30px);
+    font-weight:500;
+    line-height:1.2;
+    margin-bottom:6px;
+    letter-spacing:-.01em;
+  }
+  .result-hero .equiv{
+    font-family:'Fraunces',serif;
+    font-style:italic;
+    font-size:18px;
+    color:var(--ink-soft);
+    margin-bottom:16px;
+  }
+  .result-hero .mec{
+    font-family:'Geist Mono',monospace;
+    font-size:12px;
+    letter-spacing:.06em;
+    color:var(--ink);
+    padding:6px 12px;
+    background:var(--paper-2);
+    border:1px solid var(--rule);
+    display:inline-block;
+    border-radius:2px;
+  }
+
+  /* Criteria recap */
+  .recap{
+    background:var(--paper-2);
+    border:1px solid var(--rule);
+    border-radius:2px;
+    padding:18px 22px;
+    margin-bottom:24px;
+  }
+  .recap-title{
+    font-family:'Geist Mono',monospace;
+    font-size:10px;
+    letter-spacing:.2em;
+    text-transform:uppercase;
+    color:var(--ink-soft);
+    margin-bottom:10px;
+  }
+  .recap-text{
+    font-family:'Fraunces',serif;
+    font-size:15.5px;
+    line-height:1.6;
+    color:var(--ink);
+  }
+
+  /* Meta row */
+  .meta-row{
+    display:flex;
+    gap:10px;
+    margin-bottom:18px;
+    flex-wrap:wrap;
+  }
+  .meta-cell{
+    flex:1;
+    min-width:140px;
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:10px 14px;
+    background:var(--paper-2);
+    border:1px solid var(--rule);
+    border-radius:2px;
+  }
+  .meta-cell label{
+    font-family:'Geist Mono',monospace;
+    font-size:10px;
+    letter-spacing:.16em;
+    text-transform:uppercase;
+    color:var(--ink-soft);
+    white-space:nowrap;
+  }
+  .meta-cell input,
+  .meta-cell select{
+    border:none;
+    background:transparent;
+    font-family:'Geist',sans-serif;
+    font-size:14px;
+    color:var(--ink);
+    padding:2px 0;
+    flex:1;
+    -webkit-appearance:none;
+    appearance:none;
+  }
+  .meta-cell select{
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'><path d='M1 1l4 4 4-4' stroke='%234a4239' stroke-width='1.5' fill='none'/></svg>");
+    background-repeat:no-repeat;
+    background-position:right center;
+    padding-right:16px;
+    cursor:pointer;
+  }
+  .meta-cell input:focus,
+  .meta-cell select:focus{outline:none}
+
+  /* Actions */
+  .actions{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+  }
+  button.btn{
+    flex:1;
+    min-width:140px;
+    padding:14px 18px;
+    border:1px solid var(--ink);
+    background:var(--ink);
+    color:var(--paper);
+    font-family:'Geist',sans-serif;
+    font-size:14px;
+    font-weight:500;
+    letter-spacing:.02em;
+    border-radius:2px;
+    cursor:pointer;
+    transition:transform .1s,background .15s;
+    -webkit-appearance:none;
+  }
+  button.btn:active{transform:translateY(1px)}
+  button.btn.secondary{
+    background:transparent;
+    color:var(--ink);
+  }
+  button.btn.secondary:hover{background:var(--paper-2)}
+  button.btn.copied{background:var(--good);border-color:var(--good);color:#fff}
+
+  .clinical-output{
+    margin-top:20px;
+    padding:20px 24px;
+    background:#fff;
+    border:1px dashed var(--rule);
+    border-radius:2px;
+    font-family:'Fraunces',serif;
+    font-size:15.5px;
+    line-height:1.7;
+    color:var(--ink);
+    display:none;
+    white-space:pre-wrap;
+  }
+  .clinical-output.show{display:block;animation:fadeIn .25s ease}
+
+  footer{
+    margin-top:46px;
+    padding-top:18px;
+    border-top:1px solid var(--rule);
+    font-family:'Geist Mono',monospace;
+    font-size:10px;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:var(--ink-soft);
+    text-align:center;
+  }
+  footer .ref{font-style:normal;font-family:'Fraunces',serif;text-transform:none;letter-spacing:0;font-size:12px;color:var(--ink-soft);margin-top:6px;display:block}
+
+  @media (max-width:560px){
+    .wrap{padding:24px 16px 60px}
+    .opt{padding:16px 16px;gap:12px}
+    .opt .opt-arrow{display:none}
+    .result-hero{padding:22px 22px}
+  }
+</style>
+</head>
+<body>
+<div class="grain"></div>
+<div class="wrap">
+
+  <header>
+    <div class="eyebrow">Reisberg · Estadiaje rápido por decisión clínica</div>
+    <h1>GDS<em>.</em></h1>
+    <div class="subtitle">Responda haciendo click. Dos pasos, o uno si es directo.</div>
+  </header>
+
+  <div class="crumb" id="crumb"></div>
+
+  <!-- Screen 1 -->
+  <div class="screen show" id="screen1">
+    <div class="question">
+      <span class="q-num">Paso 1 · Punto de partida</span>
+      ¿Qué describe mejor el estado cognitivo del paciente?
+    </div>
+    <div class="options">
+      <button class="opt" data-result="1">
+        <span class="marker">a</span>
+        <span class="opt-body">
+          <span class="opt-title">Normalidad cognitiva</span>
+          <span class="opt-desc">Sin quejas subjetivas. Ausencia de trastornos de memoria en la entrevista.</span>
+        </span>
+        <span class="opt-arrow"><span class="gds-out">GDS 1</span></span>
+      </button>
+      <button class="opt" data-result="2">
+        <span class="marker">b</span>
+        <span class="opt-body">
+          <span class="opt-title">Solo quejas subjetivas</span>
+          <span class="opt-desc">Olvido de dónde coloca objetos o de nombres conocidos, sin evidencia objetiva en la exploración ni repercusión laboral o social.</span>
+        </span>
+        <span class="opt-arrow"><span class="gds-out">GDS 2</span></span>
+      </button>
+      <button class="opt" data-next="2">
+        <span class="marker">c</span>
+        <span class="opt-body">
+          <span class="opt-title">Defectos objetivos</span>
+          <span class="opt-desc">El entorno detecta fallos, la exploración los pone de manifiesto, o hay repercusión funcional. Continúe al paso 2.</span>
+        </span>
+        <span class="opt-arrow">Continuar →</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Screen 2 -->
+  <div class="screen" id="screen2">
+    <button class="back-btn" id="backTo1">← Volver al paso 1</button>
+    <div class="question">
+      <span class="q-num">Paso 2 · Severidad funcional</span>
+      ¿Cuál es el grado de repercusión funcional?
+    </div>
+    <div class="options">
+      <button class="opt" data-result="3">
+        <span class="marker">a</span>
+        <span class="opt-body">
+          <span class="opt-title">Solo en situaciones exigentes</span>
+          <span class="opt-desc">Defectos sutiles: posibles episodios de desorientación en lugares no familiares, fallos en evocación de nombres, peor rendimiento laboral exigente. Mantiene autonomía completa. Negación y ansiedad discreta.</span>
+        </span>
+        <span class="opt-arrow"><span class="gds-out">GDS 3</span></span>
+      </button>
+      <button class="opt" data-result="4">
+        <span class="marker">b</span>
+        <span class="opt-body">
+          <span class="opt-title">Dificultad en AIVD complejas</span>
+          <span class="opt-desc">Conocimiento disminuido de acontecimientos actuales, defecto en sustracción seriada, capacidad disminuida para viajes y finanzas. Conserva orientación T/P, caras familiares y desplazamiento por lugares conocidos.</span>
+        </span>
+        <span class="opt-arrow"><span class="gds-out">GDS 4</span></span>
+      </button>
+      <button class="opt" data-result="5">
+        <span class="marker">c</span>
+        <span class="opt-body">
+          <span class="opt-title">Necesita supervisión continuada</span>
+          <span class="opt-desc">No recuerda dirección, teléfono o nombres de familiares próximos. Desorientación temporal y/o espacial frecuente. Conserva su nombre y el de la pareja. No requiere ayuda en aseo ni comida (sí elección de ropa).</span>
+        </span>
+        <span class="opt-arrow"><span class="gds-out">GDS 5</span></span>
+      </button>
+      <button class="opt" data-result="6">
+        <span class="marker">d</span>
+        <span class="opt-body">
+          <span class="opt-title">Dependencia parcial en ABVD</span>
+          <span class="opt-desc">Requiere ayuda en aseo y vestido. Puede olvidar nombre de la pareja. Desconoce acontecimientos recientes y su entorno. Posible incontinencia. Cambios conductuales: delirios, agitación, abulia. Casi siempre recuerda su nombre.</span>
+        </span>
+        <span class="opt-arrow"><span class="gds-out">GDS 6</span></span>
+      </button>
+      <button class="opt" data-result="7">
+        <span class="marker">e</span>
+        <span class="opt-body">
+          <span class="opt-title">Dependencia total</span>
+          <span class="opt-desc">Pérdida del lenguaje articulado, incontinencia urinaria, asistencia completa para aseo y alimentación, pérdida de la deambulación. Signos neurológicos generalizados y corticales.</span>
+        </span>
+        <span class="opt-arrow"><span class="gds-out">GDS 7</span></span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Result Screen -->
+  <div class="screen result-screen" id="screenR">
+    <button class="back-btn" id="backFromR">← Cambiar respuesta</button>
+
+    <div class="result-hero">
+      <div class="pre">Estadio · Reisberg</div>
+      <div class="number" id="rNumber">—</div>
+      <div class="name" id="rName">—</div>
+      <div class="equiv" id="rEquiv">—</div>
+      <div class="mec" id="rMec">—</div>
+    </div>
+
+    <div class="recap">
+      <div class="recap-title">Resumen clínico</div>
+      <div class="recap-text" id="rRecap">—</div>
+    </div>
+
+    <div class="meta-row">
+      <div class="meta-cell">
+        <label for="fecha">Fecha</label>
+        <input type="date" id="fecha">
+      </div>
+      <div class="meta-cell">
+        <label for="genero">Paciente</label>
+        <select id="genero">
+          <option value="f" selected>femenino</option>
+          <option value="m">masculino</option>
+          <option value="n">neutro</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button class="btn" id="copyBtn">Copiar para historia clínica</button>
+      <button class="btn secondary" id="resetBtn">Reiniciar</button>
+    </div>
+
+    <div class="clinical-output" id="clinicalOutput"></div>
+  </div>
+
+  <footer>
+    Global Deterioration Scale · Reisberg
+    <span class="ref">Reisberg B, Ferris SH, de Leon MJ, Crook T. <em>Am J Psychiatry</em> 1982;139(9):1136–1139.</span>
+  </footer>
+
+</div>
+
+<script>
+  const STAGES = {
+    1:{ n:1, title:'Ausencia de alteración cognitiva', equiv:'Individuo normal', mecMin:30, mecMax:35,
+        narrative:'corresponde a un perfil cognitivo normal, sin quejas subjetivas ni evidencia de trastorno mnésico en la entrevista',
+        recap:'Estado cognitivo normal. Sin quejas subjetivas. Ausencia de trastornos de memoria en la entrevista clínica.' },
+    2:{ n:2, title:'Disminución cognitiva muy leve', equiv:'Deterioro cognitivo subjetivo', mecMin:25, mecMax:30,
+        narrative:'corresponde a un cuadro compatible con deterioro cognitivo subjetivo. {Pron} refiere quejas mnésicas — fundamentalmente olvido del emplazamiento de objetos familiares y de nombres previamente conocidos — sin evidencia objetiva de defectos en el examen clínico ni repercusión sobre el desempeño laboral o social, manteniendo pleno conocimiento de su sintomatología',
+        recap:'Quejas subjetivas de defectos de memoria (olvido de dónde coloca objetos familiares, olvido de nombres) sin evidencia objetiva en la exploración ni repercusión laboral o social. Pleno conocimiento de la sintomatología.' },
+    3:{ n:3, title:'Defecto cognitivo leve', equiv:'Deterioro cognitivo leve', mecMin:20, mecMax:27,
+        narrative:'corresponde a un cuadro compatible con deterioro cognitivo leve. Aparecen los primeros defectos claros, con posibles episodios de desorientación en lugares no familiares, detección por el entorno de dificultades en la evocación de palabras y nombres, retención escasa del material leído, déficit de concentración en la exploración y decremento del rendimiento en situaciones laborales o sociales exigentes; la negación o minimización de los defectos es manifiesta y se acompaña de ansiedad discreta o moderada',
+        recap:'Primeros defectos claros. Posibles episodios de desorientación en lugares no familiares, detección por el entorno de dificultades en la evocación de palabras/nombres, déficit de concentración y peor rendimiento en situaciones exigentes. Negación con ansiedad discreta o moderada.' },
+    4:{ n:4, title:'Defecto cognitivo moderado', equiv:'Demencia en estadio leve', mecMin:16, mecMax:23,
+        narrative:'corresponde a una demencia en estadio leve. La entrevista cuidadosa pone de manifiesto un conocimiento disminuido de los acontecimientos actuales y recientes, cierto déficit en el recuerdo de la propia historia personal, defecto de concentración evidenciable mediante sustracción seriada de sietes y una capacidad disminuida para tareas complejas como viajes o gestión financiera; suelen preservarse la orientación en tiempo y persona, el reconocimiento de caras familiares y el desplazamiento por lugares conocidos. La negación es el mecanismo de defensa dominante, con disminución del afecto y abandono de las situaciones más exigentes',
+        recap:'Demencia leve. Conocimiento disminuido de acontecimientos recientes, déficit en la historia personal, alteración de la sustracción seriada y capacidad disminuida para AIVD complejas (viajes, finanzas). Se preservan orientación T/P, reconocimiento de familiares y desplazamiento por lugares conocidos. Negación dominante.' },
+    5:{ n:5, title:'Defecto cognitivo moderado-grave', equiv:'Demencia en estadio moderado', mecMin:10, mecMax:19,
+        narrative:'corresponde a una demencia en estadio moderado. {Pron} no puede sobrevivir mucho tiempo sin asistencia: no recuerda datos relevantes de su vida actual como dirección, teléfono de muchos años o nombres de familiares próximos, y presenta frecuentemente cierta desorientación temporal o espacial; conserva sin embargo el conocimiento de muchos hechos de su propia identidad y, de forma invariable, su nombre y habitualmente el de la pareja e hijos. No requiere asistencia en el aseo ni en la alimentación, aunque puede mostrar dificultad para elegir la ropa adecuada',
+        recap:'Demencia moderada. No puede sobrevivir mucho tiempo sin asistencia. No recuerda dirección, teléfono o nombres de nietos. Desorientación temporal o espacial frecuente. Conserva su nombre y el de la pareja. Autónomo para aseo y comida, con dificultad para elegir la ropa.' },
+    6:{ n:6, title:'Defecto cognitivo grave', equiv:'Demencia en estadio moderadamente grave', mecMin:0, mecMax:12,
+        narrative:'corresponde a una demencia en estadio moderadamente grave. {Pron} depende por completo del cuidador para sobrevivir, desconoce los acontecimientos recientes de su vida y conserva solo fragmentos de su biografía pasada; suele desconocer su entorno y la cronología, requiere asistencia en las actividades cotidianas y puede presentar incontinencia o necesidad de ayuda para deambular, aunque generalmente reconoce a las personas familiares y casi siempre recuerda su nombre. Son frecuentes los cambios emocionales y de personalidad: conducta delirante, síntomas obsesivos, ansiedad, agitación, conducta violenta previamente inexistente o abulia cognitiva con pérdida de iniciativa',
+        recap:'Demencia moderadamente grave. Dependencia para sobrevivir. Puede olvidar el nombre de la pareja, desconoce acontecimientos recientes y su entorno. Requiere ayuda en ABVD, posible incontinencia. Cambios conductuales: delirios, obsesiones, agitación o abulia. Casi siempre recuerda su nombre.', mecText:null },
+    7:{ n:7, title:'Defecto cognitivo muy grave', equiv:'Demencia en estadio grave', mecMin:0, mecMax:0, mecText:'impracticable',
+        narrative:'corresponde a una demencia en estadio grave. Se evidencia pérdida progresiva de las capacidades verbales — desde frases circunscritas hasta la ausencia de lenguaje articulado en fases terminales —, incontinencia urinaria, necesidad de asistencia para el aseo y la alimentación y pérdida progresiva de las habilidades psicomotoras básicas como la deambulación, con aparición frecuente de signos neurológicos generalizados y corticales',
+        recap:'Demencia grave. Pérdida progresiva del lenguaje (hasta mutismo), incontinencia urinaria, asistencia total para aseo y alimentación, pérdida de la deambulación. Signos neurológicos generalizados y corticales.' }
+  };
+
+  const $ = s => document.querySelector(s);
+  const screens = {1:$('#screen1'), 2:$('#screen2'), R:$('#screenR')};
+  const crumb = $('#crumb');
+  let path = []; // for breadcrumb
+  let currentResult = null;
+
+  $('#fecha').value = new Date().toISOString().split('T')[0];
+
+  function showScreen(id){
+    Object.values(screens).forEach(s => s.classList.remove('show'));
+    screens[id].classList.add('show');
+    if(id === 'R') updateResultUI();
+    if(id === 1){ path = []; }
+    updateCrumb(id);
+    window.scrollTo({top:0, behavior:'smooth'});
+  }
+
+  function updateCrumb(id){
+    let html = '';
+    if(id === 1){
+      html = '<span class="step active">Paso 1</span>';
+    } else if(id === 2){
+      html = '<span class="step">Paso 1</span><span class="sep">›</span><span class="step active">Paso 2</span>';
+    } else if(id === 'R'){
+      const steps = path.length;
+      if(steps === 1){
+        html = '<span class="step">Paso 1</span><span class="sep">›</span><span class="step active">Resultado</span>';
+      } else {
+        html = '<span class="step">Paso 1</span><span class="sep">›</span><span class="step">Paso 2</span><span class="sep">›</span><span class="step active">Resultado</span>';
+      }
+    }
+    crumb.innerHTML = html;
+  }
+
+  // Wire up options
+  document.querySelectorAll('.opt').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const result = btn.dataset.result;
+      const next = btn.dataset.next;
+      if(result){
+        if(btn.closest('#screen1')) path = [1];
+        else path = [1,2];
+        currentResult = parseInt(result, 10);
+        showScreen('R');
+      } else if(next){
+        path = [1];
+        showScreen(parseInt(next,10));
+      }
+    });
+  });
+
+  $('#backTo1').addEventListener('click', () => showScreen(1));
+  $('#backFromR').addEventListener('click', () => {
+    // Go back to the last step (1 if direct result, 2 if came from step 2)
+    showScreen(path.length === 2 ? 2 : 1);
+  });
+  $('#resetBtn').addEventListener('click', () => {
+    currentResult = null;
+    $('#clinicalOutput').classList.remove('show');
+    $('#clinicalOutput').textContent = '';
+    $('#fecha').value = new Date().toISOString().split('T')[0];
+    $('#genero').value = 'f';
+    showScreen(1);
+  });
+
+  function updateResultUI(){
+    if(!currentResult) return;
+    const s = STAGES[currentResult];
+    $('#rNumber').textContent = s.n;
+    $('#rName').textContent = s.title;
+    $('#rEquiv').textContent = s.equiv;
+    const mecText = s.mecText
+      ? `MEC Lobo: ${s.mecText}`
+      : `MEC Lobo ${s.mecMin}–${s.mecMax} pts · orientativo`;
+    $('#rMec').textContent = mecText;
+    $('#rRecap').textContent = s.recap;
+    $('#clinicalOutput').classList.remove('show');
+  }
+
+  function fmtFecha(iso){
+    if(!iso) return '';
+    const [y,m,d] = iso.split('-');
+    return `${d}/${m}/${y}`;
+  }
+  function pronoun(g){
+    return g === 'm' ? 'El paciente' : (g === 'n' ? 'El/la paciente' : 'La paciente');
+  }
+
+  function buildClinicalText(){
+    if(!currentResult) return '';
+    const s = STAGES[currentResult];
+    const fecha = fmtFecha($('#fecha').value);
+    const pron = pronoun($('#genero').value);
+    const narrative = s.narrative.replace(/\{Pron\}/g, pron);
+    const mecPhrase = s.mecText
+      ? `El Miniexamen Cognoscitivo de Lobo resulta ${s.mecText} en este estadio.`
+      : `La correlación orientativa con el Miniexamen Cognoscitivo de Lobo se sitúa entre ${s.mecMin} y ${s.mecMax} puntos.`;
+    return `Tras la evaluación clínica realizada el ${fecha}, se establece un GDS ${s.n} (${s.title.toLowerCase()}) en la escala de deterioro global de Reisberg, que ${narrative}. ${mecPhrase}`;
+  }
+
+  const copyBtn = $('#copyBtn');
+  copyBtn.addEventListener('click', async () => {
+    const text = buildClinicalText();
+    const output = $('#clinicalOutput');
+    output.textContent = text;
+    output.classList.add('show');
+    try{
+      await navigator.clipboard.writeText(text);
+      const original = copyBtn.textContent;
+      copyBtn.textContent = 'Copiado ✓';
+      copyBtn.classList.add('copied');
+      setTimeout(() => {
+        copyBtn.textContent = original;
+        copyBtn.classList.remove('copied');
+      }, 1800);
+    }catch(e){
+      const range = document.createRange();
+      range.selectNodeContents(output);
+      const sel = window.getSelection();
+      sel.removeAllRanges();
+      sel.addRange(range);
+    }
+  });
+
+  updateCrumb(1);
+</script>
+</body>
+</html>
