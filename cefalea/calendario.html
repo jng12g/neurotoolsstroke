@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Generador de Calendario de Cefaleas - Migraña</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; color: #333; }
+        .controls { margin-bottom: 20px; padding: 15px; background-color: #f0f0f0; border-radius: 5px; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 10px; font-size: 11px; }
+        th, td { border: 1px solid #999; padding: 5px; text-align: left; }
+        th { background-color: #e5e5e5; font-weight: bold; text-align: center; }
+        td { height: 22px; }
+        h2 { font-size: 18px; margin-top: 0; margin-bottom: 5px; }
+        .leyenda { font-size: 10px; margin-top: 5px; padding: 8px; border: 1px solid #ccc; background-color: #fafafa; }
+        .resumen { font-size: 12px; font-weight: bold; margin-top: 10px; text-align: right; }
+        .resumen span { margin-left: 20px; border-bottom: 1px solid #333; padding-bottom: 2px; }
+        
+        @media print {
+            @page { size: landscape; margin: 15mm; }
+            .controls { display: none; }
+            .mes-container { page-break-after: always; }
+            body { margin: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="controls">
+        <label for="fechaInicio">Seleccione el mes de inicio:</label>
+        <input type="month" id="fechaInicio" required>
+        <button onclick="generarCalendarios()">Generar e Imprimir</button>
+    </div>
+
+    <div id="contenedorImpresion"></div>
+
+    <script>
+        function generarCalendarios() {
+            const fechaInput = document.getElementById('fechaInicio').value;
+            if (!fechaInput) {
+                alert("Por favor, seleccione una fecha.");
+                return;
+            }
+
+            const contenedor = document.getElementById('contenedorImpresion');
+            contenedor.innerHTML = ''; 
+
+            const fechaBase = new Date(fechaInput + '-01'); 
+            const nombresMeses = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+
+            for (let i = 0; i < 3; i++) {
+                const mesActual = new Date(fechaBase.getFullYear(), fechaBase.getMonth() + i, 1);
+                const mesNombre = nombresMeses[mesActual.getMonth()];
+                const año = mesActual.getFullYear();
+                const diasEnMes = new Date(año, mesActual.getMonth() + 1, 0).getDate();
+
+                let html = `
+                <div class="mes-container">
+                    <h2>Registro de Cefaleas y Migraña - ${mesNombre} ${año}</h2>
+                    <p style="font-size: 12px; margin-bottom: 10px;"><strong>Paciente:</strong> __________________________________________________ &nbsp;&nbsp;&nbsp; <strong>Tratamiento Preventivo Actual:</strong> _____________________________________</p>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th style="width: 5%;">Día</th>
+                                <th style="width: 8%;">Intensidad<br>(1-10)</th>
+                                <th style="width: 8%;">Duración<br>(Horas)</th>
+                                <th style="width: 8%;">Aura<br>(Ver Leyenda)</th>
+                                <th style="width: 10%;">Localización</th>
+                                <th style="width: 12%;">Síntomas<br>Asociados</th>
+                                <th style="width: 12%;">Desencadenantes</th>
+                                <th style="width: 15%;">Tto. de Rescate<br>(Fármaco/Dosis)</th>
+                                <th style="width: 10%;">Alivio a las 2h<br>(Sí/No/Parcial)</th>
+                                <th style="width: 12%;">Incapacidad<br>(0-3)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                `;
+
+                for (let dia = 1; dia <= diasEnMes; dia++) {
+                    html += `
+                            <tr>
+                                <td style="text-align: center;"><strong>${dia}</strong></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                    `;
+                }
+
+                html += `
+                        </tbody>
+                    </table>
+                    
+                    <div class="resumen">
+                        Días con cefalea este mes: <span style="display:inline-block; width: 40px;"></span>
+                        Días con uso de medicación de rescate: <span style="display:inline-block; width: 40px;"></span>
+                    </div>
+
+                    <div class="leyenda">
+                        <strong>Localización:</strong> HD (Hemicraneal Derecha), HI (Hemicraneal Izquierda), F (Frontal), O (Occipital), C (Cervical), G (Global).<br>
+                        <strong>Aura:</strong> V (Visual - destellos/puntos ciegos), S (Sensitiva - hormigueos), D (Disfásica - dificultad para hablar).<br>
+                        <strong>Síntomas:</strong> N (Náuseas), V (Vómitos), F (Fotofobia), S (Sonofobia), O (Osmofobia).<br>
+                        <strong>Desencadenantes:</strong> E (Estrés), D (Déficit/Exceso de sueño), M (Menstruación), AL (Alimentos/Alcohol), C (Cambios de tiempo).<br>
+                        <strong>Incapacidad:</strong> 0 (Nula, vida normal), 1 (Leve, molesta pero no impide actividad), 2 (Moderada, reduce actividad), 3 (Grave, requiere reposo en cama).
+                    </div>
+                </div>
+                `;
+
+                contenedor.innerHTML += html;
+            }
+
+            setTimeout(() => {
+                window.print();
+            }, 500);
+        }
+    </script>
+</body>
+</html>
