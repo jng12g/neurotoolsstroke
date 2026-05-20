@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test de Parks-Bielschowsky | Neurotools</title>
+    <style>
+        :root {
+            --bg-color: #000000;
+            --surface-color: #1a1a1a;
+            --primary-color: #007aff;
+            --text-color: #ffffff;
+            --text-secondary: #a1a1aa;
+            --success-color: #34c759;
+            --border-radius: 12px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            width: 100%;
+            background-color: var(--surface-color);
+            border-radius: var(--border-radius);
+            padding: 30px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            margin-top: 20px;
+        }
+
+        h1 {
+            font-size: 24px;
+            margin-bottom: 5px;
+            text-align: center;
+        }
+
+        p.subtitle {
+            color: var(--text-secondary);
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .step-indicator {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .step-indicator::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background-color: #333;
+            z-index: 1;
+            transform: translateY(-50%);
+        }
+
+        .step-dot {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: #333;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            z-index: 2;
+            transition: all 0.3s;
+        }
+
+        .step-dot.active {
+            background-color: var(--primary-color);
+            color: #fff;
+        }
+
+        .step-dot.completed {
+            background-color: var(--success-color);
+            color: #fff;
+        }
+
+        .step-container {
+            display: none;
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        .step-container.active {
+            display: block;
+        }
+
+        .question {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .option-btn {
+            background-color: #2a2a2a;
+            border: 2px solid #333;
+            border-radius: var(--border-radius);
+            padding: 20px 10px;
+            cursor: pointer;
+            color: var(--text-color);
+            transition: all 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .option-btn:hover {
+            border-color: var(--primary-color);
+            background-color: #333;
+        }
+
+        .option-btn svg {
+            width: 60px;
+            height: 60px;
+            fill: none;
+            stroke: var(--text-color);
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .option-btn span {
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .result-box {
+            background-color: rgba(0, 122, 255, 0.1);
+            border: 1px solid var(--primary-color);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .result-muscle {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin: 10px 0;
+        }
+
+        .result-nerve {
+            font-size: 16px;
+            color: var(--text-secondary);
+        }
+
+        .reset-btn {
+            background-color: var(--primary-color);
+            color: #fff;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 20px;
+            transition: background-color 0.2s;
+        }
+
+        .reset-btn:hover {
+            background-color: #005bb5;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Test de Parks-Bielschowsky</h1>
+        <p class="subtitle">Algoritmo de 3 pasos para diplopía vertical</p>
+
+        <div class="step-indicator">
+            <div class="step-dot active" id="dot-1">1</div>
+            <div class="step-dot" id="dot-2">2</div>
+            <div class="step-dot" id="dot-3">3</div>
+            <div class="step-dot" id="dot-4">✓</div>
+        </div>
+
+        <!-- Paso 1 -->
+        <div class="step-container active" id="step-1">
+            <div class="question">1. En posición primaria, ¿Qué ojo presenta hiperdesviación (hipertropía)?</div>
+            <div class="options-grid">
+                <button class="option-btn" onclick="selectAnswer(1, 'R')">
+                    <svg viewBox="0 0 100 100">
+                        <circle cx="30" cy="50" r="15" />
+                        <circle cx="30" cy="50" r="5" fill="#fff" />
+                        <circle cx="70" cy="40" r="15" stroke="#007aff" />
+                        <circle cx="70" cy="40" r="5" fill="#007aff" stroke="none" />
+                        <path d="M 70 20 L 70 10 M 65 15 L 70 10 L 75 15" stroke="#007aff" />
+                    </svg>
+                    <span>Ojo Derecho (HTD)</span>
+                </button>
+                <button class="option-btn" onclick="selectAnswer(1, 'L')">
+                    <svg viewBox="0 0 100 100">
+                        <circle cx="30" cy="40" r="15" stroke="#007aff" />
+                        <circle cx="30" cy="40" r="5" fill="#007aff" stroke="none" />
+                        <path d="M 30 20 L 30 10 M 25 15 L 30 10 L 35 15" stroke="#007aff" />
+                        <circle cx="70" cy="50" r="15" />
+                        <circle cx="70" cy="50" r="5" fill="#fff" />
+                    </svg>
+                    <span>Ojo Izquierdo (HTI)</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Paso 2 -->
+        <div class="step-container" id="step-2">
+            <div class="question">2. ¿Hacia qué lado de la mirada aumenta la hiperdesviación?</div>
+            <div class="options-grid">
+                <button class="option-btn" onclick="selectAnswer(2, 'R')">
+                    <svg viewBox="0 0 100 100">
+                        <circle cx="40" cy="50" r="15" />
+                        <circle cx="45" cy="50" r="5" fill="#fff" />
+                        <circle cx="80" cy="50" r="15" />
+                        <circle cx="85" cy="50" r="5" fill="#fff" />
+                        <path d="M 30 20 L 80 20 M 70 10 L 80 20 L 70 30" />
+                    </svg>
+                    <span>Mirada a la Derecha</span>
+                </button>
+                <button class="option-btn" onclick="selectAnswer(2, 'L')">
+                    <svg viewBox="0 0 100 100">
+                        <circle cx="20" cy="50" r="15" />
+                        <circle cx="15" cy="50" r="5" fill="#fff" />
+                        <circle cx="60" cy="50" r="15" />
+                        <circle cx="55" cy="50" r="5" fill="#fff" />
+                        <path d="M 70 20 L 20 20 M 30 10 L 20 20 L 30 30" />
+                    </svg>
+                    <span>Mirada a la Izquierda</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Paso 3 -->
+        <div class="step-container" id="step-3">
+            <div class="question">3. Test de Bielschowsky: ¿Con qué inclinación de la cabeza empeora la hiperdesviación?</div>
+            <div class="options-grid">
+                <button class="option-btn" onclick="selectAnswer(3, 'R')">
+                    <svg viewBox="0 0 100 100" style="transform: rotate(15deg);">
+                        <ellipse cx="50" cy="50" rx="30" ry="40" />
+                        <path d="M 35 45 Q 40 40 45 45" />
+                        <path d="M 55 45 Q 60 40 65 45" />
+                        <path d="M 50 50 L 50 60" />
+                        <path d="M 40 70 Q 50 75 60 70" />
+                        <path d="M 85 20 Q 95 50 85 80 M 90 70 L 85 80 L 75 75" stroke="#007aff" />
+                    </svg>
+                    <span>Hombro Derecho</span>
+                </button>
+                <button class="option-btn" onclick="selectAnswer(3, 'L')">
+                    <svg viewBox="0 0 100 100" style="transform: rotate(-15deg);">
+                        <ellipse cx="50" cy="50" rx="30" ry="40" />
+                        <path d="M 35 45 Q 40 40 45 45" />
+                        <path d="M 55 45 Q 60 40 65 45" />
+                        <path d="M 50 50 L 50 60" />
+                        <path d="M 40 70 Q 50 75 60 70" />
+                        <path d="M 15 20 Q 5 50 15 80 M 10 70 L 15 80 L 25 75" stroke="#007aff" />
+                    </svg>
+                    <span>Hombro Izquierdo</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Resultado -->
+        <div class="step-container" id="step-4">
+            <div class="question">Diagnóstico Sugerido</div>
+            <div class="result-box">
+                <div style="font-size: 14px; text-transform: uppercase; letter-spacing: 1px;">Músculo Parético</div>
+                <div class="result-muscle" id="result-text">Músculo</div>
+                <div class="result-nerve" id="nerve-text">Nervio Craneal</div>
+            </div>
+            <button class="reset-btn" onclick="resetApp()">Nueva Evaluación</button>
+        </div>
+
+    </div>
+
+    <script>
+        const state = {
+            hyperEye: null, // 'R' o 'L'
+            worseGaze: null, // 'R' o 'L'
+            worseTilt: null  // 'R' o 'L'
+        };
+
+        const diagnosisMatrix = {
+            'R': {
+                'R': {
+                    'R': { muscle: 'Recto Inferior Derecho', nerve: 'III Par Craneal' },
+                    'L': { muscle: 'Oblicuo Inferior Izquierdo', nerve: 'III Par Craneal' }
+                },
+                'L': {
+                    'R': { muscle: 'Oblicuo Superior Derecho', nerve: 'IV Par Craneal' },
+                    'L': { muscle: 'Recto Superior Izquierdo', nerve: 'III Par Craneal' }
+                }
+            },
+            'L': {
+                'R': {
+                    'R': { muscle: 'Recto Superior Derecho', nerve: 'III Par Craneal' },
+                    'L': { muscle: 'Oblicuo Superior Izquierdo', nerve: 'IV Par Craneal' }
+                },
+                'L': {
+                    'R': { muscle: 'Oblicuo Inferior Derecho', nerve: 'III Par Craneal' },
+                    'L': { muscle: 'Recto Inferior Izquierdo', nerve: 'III Par Craneal' }
+                }
+            }
+        };
+
+        function selectAnswer(step, value) {
+            if (step === 1) state.hyperEye = value;
+            if (step === 2) state.worseGaze = value;
+            if (step === 3) state.worseTilt = value;
+
+            document.getElementById(`step-${step}`).classList.remove('active');
+            document.getElementById(`dot-${step}`).classList.replace('active', 'completed');
+            
+            const nextStep = step + 1;
+            document.getElementById(`step-${nextStep}`).classList.add('active');
+            document.getElementById(`dot-${nextStep}`).classList.add('active');
+
+            if (nextStep === 4) {
+                showResult();
+            }
+        }
+
+        function showResult() {
+            const result = diagnosisMatrix[state.hyperEye][state.worseGaze][state.worseTilt];
+            document.getElementById('result-text').textContent = result.muscle;
+            document.getElementById('nerve-text').textContent = "Sospecha de afectación: " + result.nerve;
+        }
+
+        function resetApp() {
+            state.hyperEye = null;
+            state.worseGaze = null;
+            state.worseTilt = null;
+
+            document.getElementById('step-4').classList.remove('active');
+            document.getElementById('step-1').classList.add('active');
+
+            for (let i = 1; i <= 4; i++) {
+                const dot = document.getElementById(`dot-${i}`);
+                dot.classList.remove('completed', 'active');
+                if (i === 1) dot.classList.add('active');
+            }
+        }
+    </script>
+</body>
+</html>
