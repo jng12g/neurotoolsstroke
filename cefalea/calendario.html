@@ -8,7 +8,7 @@
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #f1f5f9; color: #1e293b; line-height: 1.5; }
         
-        .ui-container { max-width: 850px; margin: 40px auto; background: #ffffff; border-radius: 12px; shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); overflow: hidden; border: 1px solid #e2e8f0; }
+        .ui-container { max-width: 850px; margin: 40px auto; background: #ffffff; border-radius: 12px; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); overflow: hidden; border: 1px solid #e2e8f0; }
         .ui-header { background: linear-gradient(135deg, #1e3a8a 0%, #0f766e 100%); color: #ffffff; padding: 30px; text-align: center; }
         .ui-header h1 { font-size: 24px; font-weight: 700; margin-bottom: 8px; letter-spacing: -0.5px; }
         .ui-header p { font-size: 14px; color: #ccfbf1; font-weight: 300; }
@@ -40,44 +40,47 @@
             
             @page { 
                 size: A4 landscape; 
-                margin: 8mm 10mm 8mm 10mm; 
+                margin: 6mm 8mm; /* Márgenes reducidos para maximizar espacio */
             }
             
             .page-month { 
-                page-break-after: always; 
-                position: relative;
-                height: 100%;
-                max-height: 192mm; /* Forzar estricto ajuste en una página A4 horizontal */
+                page-break-after: always;
+                page-break-inside: avoid;
+                height: 195mm; /* Altura máxima estricta para A4 apaisado */
+                display: flex;
+                flex-direction: column; /* Estructura Flex para evitar solapes */
+                justify-content: space-between;
                 box-sizing: border-box;
+                overflow: hidden;
             }
             
             /* Cabecera Médica */
-            .print-header { width: 100%; margin-bottom: 6px; border-bottom: 2px solid #334155; padding-bottom: 5px; }
-            .print-title-row { display: table; width: 100%; }
-            .print-title { display: table-cell; font-size: 16pt; font-weight: bold; color: #1e3a8a; width: 60%; }
-            .print-date-meta { display: table-cell; font-size: 14pt; font-weight: bold; text-align: right; color: #334155; width: 40%; }
+            .print-header { width: 100%; flex-shrink: 0; margin-bottom: 4px; border-bottom: 2px solid #334155; padding-bottom: 4px; }
+            .print-title-row { display: flex; justify-content: space-between; align-items: baseline; width: 100%; }
+            .print-title { font-size: 15pt; font-weight: bold; color: #1e3a8a; }
+            .print-date-meta { font-size: 13pt; font-weight: bold; color: #334155; }
             
-            .print-meta-table { width: 100%; margin-top: 4px; font-size: 9pt; }
-            .print-meta-table td { border: none !important; padding: 2px 0 !important; height: auto !important; }
+            .print-meta-table { width: 100%; margin-top: 4px; font-size: 8.5pt; }
+            .print-meta-table td { border: none !important; padding: 1px 0 !important; }
             
-            /* Tabla de Datos Diarios Optimizado */
-            .data-table { width: 100%; border-collapse: collapse; margin-top: 4px; }
-            .data-table th { background-color: #f1f5f9 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; font-size: 8.5pt; font-weight: bold; border: 1px solid #475569; text-align: center; padding: 3px 2px; }
-            .data-table td { border: 1px solid #94a3b8; text-align: center; font-size: 8.5pt; height: 18px; padding: 0px 2px; }
+            /* Tabla de Datos Diarios Optimizada */
+            .data-table { width: 100%; border-collapse: collapse; margin-top: 2px; flex-grow: 1; /* Esto hace que la tabla ocupe todo el espacio disponible sin empujar la leyenda */ }
+            .data-table th { background-color: #f1f5f9 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; font-size: 8pt; font-weight: bold; border: 1px solid #475569; text-align: center; padding: 2px; height: 16px; }
+            .data-table td { border: 1px solid #94a3b8; text-align: center; font-size: 8pt; padding: 0; height: 10px; /* Altura base pequeña, flex-grow la expandirá */ }
             
             /* Identificación de fines de semana */
             .weekend-row { background-color: #e2e8f0 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-            .day-cell { font-weight: bold; text-align: left; padding-left: 5px !important; }
+            .day-cell { font-weight: bold; text-align: left; padding-left: 4px !important; }
             
             /* Footer de doble columna: Leyenda + Resumen */
-            .print-footer { display: table; width: 100%; margin-top: 6px; border-top: 1px solid #cbd5e1; padding-top: 5px; }
-            .footer-left { display: table-cell; width: 65%; font-size: 7.5pt; color: #334155; vertical-align: top; line-height: 1.3; }
-            .footer-right { display: table-cell; width: 35%; font-size: 9pt; vertical-align: top; padding-left: 15px; }
+            .print-footer { flex-shrink: 0; display: flex; justify-content: space-between; width: 100%; margin-top: 4px; border-top: 1px solid #cbd5e1; padding-top: 4px; }
+            .footer-left { width: 68%; font-size: 7pt; color: #334155; line-height: 1.2; }
+            .footer-right { width: 30%; font-size: 8pt; }
             
-            .summary-box { border: 1px solid #475569; padding: 5px; background-color: #f8fafc !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; border-radius: 4px; }
-            .summary-row { margin-bottom: 4px; }
+            .summary-box { border: 1px solid #475569; padding: 4px; background-color: #f8fafc !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; border-radius: 4px; }
+            .summary-row { margin-bottom: 3px; }
             .summary-row:last-child { margin-bottom: 0; }
-            .summary-line { display: inline-block; width: 35px; border-bottom: 1px solid #000; margin-left: 5px; height: 14px; vertical-align: bottom; }
+            .summary-line { display: inline-block; width: 35px; border-bottom: 1px solid #000; margin-left: 5px; height: 12px; vertical-align: bottom; }
         }
     </style>
 </head>
@@ -87,12 +90,12 @@
     <div class="ui-container">
         <div class="ui-header">
             <h1>Calendario de cefaleas</h1>
-            <p>Generación automatizada de calendario de cefaleas para 4 meses desde la fecha actual</p>
+            <p>Generación automatizada de calendario de cefaleas para 4 meses</p>
         </div>
         <div class="ui-content">
             <div class="instruction-box">
                 <h3>Optimización de Impresión</h3>
-                <p>Introduzca los datos del paciente y el tratamiento actual. Al hacer clic en generar, el sistema calculará los 4 meses consecutivos estructurando de forma exacta una página por mes en formato horizontal (A4), resaltando los fines de semana automáticamente.</p>
+                <p>Introduzca los datos del paciente y el tratamiento actual. Al hacer clic en generar, el sistema calculará los 4 meses consecutivos estructurando de forma exacta una página por mes en formato horizontal (A4), resaltando los fines de semana automáticamente sin solapes.</p>
             </div>
             
             <div class="form-grid">
@@ -105,13 +108,13 @@
                 <div class="form-row">
                     <div class="form-label">Médico / Especialista:</div>
                     <div class="form-field">
-                        <input type="text" id="inputMedico" placeholder="Ej" autocomplete="off">
+                        <input type="text" id="inputMedico" placeholder="" autocomplete="off">
                     </div>
                 </div>
                 <div class="form-row">
                     <div class="form-label">Tratamiento Preventivo Pautado:</div>
                     <div class="form-field">
-                        <input type="text" id="inputPreventivo" placeholder="Ej. Topiramato 50mg / Flunarizina 5mg" autocomplete="off">
+                        <input type="text" id="inputPreventivo" placeholder="" autocomplete="off">
                     </div>
                 </div>
                 <div class="form-row">
@@ -126,7 +129,7 @@
         </div>
     </div>
 
-    <!-- CONTENEDOR DE DINÁMICO PARA IMPRESIÓN -->
+    <!-- CONTENEDOR DINÁMICO PARA IMPRESIÓN -->
     <div id="printContainer"></div>
 
     <script>
