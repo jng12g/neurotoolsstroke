@@ -4,24 +4,29 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Retirada de FAE · NEUROTOOLS</title>
-  
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 
   <style>
     :root {
-      --paper: #f4efe4;
-      --paper-card: #faf6ec;
-      --ink: #1a1614;
-      --ink-soft: #4a3f38;
-      --ink-muted: #8a7d72;
-      --accent: #7a1f2b;
-      --hairline: #cfc4ad;
-      --ease: cubic-bezier(.2,.7,.3,1);
+      --paper:        #f4efe4;
+      --paper-card:   #faf6ec;
+      --paper-deep:   #ede5d2;
+      --ink:          #1a1614;
+      --ink-soft:     #4a3f38;
+      --ink-muted:    #8a7d72;
+      --accent:       #7a1f2b;
+      --accent-soft:  #a64a3a;
+      --gold:         #a78551;
+      --hairline:     #cfc4ad;
+      --hairline-soft:#e3d9c2;
+      --ease:         cubic-bezier(.2,.7,.3,1);
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    *,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
 
     body {
       background: var(--paper);
@@ -32,155 +37,442 @@
       min-height: 100vh;
       -webkit-font-smoothing: antialiased;
       background-image:
-        radial-gradient(at 15% 8%, rgba(122, 31, 43, 0.04) 0%, transparent 45%),
-        radial-gradient(at 85% 95%, rgba(166, 74, 58, 0.05) 0%, transparent 40%);
+        radial-gradient(at 15% 8%,  rgba(122, 31, 43, 0.05) 0%, transparent 45%),
+        radial-gradient(at 85% 95%, rgba(166, 74, 58, 0.06) 0%, transparent 40%),
+        radial-gradient(at 50% 50%, rgba(167,133, 81, 0.03) 0%, transparent 60%);
     }
 
     body::before {
       content: "";
       position: fixed; inset: 0; pointer-events: none;
-      z-index: 1; opacity: 0.3; mix-blend-mode: multiply;
+      z-index: 1; opacity: .35; mix-blend-mode: multiply;
       background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.1 0 0 0 0 0.08 0 0 0 0 0.07 0 0 0 0.45 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
     }
 
     .container {
-      max-width: 1080px; margin: 0 auto;
-      padding: 60px 32px; position: relative; z-index: 2;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 36px 32px 80px;
+      position: relative; z-index: 2;
     }
 
-    /* Cabecera */
-    header { text-align: center; margin-bottom: 50px; }
-    .back-link { display: inline-block; margin-bottom: 24px; color: var(--ink-muted); text-decoration: none; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; transition: color 0.3s; }
-    .back-link:hover { color: var(--accent); }
-    h1 { font-family: 'Fraunces', Georgia, serif; font-size: clamp(2.5rem, 5vw, 3.5rem); font-weight: 400; line-height: 1.1; letter-spacing: -0.02em; margin-bottom: 16px; color: var(--ink); }
-    h1 em { font-style: italic; color: var(--accent); font-weight: 300; }
-    .subtitle { font-family: 'Fraunces', Georgia, serif; font-style: italic; font-weight: 300; font-size: clamp(1.1rem, 2vw, 1.3rem); color: var(--ink-soft); max-width: 700px; margin: 0 auto; line-height: 1.4; }
+    /* ════════ TOPBAR ════════ */
+    .topbar {
+      display: flex; justify-content: space-between; align-items: center;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--hairline);
+      margin-bottom: 64px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .72rem; letter-spacing: .14em; text-transform: uppercase;
+      color: var(--ink-muted);
+    }
+    .topbar a { color: var(--ink-muted); text-decoration: none; transition: color .25s; }
+    .topbar a:hover { color: var(--accent); }
+    .topbar .crumb::before { content: "← "; }
+    .topbar .scope b { color: var(--ink-soft); font-weight: 500; }
 
-    /* Contenedores tipo Tarjeta */
+    /* ════════ HEADER ════════ */
+    header { text-align: center; margin-bottom: 56px; padding: 0 16px; }
+
+    .eyebrow {
+      display: inline-flex; align-items: center; gap: 14px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .68rem; letter-spacing: .24em; text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 28px;
+    }
+    .eyebrow::before, .eyebrow::after {
+      content: ""; display: block; width: 28px; height: 1px;
+      background: var(--accent); opacity: .45;
+    }
+
+    h1 {
+      font-family: 'Fraunces', Georgia, serif;
+      font-size: clamp(2.4rem, 5.2vw, 3.7rem);
+      font-weight: 400; line-height: 1.05; letter-spacing: -.025em;
+      margin-bottom: 24px; color: var(--ink);
+      font-variation-settings: "opsz" 96;
+    }
+    h1 em {
+      font-style: italic; color: var(--accent); font-weight: 300;
+      font-variation-settings: "opsz" 96;
+    }
+
+    .subtitle {
+      font-family: 'Fraunces', Georgia, serif;
+      font-style: italic; font-weight: 300;
+      font-size: clamp(1.05rem, 1.8vw, 1.2rem);
+      color: var(--ink-soft);
+      max-width: 640px; margin: 0 auto; line-height: 1.5;
+      font-variation-settings: "opsz" 14;
+    }
+
+    /* ════════ CARD ════════ */
     .card {
-      background: var(--paper-card); border: 1px solid var(--hairline); border-radius: 6px; padding: 40px;
-      margin-bottom: 24px; position: relative; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+      background: var(--paper-card);
+      border: 1px solid var(--hairline);
+      border-radius: 4px;
+      padding: 56px 56px 48px;
+      margin-bottom: 32px;
+      position: relative; overflow: hidden;
+      box-shadow:
+        0 1px 0 rgba(0,0,0,.02),
+        0 16px 48px -24px rgba(74, 63, 56, .18);
     }
-    .card::before { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: var(--accent); opacity: 0; transition: opacity 0.3s; }
-    .card:hover::before { opacity: 1; }
-
-    /* Layout del Formulario */
-    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
-    .form-section { display: flex; flex-direction: column; gap: 24px; }
-    .form-group { display: flex; flex-direction: column; gap: 8px; }
-    .form-group hr { border: 0; height: 1px; background: var(--hairline); margin-bottom: 12px; }
-    .form-group p { font-family: 'Instrument Sans', sans-serif; font-weight: 600; color: var(--ink); font-size: 0.95rem; line-height: 1.3; }
-    
-    /* Inputs numéricos */
-    .input-wrapper { display: flex; align-items: center; gap: 12px; }
-    input[type="number"] { 
-      background: transparent; border: 1px solid var(--hairline); border-radius: 4px; padding: 10px 16px; 
-      font-family: 'JetBrains Mono', monospace; font-size: 1rem; color: var(--ink); width: 100px; transition: border-color 0.3s; 
-    }
-    input[type="number"]:focus { border-color: var(--accent); outline: none; background: #fff; }
-    .unit { font-size: 0.9rem; color: var(--ink-muted); font-style: italic; }
-
-    /* Botones tipo Radio */
-    .radios { display: flex; flex-wrap: wrap; gap: 8px; }
-    .radios input[type="radio"] { display: none; }
-    .radios label { 
-      background: transparent; border: 1px solid var(--hairline); border-radius: 4px; padding: 8px 16px; 
-      font-size: 0.9rem; color: var(--ink-soft); cursor: pointer; transition: all 0.2s var(--ease); user-select: none; 
-    }
-    .radios label:hover { border-color: var(--ink-muted); background: rgba(0,0,0,0.02); }
-    .radios input[type="radio"]:checked + label { 
-      background: var(--accent); color: var(--paper); border-color: var(--accent); font-weight: 500;
+    .card::before {
+      content: ""; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+      background: linear-gradient(90deg, var(--accent) 0%, var(--accent-soft) 55%, var(--gold) 100%);
     }
 
-    /* Botón de Calcular */
-    #calcButton { 
-      background: var(--accent); color: var(--paper); border: none; border-radius: 4px; padding: 20px 40px; 
-      font-family: 'Fraunces', serif; font-size: 1.3rem; font-weight: 400; cursor: pointer; width: 100%; max-width: 400px; 
-      margin: 40px auto; display: block; text-align: center; transition: all 0.3s var(--ease); box-shadow: 0 8px 24px rgba(122, 31, 43, 0.15);
+    /* ════════ SECTIONS ════════ */
+    .section { margin-bottom: 52px; }
+    .section:last-child { margin-bottom: 0; }
+
+    .section-header {
+      display: flex; align-items: baseline; gap: 18px;
+      padding-bottom: 18px; margin-bottom: 32px;
+      border-bottom: 1px solid var(--hairline-soft);
     }
-    #calcButton:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(122, 31, 43, 0.25); filter: brightness(1.1); }
+    .section-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .7rem; letter-spacing: .18em;
+      color: var(--accent); font-weight: 600;
+    }
+    .section-title {
+      font-family: 'Fraunces', serif;
+      font-style: italic; font-weight: 400;
+      font-size: 1.55rem; color: var(--ink);
+      letter-spacing: -.01em;
+      font-variation-settings: "opsz" 36;
+    }
+
+    /* ════════ FORM GRID ════════ */
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 32px 56px;
+    }
+    .form-group { display: flex; flex-direction: column; gap: 14px; }
+    .form-group.span-2 { grid-column: span 2; }
+
+    .label {
+      display: flex; align-items: baseline; gap: 12px;
+      font-family: 'Instrument Sans', sans-serif;
+      font-weight: 500; color: var(--ink);
+      font-size: .95rem; line-height: 1.4;
+    }
+    .label-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .68rem; color: var(--ink-muted);
+      letter-spacing: .1em; min-width: 22px; flex-shrink: 0;
+    }
+
+    .num-input {
+      display: inline-flex; align-items: baseline; gap: 14px;
+      padding-left: 34px;
+    }
+    input[type="number"] {
+      background: transparent; border: none;
+      border-bottom: 1.5px solid var(--hairline);
+      padding: 6px 4px;
+      font-family: 'Fraunces', serif;
+      font-weight: 400;
+      font-size: 1.5rem;
+      color: var(--ink);
+      width: 90px; text-align: center;
+      transition: border-color .25s, background .25s;
+      -moz-appearance: textfield;
+      font-variation-settings: "opsz" 36;
+    }
+    input[type="number"]::-webkit-outer-spin-button,
+    input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+    input[type="number"]:focus {
+      outline: none;
+      border-bottom-color: var(--accent);
+      background: rgba(122, 31, 43, .03);
+    }
+    .unit {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .7rem; color: var(--ink-muted);
+      letter-spacing: .08em;
+    }
+
+    .radios {
+      display: flex; flex-wrap: wrap; gap: 6px;
+      padding-left: 34px;
+    }
+    .radios input[type="radio"] {
+      position: absolute; opacity: 0; pointer-events: none;
+    }
+    .radios label {
+      background: transparent;
+      border: 1px solid var(--hairline);
+      border-radius: 2px;
+      padding: 8px 16px;
+      font-family: 'Instrument Sans', sans-serif;
+      font-size: .87rem; color: var(--ink-soft);
+      cursor: pointer; user-select: none;
+      transition: all .2s var(--ease);
+      letter-spacing: .01em;
+    }
+    .radios label:hover {
+      border-color: var(--accent-soft);
+      color: var(--ink);
+      background: rgba(122, 31, 43, .025);
+    }
+    .radios input[type="radio"]:checked + label {
+      background: var(--ink);
+      color: var(--paper-card);
+      border-color: var(--ink);
+    }
+    .radios input[type="radio"]:focus-visible + label {
+      outline: 2px solid var(--accent); outline-offset: 2px;
+    }
+
+    /* ════════ CALC BUTTON ════════ */
+    .action-zone {
+      display: flex; justify-content: center;
+      margin: 8px 0 32px;
+    }
+    #calcButton {
+      display: inline-flex; align-items: center; gap: 16px;
+      background: var(--accent);
+      color: var(--paper-card);
+      border: none; border-radius: 3px;
+      padding: 18px 56px;
+      font-family: 'Fraunces', serif;
+      font-size: 1.18rem; font-weight: 400;
+      letter-spacing: .005em;
+      cursor: pointer;
+      transition: all .3s var(--ease);
+      box-shadow: 0 10px 28px -12px rgba(122, 31, 43, .42);
+      font-variation-settings: "opsz" 24;
+    }
+    #calcButton::after {
+      content: "→";
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1rem;
+      transition: transform .3s var(--ease);
+    }
+    #calcButton:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 16px 36px -12px rgba(122, 31, 43, .5);
+      background: #8b2331;
+    }
+    #calcButton:hover::after { transform: translateX(5px); }
     #calcButton:active { transform: translateY(0); }
+    #calcButton:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
 
-    /* Bloque de resultados */
-    #resultBlock { border-color: var(--accent); background: #fff; text-align: center; font-size: 1.1rem; }
+    /* ════════ RESULTS ════════ */
+    #resultBlock {
+      background: #fff;
+      border-color: var(--accent);
+      padding: 48px 56px 40px;
+    }
+    .result-head {
+      text-align: center;
+      padding-bottom: 28px;
+      margin-bottom: 8px;
+      border-bottom: 1px solid var(--hairline-soft);
+    }
+    .result-eyebrow {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .68rem; letter-spacing: .22em; text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 14px;
+    }
+    .result-title {
+      font-family: 'Fraunces', serif;
+      font-style: italic; font-weight: 400;
+      font-size: 1.8rem;
+      color: var(--ink);
+      letter-spacing: -.015em;
+      font-variation-settings: "opsz" 48;
+    }
+    .result {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 24px;
+      padding: 22px 0;
+      border-bottom: 1px solid var(--hairline-soft);
+    }
+    .result:last-of-type { border-bottom: none; padding-bottom: 8px; }
+    .result-label {
+      font-family: 'Fraunces', serif;
+      font-style: italic; font-weight: 400;
+      color: var(--ink-soft);
+      font-size: 1.15rem;
+      line-height: 1.3;
+      font-variation-settings: "opsz" 24;
+    }
+    .result-label small {
+      display: block;
+      font-family: 'JetBrains Mono', monospace;
+      font-style: normal;
+      font-size: .62rem;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: var(--ink-muted);
+      margin-top: 6px;
+    }
+    .value {
+      font-family: 'Fraunces', serif;
+      font-weight: 400;
+      font-size: 2.6rem;
+      line-height: 1;
+      color: var(--accent);
+      letter-spacing: -.02em;
+      font-variation-settings: "opsz" 96;
+      white-space: nowrap;
+    }
+    .result.freedom .value { color: var(--ink); }
+    .result-meta {
+      margin-top: 24px;
+      padding-top: 20px;
+      border-top: 1px solid var(--hairline-soft);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .68rem;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--ink-muted);
+      text-align: center;
+      line-height: 1.8;
+    }
+    .result-note {
+      margin-top: 14px;
+      font-family: 'Fraunces', serif;
+      font-style: italic;
+      font-size: .92rem;
+      color: var(--ink-soft);
+      text-align: center;
+      max-width: 540px;
+      margin-left: auto; margin-right: auto;
+      letter-spacing: 0;
+      text-transform: none;
+      line-height: 1.5;
+      font-variation-settings: "opsz" 14;
+    }
 
-    /* Bloque de Información / Aviso legal */
-    .info-block { background: transparent; border: 1px solid var(--hairline); border-radius: 6px; padding: 24px; margin-top: 40px; font-size: 0.85rem; color: var(--ink-soft); }
-    .info-block h4 { font-family: 'Fraunces', serif; color: var(--ink); margin-bottom: 12px; font-size: 1.1rem; }
-    .info-block a { color: var(--accent); text-decoration: none; border-bottom: 1px dotted var(--accent); transition: opacity 0.3s; }
-    .info-block a:hover { opacity: 0.7; }
-    .info-block p { margin-bottom: 12px; }
+    /* ════════ INFO BLOCK ════════ */
+    .info-block {
+      background: transparent;
+      border-top: 1px solid var(--hairline);
+      padding: 36px 8px 0;
+      margin-top: 56px;
+      font-size: .87rem;
+      color: var(--ink-soft);
+      line-height: 1.65;
+    }
+    .info-block h4 {
+      font-family: 'Fraunces', serif;
+      font-style: italic; font-weight: 400;
+      color: var(--ink);
+      margin-bottom: 18px; font-size: 1.2rem;
+      font-variation-settings: "opsz" 36;
+    }
+    .info-block a {
+      color: var(--accent); text-decoration: none;
+      border-bottom: 1px dotted var(--accent);
+      transition: opacity .25s;
+    }
+    .info-block a:hover { opacity: .7; }
+    .info-block p { margin-bottom: 14px; }
     .info-block p:last-child { margin-bottom: 0; }
+    .info-block strong { color: var(--ink); font-weight: 600; }
 
-    /* Pie de página */
-    footer { margin-top: 60px; text-align: center; font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-muted); line-height: 1.8; }
-    footer a { color: var(--ink-muted); text-decoration: underline; }
-    footer a:hover { color: var(--accent); }
+    /* ════════ FOOTER ════════ */
+    footer {
+      margin-top: 72px;
+      padding-top: 36px;
+      border-top: 1px solid var(--hairline);
+      display: flex; flex-direction: column; align-items: center; gap: 14px;
+      text-align: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .66rem; letter-spacing: .12em; text-transform: uppercase;
+      color: var(--ink-muted); line-height: 1.8;
+    }
+    footer .credit {
+      font-family: 'Fraunces', serif;
+      font-style: italic; font-weight: 300;
+      font-size: .98rem;
+      letter-spacing: 0; text-transform: none;
+      color: var(--ink-soft);
+      max-width: 580px;
+      font-variation-settings: "opsz" 14;
+    }
+    footer a {
+      color: var(--ink-muted); text-decoration: none;
+      border-bottom: 1px dotted var(--ink-muted);
+      transition: color .25s, border-color .25s;
+    }
+    footer a:hover { color: var(--accent); border-bottom-color: var(--accent); }
+    footer .meta {
+      display: flex; gap: 14px; flex-wrap: wrap;
+      justify-content: center; align-items: center;
+    }
+    footer .dot { color: var(--hairline); }
+    footer .disclaimer {
+      font-size: .6rem; opacity: .85;
+      max-width: 480px;
+    }
+    footer .stamp {
+      margin-top: 16px; padding: 7px 16px;
+      border: 1px solid var(--hairline);
+      border-radius: 2px;
+      color: var(--ink-muted);
+    }
 
-    /* Móviles */
-    @media (max-width: 768px) {
-      .container { padding: 40px 16px; }
-      h1 { font-size: 2rem; }
-      .form-grid { grid-template-columns: 1fr; gap: 32px; }
-      .card { padding: 24px 16px; }
+    /* ════════ MOBILE ════════ */
+    @media (max-width: 780px) {
+      .container { padding: 24px 16px 64px; }
+      .topbar { font-size: .62rem; flex-wrap: wrap; gap: 8px; margin-bottom: 40px; }
+      header { margin-bottom: 40px; }
+      .eyebrow { font-size: .62rem; margin-bottom: 20px; }
+      .card { padding: 32px 22px; }
+      .form-grid { grid-template-columns: 1fr; gap: 28px; }
+      .form-group.span-2 { grid-column: span 1; }
+      .section { margin-bottom: 40px; }
+      .section-title { font-size: 1.3rem; }
+      .num-input, .radios { padding-left: 0; }
+      #calcButton { width: 100%; max-width: 360px; justify-content: center; padding: 16px 32px; font-size: 1.05rem; }
+      #resultBlock { padding: 32px 22px; }
+      .result { flex-direction: column; align-items: flex-start; gap: 6px; padding: 18px 0; }
+      .value { font-size: 2.2rem; }
+      .info-block { padding: 32px 0 0; margin-top: 40px; }
     }
   </style>
 </head>
 <body>
 
 <div class="container">
+
+  <div class="topbar">
+    <a href="../epilepsia/index.html" class="crumb">Epilepsia</a>
+    <span class="scope">NEUROTOOLS · <b>Pronóstico</b></span>
+  </div>
+
   <header>
-    <a href="../epilepsia/index.html" class="back-link">&larr; Volver a Epilepsia</a>
-    <h1>Riesgo de Recurrencia tras <em>Retirada de FAE</em></h1>
-    <p class="subtitle">Estimación del riesgo de recurrencia de crisis y libertad de crisis a largo plazo en pacientes en remisión.</p>
+    <span class="eyebrow">Calculadora clínica</span>
+    <h1>Retirada de <em>fármacos antiepilépticos</em></h1>
+    <p class="subtitle">Estimación individualizada del riesgo de recurrencia de crisis y libertad de crisis a largo plazo en pacientes en remisión.</p>
   </header>
 
   <div class="card">
     <form id="mainform">
-      <div class="form-grid">
-        
-        <!-- Columna 1 -->
-        <div class="form-section">
-          
-          <div class="form-group">
-            <hr>
-            <p>Duración de la epilepsia antes de la remisión (desde la primera hasta la última crisis)</p>
-            <div class="input-wrapper">
-              <input type="number" name="duration" id="duration" placeholder="0" min="0" max="40">
-              <span class="unit">años (0–40)</span>
-            </div>
-          </div>
+
+      <!-- §01 PATIENT -->
+      <div class="section">
+        <div class="section-header">
+          <span class="section-num">§ 01</span>
+          <h2 class="section-title">Datos del paciente</h2>
+        </div>
+
+        <div class="form-grid">
 
           <div class="form-group">
-            <hr>
-            <p>Tiempo desde la última crisis (intervalo libre de crisis)</p>
-            <div class="input-wrapper">
-              <input type="number" name="ttr" id="ttr" placeholder="0" min="0" max="24">
-              <span class="unit">años (0–24)</span>
-            </div>
-          </div>
-
-          <div class="form-group">
-            <hr>
-            <p>Número de FAE en el momento de la retirada</p>
-            <div class="input-wrapper">
-              <input type="number" name="naed" id="naed" placeholder="1" min="0" max="9">
-              <span class="unit">rango (0–9)</span>
-            </div>
-          </div>
-
-          <div class="form-group">
-            <hr>
-            <p>Edad de inicio de la epilepsia</p>
-            <div class="input-wrapper">
-              <input type="number" name="ageonset" id="ageonset" placeholder="10" min="0" max="80">
-              <span class="unit">años (0–80)</span>
-            </div>
-          </div>
-
-          <div class="form-group">
-            <hr>
-            <p>Sexo</p>
+            <div class="label"><span class="label-num">01</span>Sexo</div>
             <div class="radios">
               <input type="radio" name="sex" value="male" id="sex_m" checked>
               <label for="sex_m">Hombre</label>
@@ -190,46 +482,57 @@
           </div>
 
           <div class="form-group">
-            <hr>
-            <p>Antecedentes familiares de epilepsia (1º o 2º grado)</p>
+            <div class="label"><span class="label-num">02</span>Edad de inicio de la epilepsia</div>
+            <div class="num-input">
+              <input type="number" name="ageonset" id="ageonset" placeholder="10" min="0" max="80">
+              <span class="unit">años · 0–80</span>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <div class="label"><span class="label-num">03</span>Antecedentes familiares de epilepsia (1.º o 2.º grado)</div>
             <div class="radios">
               <input type="radio" name="famhist" value="negative" id="fh_neg" checked>
-              <label for="fh_neg">Negativo</label>
+              <label for="fh_neg">Negativos</label>
               <input type="radio" name="famhist" value="positive" id="fh_pos">
-              <label for="fh_pos">Positivo</label>
+              <label for="fh_pos">Positivos</label>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <div class="label"><span class="label-num">04</span>Antecedentes de crisis febriles</div>
+            <div class="radios">
+              <input type="radio" name="histfeb" value="negative" id="hf_neg" checked>
+              <label for="hf_neg">Negativos</label>
+              <input type="radio" name="histfeb" value="positive" id="hf_pos">
+              <label for="hf_pos">Positivos</label>
+            </div>
+          </div>
+
+          <div class="form-group span-2">
+            <div class="label"><span class="label-num">05</span>Retraso del desarrollo (CI o CD &lt; 70)</div>
+            <div class="radios">
+              <input type="radio" name="delay" value="no" id="del_no" checked>
+              <label for="del_no">No</label>
+              <input type="radio" name="delay" value="yes" id="del_yes">
+              <label for="del_yes">Sí</label>
             </div>
           </div>
 
         </div>
+      </div>
 
-        <!-- Columna 2 -->
-        <div class="form-section">
-          
-          <div class="form-group">
-            <hr>
-            <p>Antecedentes de crisis febriles</p>
-            <div class="radios">
-              <input type="radio" name="histfeb" value="negative" id="hf_neg" checked>
-              <label for="hf_neg">Negativo</label>
-              <input type="radio" name="histfeb" value="positive" id="hf_pos">
-              <label for="hf_pos">Positivo</label>
-            </div>
-          </div>
+      <!-- §02 EPILEPSY -->
+      <div class="section">
+        <div class="section-header">
+          <span class="section-num">§ 02</span>
+          <h2 class="section-title">Características de la epilepsia</h2>
+        </div>
 
-          <div class="form-group">
-            <hr>
-            <p>Número total de crisis antes de la remisión</p>
-            <div class="radios">
-              <input type="radio" name="nseizures" value="0-9" id="ns_low" checked>
-              <label for="ns_low">0–9</label>
-              <input type="radio" name="nseizures" value="10 or more" id="ns_high">
-              <label for="ns_high">10 o más</label>
-            </div>
-          </div>
+        <div class="form-grid">
 
-          <div class="form-group">
-            <hr>
-            <p>Síndrome epiléptico autolimitado (ej. ausencia, rolándica, Panayiotopoulos)</p>
+          <div class="form-group span-2">
+            <div class="label"><span class="label-num">06</span>Síndrome epiléptico autolimitado (ausencia, rolándica, Panayiotopoulos…)</div>
             <div class="radios">
               <input type="radio" name="benign" value="no" id="ben_no" checked>
               <label for="ben_no">No</label>
@@ -239,19 +542,7 @@
           </div>
 
           <div class="form-group">
-            <hr>
-            <p>Retraso del desarrollo (CI o CD &lt; 70)</p>
-            <div class="radios">
-              <input type="radio" name="delay" value="no" id="del_no" checked>
-              <label for="del_no">No</label>
-              <input type="radio" name="delay" value="yes" id="del_yes">
-              <label for="del_yes">Sí</label>
-            </div>
-          </div>
-
-          <div class="form-group">
-            <hr>
-            <p>Crisis focales</p>
+            <div class="label"><span class="label-num">07</span>Crisis focales</div>
             <div class="radios">
               <input type="radio" name="focal" value="no" id="foc_no" checked>
               <label for="foc_no">No</label>
@@ -261,61 +552,311 @@
           </div>
 
           <div class="form-group">
-            <hr>
-            <p>EEG previo a la retirada de FAE</p>
+            <div class="label"><span class="label-num">08</span>Número total de crisis antes de la remisión</div>
+            <div class="radios">
+              <input type="radio" name="nseizures" value="0-9" id="ns_low" checked>
+              <label for="ns_low">0 – 9</label>
+              <input type="radio" name="nseizures" value="10 or more" id="ns_high">
+              <label for="ns_high">≥ 10</label>
+            </div>
+          </div>
+
+          <div class="form-group span-2">
+            <div class="label"><span class="label-num">09</span>Duración de la epilepsia antes de la remisión <span style="color:var(--ink-muted); font-weight:400;">(de la primera a la última crisis)</span></div>
+            <div class="num-input">
+              <input type="number" name="duration" id="duration" placeholder="0" min="0" max="40">
+              <span class="unit">años · 0–40</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- §03 WITHDRAWAL STATUS -->
+      <div class="section">
+        <div class="section-header">
+          <span class="section-num">§ 03</span>
+          <h2 class="section-title">Estado en el momento de la retirada</h2>
+        </div>
+
+        <div class="form-grid">
+
+          <div class="form-group">
+            <div class="label"><span class="label-num">10</span>Tiempo desde la última crisis <span style="color:var(--ink-muted); font-weight:400;">(intervalo libre de crisis)</span></div>
+            <div class="num-input">
+              <input type="number" name="ttr" id="ttr" placeholder="0" min="0" max="24">
+              <span class="unit">años · 0–24</span>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <div class="label"><span class="label-num">11</span>Número de FAE en el momento de la retirada</div>
+            <div class="num-input">
+              <input type="number" name="naed" id="naed" placeholder="1" min="0" max="9">
+              <span class="unit">fármacos · 0–9</span>
+            </div>
+          </div>
+
+          <div class="form-group span-2">
+            <div class="label"><span class="label-num">12</span>EEG previo a la retirada de FAE</div>
             <div class="radios">
               <input type="radio" name="EEG" value="normal" id="eeg_n" checked>
               <label for="eeg_n">Normal</label>
               <input type="radio" name="EEG" value="not performed" id="eeg_np">
               <label for="eeg_np">No realizado</label>
               <input type="radio" name="EEG" value="epileptiform abnormality" id="eeg_ea">
-              <label for="eeg_ea">Anomalía epileptiforme</label>
+              <label for="eeg_ea">Anomalías epileptiformes</label>
             </div>
           </div>
 
         </div>
-
       </div>
+
     </form>
+  </div>
+
+  <div class="action-zone">
+    <div id="calcButton" role="button" tabindex="0">Calcular riesgo</div>
   </div>
 
   <div id="resultBlock" class="card" style="display:none;"></div>
 
-  <div id="calcButton" role="button" tabindex="0">
-    Calcular Riesgo
-  </div>
-
   <div class="info-block">
-    <h4>Información sobre la herramienta</h4>
-    <p>Esta tabla de consulta se basa en nomogramas clínicos derivados de un metaanálisis de datos de participantes individuales. Estima el riesgo de recurrencia y el pronóstico a largo plazo para personas con epilepsia actualmente libres de crisis, en caso de retirada de fármacos antiepilépticos. El modelo está basado en diez poblaciones diferentes de niños y adultos. <em>No aplicable a pacientes libres de crisis tras cirugía de epilepsia.</em></p>
-    <p><strong>Referencia:</strong> Lamberink HJ, et al. Individualised prediction model of seizure recurrence and long-term outcomes after withdrawal of antiepileptic drugs in seizure-free patients. <em>Lancet Neurology</em> 2017; 16(7):523–531. DOI: <a href="https://doi.org/10.1016/S1474-4422(17)30114-X" target="_blank">10.1016/S1474-4422(17)30114-X</a>.</p>
-    <p><strong>Aviso médico:</strong> Exclusivamente para fines educativos y de investigación. Utilice siempre el juicio clínico al tomar decisiones de tratamiento.</p>
+    <h4>Sobre esta herramienta</h4>
+    <p>Esta calculadora se basa en nomogramas clínicos derivados de un metaanálisis de datos de participantes individuales. Estima el riesgo de recurrencia y el pronóstico a largo plazo en personas con epilepsia actualmente libres de crisis, en caso de retirada de fármacos antiepilépticos. El modelo está construido sobre diez poblaciones diferentes de niños y adultos. <em>No aplicable a pacientes libres de crisis tras cirugía de epilepsia.</em></p>
+    <p><strong>Referencia:</strong> Lamberink HJ, et al. Individualised prediction model of seizure recurrence and long-term outcomes after withdrawal of antiepileptic drugs in seizure-free patients. <em>Lancet Neurology</em> 2017; 16(7):523–531. DOI: <a href="https://doi.org/10.1016/S1474-4422(17)30114-X" target="_blank" rel="noopener">10.1016/S1474-4422(17)30114-X</a>.</p>
+    <p><strong>Aviso médico:</strong> Herramienta destinada exclusivamente a fines educativos y de investigación. La decisión terapéutica final debe basarse siempre en el juicio clínico individualizado.</p>
   </div>
 
   <footer>
-    <p>Versión en español no oficial de <em>Epilepsy Prediction Tools</em>, basada en el proyecto original de UMC Utrecht.</p>
-    <p>Traducción y adaptación al español por <strong>Juan Carlos Navarro García</strong>.</p>
-    <p>Esta versión no está afiliada, revisada ni aprobada por UMC Utrecht.</p>
-    <p style="margin-top: 12px;">
-      <a href="https://github.com/wmotte/epilepsypredictiontools" target="_blank">Repositorio Original</a> | 
-      Distribuido bajo <a href="https://www.apache.org/licenses/LICENSE-2.0" target="_blank">Licencia Apache-2.0</a>
-    </p>
-    <p style="margin-top: 24px;">NEUROTOOLS · v. 2026.05 · © Dr. Juan Carlos Navarro García</p>
-  </footer>
-</div>
-
-<!-- Estructura oculta si js/ui.js requiere el modal original (mantenida por compatibilidad) -->
-<div style="display:none;">
-  <div id="popUpTitle"><h2>Sobre esta calculadora</h2></div>
-  <div id="popupContent">
-    <div class="popcontent">
-      <p>Consultar bloque de información en la página principal.</p>
+    <p class="credit">Versión en español no oficial de <em>Epilepsy Prediction Tools</em>, basada en el proyecto original de UMC Utrecht.</p>
+    <p>Traducción y adaptación · Dr. Juan Carlos Navarro García</p>
+    <div class="meta">
+      <a href="https://github.com/wmotte/epilepsypredictiontools" target="_blank" rel="noopener">Repositorio original</a>
+      <span class="dot">·</span>
+      <a href="https://www.apache.org/licenses/LICENSE-2.0" target="_blank" rel="noopener">Licencia Apache-2.0</a>
     </div>
-  </div>
-  <div id="infobutton"></div>
+    <p class="disclaimer">Esta versión no está afiliada, revisada ni aprobada por UMC Utrecht.</p>
+    <div class="stamp">NEUROTOOLS · v. 2026.05 · © Dr. Juan Carlos Navarro García</div>
+  </footer>
+
 </div>
 
-<script src="js/ui.js"></script>
-<script src="js/aed-calc.js"></script>
+<!-- ════════════════════════════════════════════════════════════════════
+     LÓGICA DEL NOMOGRAMA (Lamberink et al., Lancet Neurol 2017)
+     Portado del aed-calc.js original de UMC Utrecht.
+     Tablas de puntuación preservadas literalmente del original.
+     ════════════════════════════════════════════════════════════════════ -->
+<script>
+(function () {
+  'use strict';
+
+  /* ── Tablas de puntuación del nomograma ── */
+
+  var TTR_VALUES = [24, 23, 22, 21, 20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0];
+  var TTR_PTS    = [0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 5.5, 6.5, 7.5, 8.5, 9.5, 10.5, 11.5, 12.5,
+                    13.0, 14.0, 15.0, 16.0, 17.0, 18.0, 19.0, 19.5, 20.0, 20.0, 20.0];
+  var TTR_PTS2   = [0, 1, 1.5, 2, 3, 4, 4.5, 5, 6, 6.5, 7.5, 8, 9, 9.5, 10.5, 11, 12, 12.5,
+                    13.5, 14, 15, 16, 17, 18.5, 20];
+
+  var DUR_VALUES = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,
+                    26,27,28,29,30,31,32,33,34,35,36,37,38,39,40];
+  var DUR_PTS    = [0,2,3.5,5,6,7,7.5,8,8,8.5,8.5,8.5,8.5,8.5,9,9,9,9,9,9,9,9,9.5,9.5,
+                    9.5,9.5,9.5,9.5,9.5,10,10,10,10,10,10,10,10,10.5,10.5,10.5,10.5];
+  var DUR_PTS2   = [0,1,2.5,3,4,4.5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,
+                    5,5,5,5,5,5,5,5,5,5,5,5,5,5];
+
+  var AGE_VALUES = [3,4,2,5,1,6,0,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,
+                    26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,
+                    50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,
+                    74,75,76,77,78,79,80];
+  var AGE_PTS    = [0,0,0.5,1,1.5,2,2.5,3.5,5,5.5,6.5,6.5,6.5,6.5,6.5,6.5,6.5,6.5,6.5,6.5,
+                    6.5,6.5,6.5,6.5,6.5,6.5,6.5,6.5,6.5,6.5,6.5,6.5,6.5,7,7,7,7,7,7.5,7.5,
+                    7.5,7.5,7.5,7.5,8,8,8,8,8,8.5,8.5,8.5,8.5,8.5,9,9,9,9,9,9,9.5,9.5,
+                    9.5,9.5,9.5,10,10,10,10,10,10.5,10.5,10.5,10.5,10.5,10.5,11,11,11,11,11];
+
+  var HISTFEB_MAP   = { negative: 0.0, positive: 3.5 };
+  var NSEIZ_MAP     = { '0-9': [0.0, 0.0], '10 or more': [3.0, 2.5] };
+  var BENIGN_MAP    = { yes: 0.0, no: 5.5 };
+  var DELAY_MAP     = { no: 0.0, yes: 2.0 };
+  var EEG_VALS      = ['normal', 'not performed', 'epileptiform abnormality'];
+  var EEG_PTS       = [0, 0, 4];
+  var EEG_PTS2      = [0, 0, 2];
+  var NAED_PTS2     = [0, 0, 1.5, 3, 4.5, 6, 7, 8.5, 10, 11.5];
+  var SEX_MAP2      = { male: 0.0, female: 1.5 };
+  var FAMHIST_MAP2  = { negative: 0.0, positive: 2.0 };
+  var FOCAL_MAP2    = { no: 0.0, yes: 3.0 };
+
+  var RISK2Y = ['<10','<10','<10','<10','<10','<10','<10','<10',
+    '<10','<10','<10','<10','<10','<10','<10','<10','<10',
+    '<10','<10','<10','<10','<10','<10','<10','<10','<10','<10',
+    '<10','<10','<10','<10','<10',10,11,11,12,13,
+    13,14,14,15,16,16,17,18,18,19,
+    19,20,21,22,23,24,26,27,28,29,
+    30,31,33,34,36,37,39,40,41,43,
+    44,46,47,49,50,52,53,55,57,58,
+    60,62,64,66,68,70,72,73,75,77,
+    78,80,81,83,84,86,87,89,90,'>90',
+    '>90','>90','>90','>90','>90','>90','>90','>90','>90','>90',
+    '>90','>90','>90','>90','>90','>90','>90','>90','>90','>90',
+    '>90','>90','>90'];
+
+  var RISK5Y = ['<10','<10','<10','<10','<10','<10','<10','<10',
+    '<10','<10','<10','<10','<10','<10','<10','<10','<10','<10',
+    '<10','<10','<10','<10','<10','<10','<10','<10',10,11,
+    11,12,13,13,14,15,15,16,17,17,
+    18,19,19,20,21,22,23,24,26,27,
+    28,29,30,31,33,34,35,36,38,39,
+    40,42,43,45,47,48,50,52,53,55,
+    57,58,60,62,64,66,68,70,72,73,
+    75,77,78,80,81,83,84,86,87,89,
+    90,'>90','>90','>90','>90','>90','>90','>90','>90','>90',
+    '>90','>90','>90','>90','>90','>90','>90','>90','>90','>90',
+    '>90','>90','>90','>90','>90','>90','>90','>90','>90','>90',
+    '>90','>90'];
+
+  var RISK_LONG = ['>99','>99','>99','>99','>99','>99','>99','>99','>99','>99','>99','>99','>99','>99',
+    '>99','>99','>99','>99','>99','>99','>99','>99','>99','>99','>99','>99','>99','>99',
+    '>99','>99',99,99,99,99,98,98,98,98,98,97,97,97,96,96,95,94,94,93,92,91,91,
+    90,89,87,86,84,83,81,80,78,75,73,70,67,63,60,57,53,50,47,43,40,'<40','<40',
+    '<40','<40','<40','<40','<40','<40','<40','<40','<40','<40','<40','<40','<40','<40',
+    '<40','<40','<40','<40','<40','<40','<40','<40'];
+
+  function indexOf(arr, val) {
+    for (var i = 0; i < arr.length; i++) if (arr[i] === val) return i;
+    return -1;
+  }
+  function lookupRisk(total, table) {
+    var idx = Math.round(total * 2);
+    if (idx < 0 || idx >= table.length) return null;
+    return table[idx];
+  }
+
+  function calculate() {
+    var form = document.getElementById('mainform');
+    var fd = new FormData(form);
+
+    var duration  = parseInt(fd.get('duration') || 0, 10);
+    var ttr       = parseInt(fd.get('ttr') || 0, 10);
+    var naed      = parseInt(fd.get('naed') || 0, 10);
+    var ageonset  = parseInt(fd.get('ageonset') || 0, 10);
+    var sex       = fd.get('sex') || 'male';
+    var famhist   = fd.get('famhist') || 'negative';
+    var histfeb   = fd.get('histfeb') || 'negative';
+    var nseizures = fd.get('nseizures') || '0-9';
+    var benign    = fd.get('benign') || 'no';
+    var delay     = fd.get('delay') || 'no';
+    var focal     = fd.get('focal') || 'no';
+    var EEG       = fd.get('EEG') || 'normal';
+
+    if (ttr > 24) ttr = 24;
+    if (duration > 40) duration = 40;
+    if (ageonset > 80) ageonset = 80;
+    if (naed > 9) naed = 9;
+    if (naed < 0) naed = 0;
+
+    var ttr_idx = indexOf(TTR_VALUES, ttr);
+    if (ttr_idx < 0) { alert('Valor de intervalo libre de crisis no válido.'); return; }
+    var ttr_pt  = TTR_PTS[ttr_idx];
+    var ttr_pt2 = TTR_PTS2[ttr_idx];
+
+    var dur_idx = indexOf(DUR_VALUES, duration);
+    if (dur_idx < 0) { alert('Duración no válida.'); return; }
+    var dur_pt  = DUR_PTS[dur_idx];
+    var dur_pt2 = DUR_PTS2[dur_idx];
+
+    var age_idx = indexOf(AGE_VALUES, ageonset);
+    if (age_idx < 0) { alert('Edad de inicio no válida.'); return; }
+    var age_pt = AGE_PTS[age_idx];
+
+    var hf_pt = HISTFEB_MAP[histfeb];
+    if (hf_pt === undefined) { alert('Antecedente de crisis febriles no válido.'); return; }
+
+    var ns = NSEIZ_MAP[nseizures];
+    if (!ns) { alert('Número de crisis no válido.'); return; }
+    var ns_pt = ns[0], ns_pt2 = ns[1];
+
+    var ben_pt = BENIGN_MAP[benign];
+    if (ben_pt === undefined) { alert('Síndrome autolimitado no válido.'); return; }
+
+    var del_pt = DELAY_MAP[delay];
+    if (del_pt === undefined) { alert('Valor de retraso del desarrollo no válido.'); return; }
+
+    var eeg_idx = indexOf(EEG_VALS, EEG);
+    if (eeg_idx < 0) { alert('Valor de EEG no válido.'); return; }
+    var eeg_pt  = EEG_PTS[eeg_idx];
+    var eeg_pt2 = EEG_PTS2[eeg_idx];
+
+    var naed_pt2 = NAED_PTS2[naed];
+    var sex_pt2  = SEX_MAP2[sex];
+    var fh_pt2   = FAMHIST_MAP2[famhist];
+    var foc_pt2  = FOCAL_MAP2[focal];
+
+    var totalRecur = ttr_pt + dur_pt + age_pt + hf_pt + ns_pt + ben_pt + del_pt + eeg_pt;
+    var totalLong  = ttr_pt2 + dur_pt2 + naed_pt2 + sex_pt2 + fh_pt2 + ns_pt2 + foc_pt2 + eeg_pt2;
+
+    totalRecur = Math.round(totalRecur * 2) / 2;
+    totalLong  = Math.round(totalLong * 2) / 2;
+
+    var r2y   = lookupRisk(totalRecur, RISK2Y);
+    var r5y   = lookupRisk(totalRecur, RISK5Y);
+    var rLong = lookupRisk(totalLong, RISK_LONG);
+
+    if (r2y === null || r5y === null || rLong === null) {
+      alert('Puntuación fuera de rango. Revise los datos introducidos.');
+      return;
+    }
+
+    var html =
+      '<div class="result-head">'
+        + '<span class="result-eyebrow">— Estimación individualizada —</span>'
+        + '<h3 class="result-title">Riesgo predicho</h3>'
+      + '</div>'
+      + '<div class="result">'
+        + '<p class="result-label">Recurrencia de crisis<small>A 2 años</small></p>'
+        + '<p class="value">' + r2y + '%</p>'
+      + '</div>'
+      + '<div class="result">'
+        + '<p class="result-label">Recurrencia de crisis<small>A 5 años</small></p>'
+        + '<p class="value">' + r5y + '%</p>'
+      + '</div>'
+      + '<div class="result freedom">'
+        + '<p class="result-label">Libertad de crisis<small>A largo plazo · 10 años</small></p>'
+        + '<p class="value">' + rLong + '%</p>'
+      + '</div>'
+      + '<p class="result-meta">'
+        + 'Puntuación recurrencia: ' + totalRecur + ' &nbsp;·&nbsp; Puntuación libertad: ' + totalLong
+      + '</p>'
+      + '<p class="result-note">Los resultados se basan en datos poblacionales; deben complementar, no sustituir, el juicio clínico.</p>';
+
+    var block = document.getElementById('resultBlock');
+    block.innerHTML = html;
+    block.style.display = 'block';
+    block.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
+  /* ── Engancha el botón ── */
+  function attach() {
+    var btn = document.getElementById('calcButton');
+    if (!btn) return;
+    btn.addEventListener('click', calculate);
+    btn.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        calculate();
+      }
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', attach);
+  } else {
+    attach();
+  }
+
+  /* Expuesto por si quieres llamarlo desde la consola para pruebas */
+  window.calculate = calculate;
+})();
+</script>
 </body>
 </html>
