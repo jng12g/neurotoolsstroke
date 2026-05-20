@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HIT-6 — Escala de Impacto del Dolor de Cabeza</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,300&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Source Serif 4', serif;
+    background: #f4efe4;
+    color: #1a1614;
+    min-height: 100vh;
+  }
+
+  header {
+    background: #2c3e50;
+    color: #fff;
+    padding: 32px 24px 28px;
+  }
+
+  .header-inner { max-width: 700px; margin: 0 auto; }
+
+  .header-label {
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    opacity: 0.6;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 36px;
+    font-weight: 700;
+    line-height: 1.1;
+    margin-bottom: 6px;
+  }
+
+  .header-sub {
+    font-size: 15px;
+    opacity: 0.72;
+    font-style: italic;
+    line-height: 1.5;
+  }
+
+  .progress-wrap { margin-top: 22px; }
+  .progress-info {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    opacity: 0.7;
+    margin-bottom: 6px;
+  }
+  .progress-track {
+    height: 4px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: #fff;
+    border-radius: 2px;
+    width: 0%;
+    transition: width 0.4s ease;
+  }
+
+  main { max-width: 700px; margin: 0 auto; padding: 32px 24px 60px; }
+
+  /* Iniciales */
+  .initials-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 28px;
+  }
+  .initials-row label { font-size: 14px; color: #666; font-style: italic; }
+  .initials-input {
+    border: 1.5px solid #d4cfc5;
+    border-radius: 6px;
+    padding: 8px 14px;
+    font-family: 'Source Serif 4', serif;
+    font-size: 15px;
+    background: #fff;
+    color: #1a1614;
+    outline: none;
+    width: 150px;
+    text-transform: uppercase;
+    transition: border-color 0.18s;
+  }
+  .initials-input:focus { border-color: #2c3e50; }
+
+  /* Questions */
+  #form-section { display: flex; flex-direction: column; gap: 18px; }
+
+  .question-card {
+    background: #fff;
+    border-radius: 10px;
+    padding: 24px 26px;
+    border: 1px solid #e8e3dc;
+    border-left: 4px solid transparent;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+    transition: border-left-color 0.25s;
+  }
+  .question-card.answered { border-left-color: #2c3e50; }
+
+  .question-top {
+    display: flex;
+    gap: 14px;
+    margin-bottom: 16px;
+    align-items: flex-start;
+  }
+  .question-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 24px;
+    color: #ccc;
+    font-weight: 700;
+    line-height: 1;
+    min-width: 28px;
+    flex-shrink: 0;
+  }
+  .question-text { font-size: 15.5px; line-height: 1.55; color: #1a1614; }
+  .question-context { font-size: 13px; color: #888; margin-top: 4px; font-style: italic; }
+
+  .options-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .opt-btn {
+    border: 1.5px solid #d4cfc5;
+    background: #fff;
+    color: #333;
+    border-radius: 6px;
+    padding: 9px 14px;
+    cursor: pointer;
+    font-family: 'Source Serif 4', serif;
+    font-size: 13.5px;
+    transition: all 0.18s ease;
+    flex: 1;
+    min-width: 80px;
+    text-align: center;
+  }
+  .opt-btn:hover { border-color: #8a7c6e; background: #f5f2ec; }
+  .opt-btn.selected { background: #2c3e50; color: #fff; border-color: #2c3e50; }
+
+  /* Submit */
+  .submit-wrap { text-align: center; margin-top: 12px; }
+  .submit-btn {
+    background: #2c3e50;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 14px 42px;
+    font-size: 16px;
+    font-family: 'Playfair Display', serif;
+    cursor: pointer;
+    letter-spacing: 0.03em;
+    transition: background 0.2s;
+  }
+  .submit-btn:hover { background: #1a252f; }
+  .submit-btn:disabled { background: #bbb; cursor: not-allowed; }
+  .submit-hint { margin-top: 10px; font-size: 13px; color: #aaa; font-style: italic; }
+
+  /* Results */
+  #result-section { display: none; flex-direction: column; gap: 22px; }
+
+  .score-card {
+    border-radius: 12px;
+    padding: 28px 30px;
+    border: 2px solid transparent;
+  }
+  .score-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 18px;
+  }
+  .score-label { font-size: 12px; color: #888; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 4px; }
+  .score-number {
+    font-family: 'Playfair Display', serif;
+    font-size: 58px;
+    font-weight: 700;
+    line-height: 1;
+  }
+  .score-max { font-size: 22px; color: #bbb; font-weight: 400; font-family: 'Source Serif 4', serif; }
+  .score-meta { text-align: right; }
+  .score-initials { font-size: 13px; color: #999; font-style: italic; margin-bottom: 4px; }
+  .score-date { font-size: 12px; color: #aaa; margin-bottom: 8px; }
+  .score-badge {
+    display: inline-block;
+    color: #fff;
+    border-radius: 20px;
+    padding: 5px 14px;
+    font-size: 13px;
+  }
+
+  .score-bar-track {
+    height: 8px;
+    background: #e0ddd8;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 6px;
+  }
+  .score-bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    width: 0%;
+    transition: width 1s ease;
+  }
+  .score-bar-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    color: #bbb;
+  }
+
+  .result-divider { height: 1px; margin: 18px 0; }
+  .result-level {
+    font-family: 'Playfair Display', serif;
+    font-size: 21px;
+    margin-bottom: 8px;
+  }
+  .result-desc { font-size: 14.5px; color: #555; line-height: 1.65; }
+
+  /* Breakdown */
+  .breakdown-card {
+    background: #fff;
+    border-radius: 10px;
+    border: 1px solid #e8e3dc;
+    padding: 22px 26px;
+  }
+  .breakdown-card h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 17px;
+    color: #2c3e50;
+    margin-bottom: 16px;
+  }
+  .breakdown-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #f0ede8;
+  }
+  .breakdown-row:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+  .breakdown-left { display: flex; gap: 10px; align-items: flex-start; }
+  .breakdown-num { font-family: 'Playfair Display', serif; font-size: 14px; color: #ccc; min-width: 18px; }
+  .breakdown-q { font-size: 13.5px; color: #444; line-height: 1.4; }
+  .breakdown-right { display: flex; gap: 8px; align-items: center; flex-shrink: 0; }
+  .breakdown-opt { font-size: 13px; color: #888; font-style: italic; }
+  .breakdown-pts {
+    background: #2c3e50;
+    color: #fff;
+    border-radius: 4px;
+    padding: 2px 8px;
+    font-size: 12px;
+  }
+  .breakdown-total {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 12px;
+    padding-top: 10px;
+    border-top: 2px solid #2c3e50;
+    font-family: 'Playfair Display', serif;
+    font-size: 16px;
+    color: #2c3e50;
+  }
+
+  /* Summary */
+  .summary-card { }
+  .summary-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+  .summary-header h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 17px;
+    color: #2c3e50;
+  }
+  .copy-btn {
+    background: transparent;
+    border: 1.5px solid #2c3e50;
+    color: #2c3e50;
+    border-radius: 6px;
+    padding: 8px 18px;
+    font-family: 'Source Serif 4', serif;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.18s;
+  }
+  .copy-btn:hover { background: #2c3e50; color: #fff; }
+  .copy-btn.copied { background: #27ae60; border-color: #27ae60; color: #fff; }
+
+  .summary-box {
+    background: #fff;
+    border-radius: 10px;
+    border: 1px solid #e8e3dc;
+    padding: 24px 28px;
+    white-space: pre-wrap;
+    font-family: 'Source Serif 4', serif;
+    font-size: 13.5px;
+    line-height: 1.8;
+    color: #333;
+    max-height: 380px;
+    overflow-y: auto;
+  }
+
+  .reset-wrap { text-align: center; }
+  .reset-btn {
+    background: transparent;
+    border: 1.5px solid #8a7c6e;
+    color: #8a7c6e;
+    border-radius: 6px;
+    padding: 10px 24px;
+    font-family: 'Source Serif 4', serif;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.18s;
+  }
+  .reset-btn:hover { background: #8a7c6e; color: #fff; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="header-label">Escala validada · Neurología</div>
+    <h1>HIT-6</h1>
+    <p class="header-sub">Headache Impact Test — Cuestionario de Impacto del Dolor de Cabeza</p>
+    <div class="progress-wrap">
+      <div class="progress-info">
+        <span id="progress-text">0 de 6 preguntas respondidas</span>
+        <span id="progress-ready" style="display:none">✓ Listo para calcular</span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill" id="progress-fill"></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <!-- Form -->
+  <div id="form-section">
+
+    <div class="initials-row">
+      <label for="initials">Iniciales del paciente (opcional):</label>
+      <input class="initials-input" id="initials" type="text" maxlength="6" placeholder="Ej: A.M.G.">
+    </div>
+
+    <!-- Questions injected by JS -->
+    <div id="questions-wrap"></div>
+
+    <div class="submit-wrap">
+      <button class="submit-btn" id="submit-btn" disabled onclick="calcular()">Calcular puntuación</button>
+      <p class="submit-hint" id="submit-hint">Responda todas las preguntas para continuar</p>
+    </div>
+
+  </div>
+
+  <!-- Results -->
+  <div id="result-section">
+
+    <div class="score-card" id="score-card">
+      <div class="score-top">
+        <div>
+          <div class="score-label">Puntuación total</div>
+          <div class="score-number" id="score-num">—<span class="score-max">/78</span></div>
+        </div>
+        <div class="score-meta">
+          <div class="score-initials" id="res-initials"></div>
+          <div class="score-date" id="res-date"></div>
+          <div class="score-badge" id="score-badge"></div>
+        </div>
+      </div>
+      <div class="score-bar-track">
+        <div class="score-bar-fill" id="score-bar"></div>
+      </div>
+      <div class="score-bar-labels">
+        <span>36</span><span>49</span><span>55</span><span>59</span><span>78</span>
+      </div>
+      <div class="result-divider" id="res-divider"></div>
+      <div class="result-level" id="res-level"></div>
+      <div class="result-desc" id="res-desc"></div>
+    </div>
+
+    <div class="breakdown-card">
+      <h3>Detalle de respuestas</h3>
+      <div id="breakdown-rows"></div>
+      <div class="breakdown-total" id="breakdown-total"></div>
+    </div>
+
+    <div class="summary-card">
+      <div class="summary-header">
+        <h3>Resumen para historia clínica</h3>
+        <button class="copy-btn" id="copy-btn" onclick="copiarTexto()">Copiar texto</button>
+      </div>
+      <div class="summary-box" id="summary-box"></div>
+    </div>
+
+    <div class="reset-wrap">
+      <button class="reset-btn" onclick="resetear()">← Nueva evaluación</button>
+    </div>
+
+  </div>
+</main>
+
+<script>
+const QUESTIONS = [
+  {
+    id: 1,
+    text: "Cuando usted tiene dolor de cabeza, ¿con qué frecuencia el dolor es intenso?",
+    context: null
+  },
+  {
+    id: 2,
+    text: "¿Con qué frecuencia el dolor de cabeza limita su capacidad para realizar actividades diarias habituales?",
+    context: "Como las tareas domésticas, el trabajo, los estudios o actividades sociales."
+  },
+  {
+    id: 3,
+    text: "Cuando tiene dolor de cabeza, ¿con qué frecuencia desearía poder acostarse?",
+    context: null
+  },
+  {
+    id: 4,
+    text: "¿Con qué frecuencia se ha sentido demasiado cansado/a para trabajar o realizar las actividades diarias debido a su dolor de cabeza?",
+    context: "En las últimas 4 semanas."
+  },
+  {
+    id: 5,
+    text: "¿Con qué frecuencia se ha sentido harto/a o irritado/a debido a su dolor de cabeza?",
+    context: "En las últimas 4 semanas."
+  },
+  {
+    id: 6,
+    text: "¿Con qué frecuencia el dolor de cabeza ha limitado su capacidad para concentrarse en el trabajo o en las actividades diarias?",
+    context: "En las últimas 4 semanas."
+  }
+];
+
+const OPTIONS = [
+  { label: "Nunca",       value: 6 },
+  { label: "Pocas veces", value: 8 },
+  { label: "A veces",     value: 10 },
+  { label: "Muy a menudo",value: 11 },
+  { label: "Siempre",     value: 13 }
+];
+
+const RESULTS = [
+  { min: 60, max: 78,  level: "Impacto muy severo",    range: "≥ 60",   color: "#c0392b", bg: "#fdf2f2", bar: "#e74c3c", desc: "Los dolores de cabeza están teniendo un impacto muy severo en la vida diaria, con dolor que puede ser inhabilitante. Se recomienda consulta médica urgente." },
+  { min: 56, max: 59,  level: "Impacto importante",    range: "56 – 59",color: "#d35400", bg: "#fdf6f0", bar: "#e67e22", desc: "Los dolores de cabeza tienen un impacto importante, con pérdida significativa de tiempo en familia, trabajo y actividades sociales. Se recomienda consulta médica." },
+  { min: 50, max: 55,  level: "Cierto impacto",        range: "50 – 55",color: "#b7950b", bg: "#fdfbf0", bar: "#f1c40f", desc: "Los dolores de cabeza tienen cierto impacto en la vida cotidiana. Se aconseja comentar los resultados en la próxima visita médica." },
+  { min: 36, max: 49,  level: "Poco o ningún impacto", range: "≤ 49",  color: "#1a7a4a", bg: "#f0fdf7", bar: "#27ae60", desc: "Los dolores de cabeza tienen poco o ningún impacto en la vida en este momento. Se recomienda repetir la escala mensualmente para seguimiento." }
+];
+
+let answers = {};
+
+function getResult(score) {
+  return RESULTS.find(r => score >= r.min && score <= r.max) || RESULTS[3];
+}
+
+// Render questions
+function renderQuestions() {
+  const wrap = document.getElementById('questions-wrap');
+  wrap.innerHTML = '';
+  QUESTIONS.forEach(q => {
+    const card = document.createElement('div');
+    card.className = 'question-card';
+    card.id = `card-${q.id}`;
+
+    const top = document.createElement('div');
+    top.className = 'question-top';
+    top.innerHTML = `
+      <div class="question-num">${q.id}</div>
+      <div>
+        <div class="question-text">${q.text}</div>
+        ${q.context ? `<div class="question-context">${q.context}</div>` : ''}
+      </div>`;
+
+    const opts = document.createElement('div');
+    opts.className = 'options-row';
+
+    OPTIONS.forEach(opt => {
+      const btn = document.createElement('button');
+      btn.className = 'opt-btn';
+      btn.textContent = opt.label;
+      btn.dataset.qid = q.id;
+      btn.dataset.val = opt.value;
+      btn.onclick = () => selectOption(q.id, opt.value, btn);
+      opts.appendChild(btn);
+    });
+
+    card.appendChild(top);
+    card.appendChild(opts);
+    wrap.appendChild(card);
+  });
+}
+
+function selectOption(qid, val, btnEl) {
+  answers[qid] = val;
+  // Update button states
+  const card = document.getElementById(`card-${qid}`);
+  card.querySelectorAll('.opt-btn').forEach(b => b.classList.remove('selected'));
+  btnEl.classList.add('selected');
+  card.classList.add('answered');
+  updateProgress();
+}
+
+function updateProgress() {
+  const n = Object.keys(answers).length;
+  const pct = (n / 6) * 100;
+  document.getElementById('progress-fill').style.width = pct + '%';
+  document.getElementById('progress-text').textContent = `${n} de 6 preguntas respondidas`;
+
+  const ready = document.getElementById('progress-ready');
+  const hint  = document.getElementById('submit-hint');
+  const btn   = document.getElementById('submit-btn');
+
+  if (n === 6) {
+    ready.style.display = 'inline';
+    hint.style.display = 'none';
+    btn.disabled = false;
+  } else {
+    ready.style.display = 'none';
+    hint.style.display = 'block';
+    btn.disabled = true;
+  }
+}
+
+function calcular() {
+  const score = Object.values(answers).reduce((a, b) => a + b, 0);
+  const r = getResult(score);
+  const initials = document.getElementById('initials').value.trim();
+  const today = new Date().toLocaleDateString('es-ES');
+
+  // Hide form
+  document.getElementById('form-section').style.display = 'none';
+
+  // Score card
+  const card = document.getElementById('score-card');
+  card.style.background = r.bg;
+  card.style.borderColor = r.color + '40';
+
+  document.getElementById('score-num').innerHTML = `${score}<span class="score-max">/78</span>`;
+  document.getElementById('score-num').style.color = r.color;
+
+  if (initials) document.getElementById('res-initials').textContent = initials;
+  document.getElementById('res-date').textContent = today;
+
+  const badge = document.getElementById('score-badge');
+  badge.textContent = r.range + ' pts';
+  badge.style.background = r.color;
+
+  // Bar
+  const pct = Math.min(Math.round(((score - 36) / (78 - 36)) * 100), 100);
+  setTimeout(() => {
+    document.getElementById('score-bar').style.width = pct + '%';
+    document.getElementById('score-bar').style.background = r.bar;
+  }, 100);
+
+  document.getElementById('res-divider').style.borderTop = `1px solid ${r.color}25`;
+  document.getElementById('res-level').textContent = r.level;
+  document.getElementById('res-level').style.color = r.color;
+  document.getElementById('res-desc').textContent = r.desc;
+
+  // Breakdown
+  const bwrap = document.getElementById('breakdown-rows');
+  bwrap.innerHTML = '';
+  QUESTIONS.forEach(q => {
+    const opt = OPTIONS.find(o => o.value === answers[q.id]);
+    const row = document.createElement('div');
+    row.className = 'breakdown-row';
+    const shortQ = q.text.length > 72 ? q.text.slice(0, 72) + '…' : q.text;
+    row.innerHTML = `
+      <div class="breakdown-left">
+        <span class="breakdown-num">${q.id}.</span>
+        <span class="breakdown-q">${shortQ}</span>
+      </div>
+      <div class="breakdown-right">
+        <span class="breakdown-opt">${opt?.label}</span>
+        <span class="breakdown-pts">${answers[q.id]} pts</span>
+      </div>`;
+    bwrap.appendChild(row);
+  });
+  document.getElementById('breakdown-total').innerHTML = `Total: <strong style="margin-left:6px">${score}</strong>&nbsp;/ 78`;
+
+  // Summary text
+  const lines = QUESTIONS.map((q, i) => {
+    const opt = OPTIONS.find(o => o.value === answers[q.id]);
+    return `${i + 1}. ${q.text}\n   Respuesta: ${opt?.label} (${answers[q.id]} pts)`;
+  }).join('\n\n');
+
+  const distrib = OPTIONS.map(o => {
+    const n = Object.values(answers).filter(v => v === o.value).length;
+    return `${o.label}: ${n}`;
+  }).join(' | ');
+
+  const summary =
+`ESCALA HIT-6${initials ? ' — ' + initials : ''}
+Fecha: ${today}
+
+PUNTUACIÓN TOTAL: ${score}/78
+
+INTERPRETACIÓN: ${r.level} (${r.range} puntos)
+${r.desc}
+
+DETALLE DE RESPUESTAS:
+${lines}
+
+DISTRIBUCIÓN DE RESPUESTAS:
+${distrib}`;
+
+  document.getElementById('summary-box').textContent = summary;
+  window._summaryText = summary;
+
+  // Show results
+  const res = document.getElementById('result-section');
+  res.style.display = 'flex';
+  res.scrollIntoView({ behavior: 'smooth' });
+}
+
+function copiarTexto() {
+  navigator.clipboard.writeText(window._summaryText || '').then(() => {
+    const btn = document.getElementById('copy-btn');
+    btn.textContent = '✓ Copiado';
+    btn.classList.add('copied');
+    setTimeout(() => {
+      btn.textContent = 'Copiar texto';
+      btn.classList.remove('copied');
+    }, 2000);
+  });
+}
+
+function resetear() {
+  answers = {};
+  document.getElementById('initials').value = '';
+  document.getElementById('result-section').style.display = 'none';
+  document.getElementById('form-section').style.display = 'block';
+  renderQuestions();
+  updateProgress();
+  document.getElementById('progress-fill').style.width = '0%';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// Init
+renderQuestions();
+</script>
+</body>
+</html>

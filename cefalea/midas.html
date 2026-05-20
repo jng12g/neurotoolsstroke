@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Escala MIDAS · Neurología</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#f4efe4;
+    --paper-2:#ebe4d3;
+    --ink:#1a1612;
+    --ink-soft:#4a4239;
+    --rule:#cfc4ad;
+    --rule-soft:#e8e1ce;
+    --accent:#7a1d1d;
+    --accent-deep:#5a1414;
+    --accent-soft:#f3e2d8;
+    --good:#3d6b3d;
+    --warn:#a86a1a;
+    --bad:#7a1d1d;
+    --severe:#4a0e0e;
+    --shadow: 0 1px 0 rgba(26,22,18,.04), 0 8px 24px -8px rgba(26,22,18,.12);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:'Geist',-apple-system,BlinkMacSystemFont,sans-serif;
+    background:var(--paper);
+    color:var(--ink);
+    font-size:16px;
+    line-height:1.55;
+    min-height:100vh;
+    background-image:
+      radial-gradient(at 12% 8%, rgba(122,29,29,.04) 0, transparent 40%),
+      radial-gradient(at 90% 92%, rgba(122,29,29,.03) 0, transparent 45%);
+  }
+  .grain{
+    position:fixed;inset:0;pointer-events:none;z-index:1;opacity:.35;mix-blend-mode:multiply;
+    background-image:url("data:image/svg+xml;utf8,<svg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/><feColorMatrix values='0 0 0 0 0.1 0 0 0 0 0.08 0 0 0 0 0.06 0 0 0 0.08 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  }
+  .wrap{
+    max-width:780px;
+    margin:0 auto;
+    padding:32px 22px 80px;
+    position:relative;
+    z-index:2;
+  }
+  /* Header */
+  header{
+    border-bottom:1px solid var(--ink);
+    padding-bottom:20px;
+    margin-bottom:28px;
+  }
+  .eyebrow{
+    font-family:'Geist Mono',monospace;
+    font-size:11px;
+    letter-spacing:.18em;
+    text-transform:uppercase;
+    color:var(--ink-soft);
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    gap:12px;
+    flex-wrap:wrap;
+  }
+  .eyebrow .hospital{font-weight:500}
+  h1{
+    font-family:'Fraunces',serif;
+    font-weight:500;
+    font-size:clamp(38px,7.5vw,58px);
+    line-height:1;
+    margin:18px 0 4px;
+    letter-spacing:-.02em;
+    font-variation-settings:"opsz" 144;
+  }
+  h1 em{
+    font-style:italic;
+    font-weight:400;
+    color:var(--accent);
+  }
+  .subtitle{
+    font-family:'Fraunces',serif;
+    font-style:italic;
+    font-size:17px;
+    color:var(--ink-soft);
+    margin-top:8px;
+    max-width:60ch;
+  }
+
+  /* Date row */
+  .date-row{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    margin-bottom:28px;
+    padding:12px 16px;
+    background:var(--paper-2);
+    border:1px solid var(--rule);
+    border-radius:2px;
+  }
+  .date-row label{
+    font-family:'Geist Mono',monospace;
+    font-size:11px;
+    letter-spacing:.16em;
+    text-transform:uppercase;
+    color:var(--ink-soft);
+  }
+  .date-row input{
+    border:none;
+    background:transparent;
+    font-family:'Geist',sans-serif;
+    font-size:15px;
+    color:var(--ink);
+    padding:4px 0;
+  }
+  .date-row input:focus{outline:none}
+
+  /* Instructions */
+  .instructions{
+    font-family:'Fraunces',serif;
+    font-style:italic;
+    font-size:16px;
+    color:var(--ink-soft);
+    background:transparent;
+    border-left:2px solid var(--accent);
+    padding:6px 0 6px 18px;
+    margin-bottom:34px;
+    line-height:1.55;
+  }
+
+  /* Section */
+  .section-label{
+    font-family:'Geist Mono',monospace;
+    font-size:10px;
+    letter-spacing:.22em;
+    text-transform:uppercase;
+    color:var(--ink-soft);
+    display:flex;
+    align-items:center;
+    gap:12px;
+    margin:36px 0 14px;
+  }
+  .section-label::after{
+    content:'';
+    flex:1;
+    height:1px;
+    background:var(--rule);
+  }
+
+  /* Questions */
+  .question{
+    display:grid;
+    grid-template-columns:auto 1fr auto;
+    align-items:start;
+    gap:18px;
+    padding:18px 0;
+    border-bottom:1px solid var(--rule-soft);
+  }
+  .question:last-of-type{border-bottom:none}
+  .q-num{
+    font-family:'Fraunces',serif;
+    font-weight:500;
+    font-size:22px;
+    color:var(--accent);
+    line-height:1.2;
+    min-width:32px;
+    font-variation-settings:"opsz" 144;
+  }
+  .q-num.alpha{color:var(--ink-soft)}
+  .q-text{
+    font-size:15.5px;
+    line-height:1.5;
+    color:var(--ink);
+    padding-top:2px;
+  }
+  .q-text small{
+    display:block;
+    margin-top:4px;
+    color:var(--ink-soft);
+    font-size:13px;
+    font-style:italic;
+    font-family:'Fraunces',serif;
+  }
+  .q-input{
+    display:flex;
+    align-items:center;
+    gap:6px;
+  }
+  .q-input input{
+    width:64px;
+    height:46px;
+    border:1px solid var(--ink);
+    background:var(--paper);
+    font-family:'Fraunces',serif;
+    font-weight:500;
+    font-size:22px;
+    text-align:center;
+    color:var(--ink);
+    border-radius:2px;
+    padding:0;
+    -moz-appearance:textfield;
+    transition:background .15s,border-color .15s;
+  }
+  .q-input input::-webkit-outer-spin-button,
+  .q-input input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+  .q-input input:focus{
+    outline:none;
+    background:var(--accent-soft);
+    border-color:var(--accent);
+  }
+  .q-input input.filled{background:#fff}
+  .q-input .unit{
+    font-family:'Geist Mono',monospace;
+    font-size:11px;
+    letter-spacing:.1em;
+    color:var(--ink-soft);
+    text-transform:uppercase;
+  }
+
+  /* Result panel */
+  .result{
+    margin-top:36px;
+    border:1px solid var(--ink);
+    background:#fff;
+    box-shadow:var(--shadow);
+    border-radius:2px;
+    overflow:hidden;
+  }
+  .result-top{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    border-bottom:1px solid var(--rule);
+  }
+  .result-cell{
+    padding:22px 24px;
+    border-right:1px solid var(--rule);
+  }
+  .result-cell:last-child{border-right:none}
+  .result-cell .label{
+    font-family:'Geist Mono',monospace;
+    font-size:10px;
+    letter-spacing:.2em;
+    text-transform:uppercase;
+    color:var(--ink-soft);
+    margin-bottom:8px;
+  }
+  .result-cell .value{
+    font-family:'Fraunces',serif;
+    font-weight:500;
+    font-size:48px;
+    line-height:1;
+    color:var(--ink);
+    font-variation-settings:"opsz" 144;
+  }
+  .result-cell .value small{
+    font-size:18px;
+    color:var(--ink-soft);
+    font-weight:400;
+    margin-left:4px;
+  }
+  .grade{
+    padding:24px;
+    background:var(--paper);
+    transition:background .3s;
+  }
+  .grade.g1{background:#e8efe5}
+  .grade.g2{background:#f4ead5}
+  .grade.g3{background:#f3dac4}
+  .grade.g4{background:#f0d0cb}
+  .grade .label{
+    font-family:'Geist Mono',monospace;
+    font-size:10px;
+    letter-spacing:.2em;
+    text-transform:uppercase;
+    color:var(--ink-soft);
+    margin-bottom:6px;
+  }
+  .grade .grade-line{
+    display:flex;
+    align-items:baseline;
+    gap:14px;
+    flex-wrap:wrap;
+  }
+  .grade .roman{
+    font-family:'Fraunces',serif;
+    font-style:italic;
+    font-weight:500;
+    font-size:34px;
+    color:var(--accent);
+    line-height:1;
+    font-variation-settings:"opsz" 144;
+  }
+  .grade .desc{
+    font-family:'Fraunces',serif;
+    font-size:22px;
+    font-weight:500;
+    color:var(--ink);
+    line-height:1.2;
+  }
+
+  /* Reference table */
+  .reference{
+    margin-top:36px;
+    padding:20px 22px;
+    background:var(--paper-2);
+    border:1px solid var(--rule);
+    border-radius:2px;
+  }
+  .reference h3{
+    font-family:'Geist Mono',monospace;
+    font-size:10px;
+    letter-spacing:.22em;
+    text-transform:uppercase;
+    color:var(--ink-soft);
+    margin:0 0 12px;
+    font-weight:500;
+  }
+  .ref-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:1px;
+    background:var(--rule);
+    border:1px solid var(--rule);
+  }
+  .ref-cell{
+    background:var(--paper);
+    padding:10px 12px;
+    text-align:center;
+  }
+  .ref-cell .range{
+    font-family:'Geist Mono',monospace;
+    font-size:11px;
+    color:var(--ink-soft);
+    margin-bottom:4px;
+  }
+  .ref-cell .label{
+    font-family:'Fraunces',serif;
+    font-size:13px;
+    font-weight:500;
+  }
+  .ref-cell.g1 .label{color:var(--good)}
+  .ref-cell.g2 .label{color:var(--warn)}
+  .ref-cell.g3 .label{color:var(--accent)}
+  .ref-cell.g4 .label{color:var(--severe)}
+
+  /* Actions */
+  .actions{
+    margin-top:32px;
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+  }
+  button.btn{
+    flex:1;
+    min-width:140px;
+    padding:14px 18px;
+    border:1px solid var(--ink);
+    background:var(--ink);
+    color:var(--paper);
+    font-family:'Geist',sans-serif;
+    font-size:14px;
+    font-weight:500;
+    letter-spacing:.02em;
+    border-radius:2px;
+    cursor:pointer;
+    transition:transform .1s,background .15s;
+    -webkit-appearance:none;
+  }
+  button.btn:active{transform:translateY(1px)}
+  button.btn.secondary{
+    background:transparent;
+    color:var(--ink);
+  }
+  button.btn.secondary:hover{background:var(--paper-2)}
+  button.btn.copied{
+    background:var(--good);
+    border-color:var(--good);
+    color:#fff;
+  }
+
+  /* Clinical output */
+  .clinical-output{
+    margin-top:24px;
+    padding:22px 24px;
+    background:#fff;
+    border:1px dashed var(--rule);
+    border-radius:2px;
+    font-family:'Fraunces',serif;
+    font-size:15.5px;
+    line-height:1.65;
+    color:var(--ink);
+    display:none;
+    white-space:pre-wrap;
+  }
+  .clinical-output.show{display:block;animation:fadeIn .25s ease}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+
+  /* Footer */
+  footer{
+    margin-top:50px;
+    padding-top:18px;
+    border-top:1px solid var(--rule);
+    font-family:'Geist Mono',monospace;
+    font-size:10px;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:var(--ink-soft);
+    text-align:center;
+    line-height:1.6;
+  }
+  footer .ref{font-style:normal;font-family:'Fraunces',serif;text-transform:none;letter-spacing:0;font-size:12px;color:var(--ink-soft);margin-top:6px;display:block}
+
+  @media (max-width:560px){
+    .wrap{padding:24px 18px 60px}
+    .result-top{grid-template-columns:1fr}
+    .result-cell{border-right:none;border-bottom:1px solid var(--rule)}
+    .result-cell:last-child{border-bottom:none}
+    .result-cell .value{font-size:40px}
+    .ref-grid{grid-template-columns:repeat(2,1fr)}
+    .question{grid-template-columns:auto 1fr;gap:14px}
+    .q-input{grid-column:1/-1;justify-content:flex-end;margin-top:-6px}
+    h1{font-size:42px}
+  }
+</style>
+</head>
+<body>
+<div class="grain"></div>
+<div class="wrap">
+
+  <header>
+    <div class="eyebrow">
+      <span>Escala validada · Stewart et al., 1999</span>
+      <span class="hospital">Servicio de Neurología</span>
+    </div>
+    <h1>MIDAS<em>.</em></h1>
+    <div class="subtitle">Migraine Disability Assessment · evaluación de la discapacidad por cefalea en los últimos tres meses.</div>
+  </header>
+
+  <div class="date-row">
+    <label for="fecha">Fecha</label>
+    <input type="date" id="fecha">
+  </div>
+
+  <div class="instructions">
+    Conteste las siguientes preguntas respecto a <strong>todas las cefaleas</strong> sufridas en los últimos 3 meses. Escriba “0” si la cefalea no ha afectado la actividad correspondiente.
+  </div>
+
+  <div class="section-label">Items puntuables</div>
+
+  <div class="question">
+    <div class="q-num">1</div>
+    <div class="q-text">Días sin poder ir al trabajo o a clase por la cefalea.</div>
+    <div class="q-input">
+      <input type="number" min="0" max="92" inputmode="numeric" pattern="[0-9]*" id="q1" data-score>
+      <span class="unit">días</span>
+    </div>
+  </div>
+
+  <div class="question">
+    <div class="q-num">2</div>
+    <div class="q-text">Días con la productividad laboral o escolar reducida a la mitad por la cefalea.<small>No incluir los días contabilizados en la pregunta 1.</small></div>
+    <div class="q-input">
+      <input type="number" min="0" max="92" inputmode="numeric" pattern="[0-9]*" id="q2" data-score>
+      <span class="unit">días</span>
+    </div>
+  </div>
+
+  <div class="question">
+    <div class="q-num">3</div>
+    <div class="q-text">Días sin poder realizar tareas domésticas por la cefalea.</div>
+    <div class="q-input">
+      <input type="number" min="0" max="92" inputmode="numeric" pattern="[0-9]*" id="q3" data-score>
+      <span class="unit">días</span>
+    </div>
+  </div>
+
+  <div class="question">
+    <div class="q-num">4</div>
+    <div class="q-text">Días con el rendimiento doméstico reducido a la mitad por la cefalea.<small>No incluir los días contabilizados en la pregunta 3.</small></div>
+    <div class="q-input">
+      <input type="number" min="0" max="92" inputmode="numeric" pattern="[0-9]*" id="q4" data-score>
+      <span class="unit">días</span>
+    </div>
+  </div>
+
+  <div class="question">
+    <div class="q-num">5</div>
+    <div class="q-text">Días en los que se ha perdido actividades familiares, sociales o lúdicas por la cefalea.</div>
+    <div class="q-input">
+      <input type="number" min="0" max="92" inputmode="numeric" pattern="[0-9]*" id="q5" data-score>
+      <span class="unit">días</span>
+    </div>
+  </div>
+
+  <div class="section-label">Items informativos · no puntúan</div>
+
+  <div class="question">
+    <div class="q-num alpha">A</div>
+    <div class="q-text">Días totales con cefalea en los últimos 3 meses.<small>Si el dolor ha durado más de un día, contabilizar cada día por separado.</small></div>
+    <div class="q-input">
+      <input type="number" min="0" max="92" inputmode="numeric" pattern="[0-9]*" id="qA">
+      <span class="unit">días</span>
+    </div>
+  </div>
+
+  <div class="question">
+    <div class="q-num alpha">B</div>
+    <div class="q-text">Intensidad media del dolor.<small>Escala 0–10, donde 0 = sin dolor y 10 = dolor intenso.</small></div>
+    <div class="q-input">
+      <input type="number" min="0" max="10" inputmode="numeric" pattern="[0-9]*" id="qB">
+      <span class="unit">/ 10</span>
+    </div>
+  </div>
+
+  <!-- Result -->
+  <div class="result">
+    <div class="result-top">
+      <div class="result-cell">
+        <div class="label">Puntuación total</div>
+        <div class="value"><span id="total">0</span><small>pts</small></div>
+      </div>
+      <div class="result-cell">
+        <div class="label">Días de cefalea / Intensidad</div>
+        <div class="value"><span id="diasA">0</span><small>d</small> · <span id="intB">0</span><small>/10</small></div>
+      </div>
+    </div>
+    <div class="grade g1" id="gradeBox">
+      <div class="label">Grado de discapacidad</div>
+      <div class="grade-line">
+        <span class="roman" id="gradeRoman">I</span>
+        <span class="desc" id="gradeDesc">Discapacidad nula o mínima</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Reference -->
+  <div class="reference">
+    <h3>Estratificación MIDAS</h3>
+    <div class="ref-grid">
+      <div class="ref-cell g1">
+        <div class="range">0–5</div>
+        <div class="label">Grado I · Nula/mínima</div>
+      </div>
+      <div class="ref-cell g2">
+        <div class="range">6–10</div>
+        <div class="label">Grado II · Leve</div>
+      </div>
+      <div class="ref-cell g3">
+        <div class="range">11–20</div>
+        <div class="label">Grado III · Moderada</div>
+      </div>
+      <div class="ref-cell g4">
+        <div class="range">≥ 21</div>
+        <div class="label">Grado IV · Grave</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="actions">
+    <button class="btn" id="copyBtn">Copiar para historia clínica</button>
+    <button class="btn secondary" id="resetBtn">Reiniciar</button>
+  </div>
+
+  <div class="clinical-output" id="clinicalOutput"></div>
+
+  <footer>
+    Escala MIDAS — Migraine Disability Assessment
+    <span class="ref">Stewart WF, Lipton RB, Dowson AJ, Sawyer J. <em>Neurology</em> 2001;56(suppl 1):S20–S28.</span>
+  </footer>
+
+</div>
+
+<script>
+  const $ = s => document.querySelector(s);
+  const scoreInputs = document.querySelectorAll('[data-score]');
+  const aInput = $('#qA');
+  const bInput = $('#qB');
+  const totalEl = $('#total');
+  const diasAEl = $('#diasA');
+  const intBEl = $('#intB');
+  const gradeBox = $('#gradeBox');
+  const gradeRoman = $('#gradeRoman');
+  const gradeDesc = $('#gradeDesc');
+  const fechaInput = $('#fecha');
+  const copyBtn = $('#copyBtn');
+  const resetBtn = $('#resetBtn');
+  const output = $('#clinicalOutput');
+
+  // Default date = today
+  const today = new Date();
+  fechaInput.value = today.toISOString().split('T')[0];
+
+  function parseNum(el){
+    const v = parseInt(el.value, 10);
+    return isNaN(v) || v < 0 ? 0 : v;
+  }
+
+  function gradeFor(score){
+    if (score <= 5)  return {n:1, roman:'I',   desc:'Discapacidad nula o mínima', cls:'g1'};
+    if (score <= 10) return {n:2, roman:'II',  desc:'Discapacidad leve',           cls:'g2'};
+    if (score <= 20) return {n:3, roman:'III', desc:'Discapacidad moderada',       cls:'g3'};
+    return                {n:4, roman:'IV',  desc:'Discapacidad grave',            cls:'g4'};
+  }
+
+  function update(){
+    let total = 0;
+    scoreInputs.forEach(inp => {
+      const v = parseNum(inp);
+      total += v;
+      inp.classList.toggle('filled', inp.value !== '' && v >= 0);
+    });
+
+    const a = parseNum(aInput);
+    const b = Math.min(parseNum(bInput), 10);
+
+    [aInput, bInput].forEach(inp => {
+      inp.classList.toggle('filled', inp.value !== '');
+    });
+
+    totalEl.textContent = total;
+    diasAEl.textContent = a;
+    intBEl.textContent  = b;
+
+    const g = gradeFor(total);
+    gradeRoman.textContent = g.roman;
+    gradeDesc.textContent  = g.desc;
+    gradeBox.className = 'grade ' + g.cls;
+  }
+
+  [...scoreInputs, aInput, bInput].forEach(inp => {
+    inp.addEventListener('input', update);
+    inp.addEventListener('focus', () => inp.select());
+  });
+
+  function fmtFecha(iso){
+    if(!iso) return '';
+    const [y,m,d] = iso.split('-');
+    return `${d}/${m}/${y}`;
+  }
+
+  function buildClinicalText(){
+    const q1 = parseNum($('#q1'));
+    const q2 = parseNum($('#q2'));
+    const q3 = parseNum($('#q3'));
+    const q4 = parseNum($('#q4'));
+    const q5 = parseNum($('#q5'));
+    const total = q1+q2+q3+q4+q5;
+    const a = parseNum(aInput);
+    const b = Math.min(parseNum(bInput), 10);
+    const g = gradeFor(total);
+    const fecha = fmtFecha(fechaInput.value);
+
+    const text =
+`Se aplica la escala MIDAS (Migraine Disability Assessment) el ${fecha} para evaluar la repercusión funcional de la cefalea en los últimos tres meses. La paciente refiere ${q1} día(s) de absentismo laboral o académico atribuibles a la cefalea, ${q2} día(s) con rendimiento laboral reducido al menos a la mitad, ${q3} día(s) sin poder realizar las tareas domésticas y ${q4} día(s) con rendimiento doméstico igualmente disminuido, así como ${q5} día(s) en los que ha perdido actividades familiares, sociales o lúdicas por dicho motivo. La suma de estos cinco ítems arroja una puntuación total de ${total} puntos, correspondiente a un grado ${g.roman} en la estratificación MIDAS (${g.desc.toLowerCase()}). En cuanto a los ítems informativos, ha presentado cefalea durante ${a} día(s) en el periodo evaluado, con una intensidad media autorreferida de ${b}/10.`;
+
+    return text;
+  }
+
+  copyBtn.addEventListener('click', async () => {
+    const text = buildClinicalText();
+    output.textContent = text;
+    output.classList.add('show');
+    try{
+      await navigator.clipboard.writeText(text);
+      const original = copyBtn.textContent;
+      copyBtn.textContent = 'Copiado ✓';
+      copyBtn.classList.add('copied');
+      setTimeout(() => {
+        copyBtn.textContent = original;
+        copyBtn.classList.remove('copied');
+      }, 1800);
+    }catch(e){
+      // Fallback: select text in output for manual copy
+      const range = document.createRange();
+      range.selectNodeContents(output);
+      const sel = window.getSelection();
+      sel.removeAllRanges();
+      sel.addRange(range);
+    }
+  });
+
+  resetBtn.addEventListener('click', () => {
+    document.querySelectorAll('input[type="number"]').forEach(i => { i.value=''; i.classList.remove('filled'); });
+    output.classList.remove('show');
+    output.textContent = '';
+    fechaInput.value = new Date().toISOString().split('T')[0];
+    update();
+    window.scrollTo({top:0, behavior:'smooth'});
+  });
+
+  update();
+</script>
+</body>
+</html>
