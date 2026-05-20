@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MDS-UPDRS · Parte III — Exploración Motora</title>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+    :root {
+    --bg: #f4efe4;
+    --bg2: #ebe4d3;
+    --bg3: #faf6ec;
+    --border: #cfc4ad;
+    --border2: #b8a98b;
+    --text: #1a1614;
+    --text2: #4a3f38;
+    --text3: #6e6258;
+    --text4: #8a7d72;
+    --accent: #7a1f2b;
+    --accent2: #a64a3a;
+    --c0: #4a6741;
+    --c1: #6b7a38;
+    --c2: #b8862f;
+    --c3: #a64a3a;
+    --c4: #962934;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; overflow: hidden; }
+  body { font-family: 'EB Garamond', Georgia, serif; background: var(--bg); color: var(--text); font-size: 17px; }
+  .mono { font-family: 'JetBrains Mono', monospace; }
+
+  /* ── LAYOUT ── */
+  #app { display: flex; flex-direction: column; height: 100vh; }
+
+  /* Header */
+  #header {
+    background: linear-gradient(135deg, #faf6ec 0%, #ebe4d3 100%);
+    border-bottom: 1px solid var(--border2);
+    padding: 18px 30px;
+    display: flex; align-items: center; justify-content: space-between;
+    flex-shrink: 0;
+  }
+  #header h1 { font-size: 28px; font-weight: 600; color: var(--text); letter-spacing: -.5px; }
+  #header .subtitle { font-size: 13px; color: var(--accent); letter-spacing: 3px; margin-bottom: 4px; font-weight: 600; }
+  .hright { display: flex; align-items: center; gap: 20px; }
+  .hstat { text-align: right; }
+  .hstat .hlabel { font-size: 12px; color: var(--text2); margin-bottom: 2px; font-weight: 600; letter-spacing: 1px; }
+  .hstat .hval { font-size: 22px; color: var(--accent); font-weight: 600; }
+  .hsep { width: 1px; height: 40px; background: var(--border2); }
+  #btn-resumen {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border: 1px solid var(--accent); color: #faf6ec;
+    padding: 11px 22px; border-radius: 8px; cursor: pointer;
+    font-family: inherit; font-size: 15px; letter-spacing: .5px; font-weight: 600;
+    transition: background .2s, transform .15s;
+  }
+  #btn-resumen:hover { background: linear-gradient(135deg, var(--accent2), var(--accent)); transform: translateY(-1px); }
+
+  /* Body */
+  #body { display: flex; flex: 1; overflow: hidden; }
+
+  /* Sidebar */
+  #sidebar {
+    width: 260px; flex-shrink: 0;
+    background: var(--bg2); border-right: 1px solid var(--border);
+    overflow-y: auto; padding: 12px 0;
+  }
+  .nav-item {
+    padding: 13px 16px; border-left: 3px solid transparent;
+    cursor: pointer; transition: background .15s, border-color .15s;
+  }
+  .nav-item:hover { background: rgba(26, 22, 20, .05); }
+  .nav-item.active { background: rgba(122, 31, 43,.1); border-left-color: var(--accent); }
+  .nav-title { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+  .nav-title span.icon { font-size: 17px; }
+  .nav-title span.label { font-size: 15px; color: var(--text2); line-height: 1.3; }
+  .nav-item.active .nav-title span.label { color: var(--accent); font-weight: 600; }
+  .nav-meta { display: flex; justify-content: space-between; padding-left: 25px; }
+  .nav-meta span { font-size: 12px; color: var(--text3); }
+  .nav-progress {
+    margin: 14px 12px 8px;
+    padding: 12px 14px;
+    background: rgba(122, 31, 43,.05);
+    border-radius: 8px; border: 1px solid var(--border2);
+  }
+  .nav-progress .plabel { font-size: 12px; color: var(--text3); letter-spacing: 1px; margin-bottom: 8px; font-weight: 600; }
+  .pbar-track { height: 5px; background: var(--border); border-radius: 3px; margin-bottom: 8px; }
+  .pbar-fill { height: 100%; background: linear-gradient(90deg, var(--accent2), var(--accent)); border-radius: 3px; transition: width .4s ease; }
+  .pbar-meta { display: flex; justify-content: space-between; font-size: 12px; }
+
+  /* Main */
+  #main { flex: 1; overflow-y: auto; padding: 28px 32px 48px; }
+
+  .sec-header { margin-bottom: 26px; padding-bottom: 18px; border-bottom: 1px solid var(--border); }
+  .sec-header h2 { font-size: 28px; font-weight: 600; color: var(--text); display: flex; align-items: center; gap: 12px; margin-bottom: 6px; }
+  .sec-header .sec-pts { font-size: 13px; color: var(--text3); letter-spacing: 2px; font-weight: 600; }
+
+  /* Item card */
+  .item-card {
+    margin-bottom: 22px; border-radius: 12px;
+    padding: 22px; border: 1px solid var(--border);
+    background: var(--bg3);
+    transition: background .3s, border-color .3s, box-shadow .3s;
+    box-shadow: 0 1px 2px rgba(26,22,20,.03);
+  }
+  .item-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 14px; gap: 16px; }
+  .item-name { font-size: 18px; color: var(--text); font-weight: 600; margin-bottom: 5px; line-height: 1.3; }
+  .item-desc { font-size: 14px; color: var(--text3); font-style: italic; line-height: 1.4; }
+  .item-score-badge { font-size: 24px; font-weight: 600; min-width: 32px; text-align: right; flex-shrink: 0; }
+
+  /* Score buttons */
+  .score-grid { display: grid; grid-template-columns: repeat(5,1fr); gap: 8px; }
+  .score-btn {
+    padding: 11px 4px; border-radius: 8px; border: 2px solid var(--border);
+    background: var(--bg); cursor: pointer; text-align: center;
+    transition: transform .15s, border-color .15s, background .15s, box-shadow .15s;
+    outline: none;
+  }
+  .score-btn:hover { transform: translateY(-2px); box-shadow: 0 2px 8px rgba(26,22,20,.1); }
+  .score-btn.sel { transform: translateY(-1px) scale(1.04); box-shadow: 0 0 0 2px rgba(122,31,43,.18), 0 4px 12px rgba(26,22,20,.15); }
+  .score-btn .snum { font-size: 20px; font-weight: 600; display: block; margin-bottom: 4px; }
+  .score-btn .stxt { font-size: 12px; font-family: 'EB Garamond', serif; line-height: 1.25; display: block; color: var(--text2); }
+  .score-btn.sel .stxt { color: inherit; font-weight: 600; }
+
+  /* Selected description */
+  .sel-desc {
+    margin-top: 12px; padding: 10px 14px;
+    background: rgba(26,22,20,.04); border-radius: 6px;
+    font-size: 14px; font-style: italic;
+    border-left: 3px solid currentColor;
+  }
+
+  /* Nav buttons */
+  .nav-buttons { display: flex; justify-content: space-between; margin-top: 14px; padding-top: 22px; border-top: 1px solid var(--border); }
+  .btn-prev, .btn-next, .btn-finish {
+    padding: 11px 22px; border-radius: 8px; cursor: pointer;
+    font-family: inherit; font-size: 15px; transition: all .2s; font-weight: 500;
+  }
+  .btn-prev { background: transparent; border: 1px solid var(--border2); color: var(--text2); }
+  .btn-prev:hover { border-color: var(--accent); color: var(--accent); }
+  .btn-next { background: linear-gradient(135deg, var(--accent), var(--accent2)); border: 1px solid var(--accent); color: #faf6ec; font-weight: 600; }
+  .btn-next:hover { background: linear-gradient(135deg, var(--accent2), var(--accent)); transform: translateY(-1px); }
+  .btn-finish { background: linear-gradient(135deg, var(--c0), var(--c1)); border: 1px solid var(--c0); color: #faf6ec; font-weight: 600; }
+  .btn-finish:hover { background: linear-gradient(135deg, var(--c1), var(--c0)); transform: translateY(-1px); }
+
+  /* ── SUMMARY ── */
+  #summary { display: none; }
+  #summary.visible { display: block; }
+  .sum-hero { text-align: center; margin-bottom: 32px; }
+  .sum-hero .big-score { font-size: 64px; font-weight: 600; line-height: 1; }
+  .sum-hero .big-of { font-size: 18px; color: var(--text3); margin-bottom: 12px; }
+  .sum-badge {
+    display: inline-block; margin-top: 10px; padding: 7px 24px;
+    border-radius: 22px; font-size: 17px; font-weight: 600;
+  }
+  .sum-title { font-size: 13px; color: var(--text3); letter-spacing: 2px; margin-bottom: 18px; font-weight: 600; }
+
+  .sum-block { background: var(--bg3); border-radius: 12px; padding: 24px; margin-bottom: 20px; border: 1px solid var(--border); }
+  .sec-bar { margin-bottom: 16px; }
+  .sec-bar-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+  .sec-bar-label { font-size: 15px; color: var(--text2); display: flex; align-items: center; gap: 8px; }
+  .sec-bar-val { font-size: 15px; font-weight: 600; }
+  .bar-track { height: 6px; background: var(--border); border-radius: 3px; }
+  .bar-fill { height: 100%; border-radius: 3px; transition: width .6s ease; }
+
+  .detail-sec { margin-bottom: 22px; }
+  .detail-sec-title { font-size: 15px; color: var(--accent); margin-bottom: 10px; display: flex; align-items: center; gap: 8px; font-weight: 600; }
+  .detail-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 10px 14px; margin-bottom: 4px; border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--bg);
+  }
+  .detail-row .dlabel { font-size: 14px; color: var(--text2); font-weight: 500; }
+  .detail-row .dright { display: flex; align-items: center; gap: 12px; }
+  .detail-row .ddesc { font-size: 13px; font-style: italic; color: var(--text3); max-width: 240px; text-align: right; }
+  .detail-row .dval { font-size: 17px; font-weight: 600; min-width: 20px; text-align: right; }
+
+  .total-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 16px 20px; background: rgba(122, 31, 43,.07);
+    border: 1px solid var(--border2); border-radius: 10px; margin-top: 20px;
+  }
+  .total-row .tlabel { font-size: 19px; font-weight: 600; color: var(--text); }
+  .total-row .tval { text-align: right; }
+  .total-row .tnum { font-size: 36px; font-weight: 600; }
+  .total-row .tinterp { font-size: 15px; font-style: italic; font-weight: 500; }
+
+  .btn-reset {
+    width: 100%; margin-top: 14px; padding: 13px;
+    background: transparent; border: 1px solid var(--border2);
+    color: var(--text3); border-radius: 8px; cursor: pointer;
+    font-family: inherit; font-size: 15px; transition: all .2s;
+  }
+  .btn-reset:hover { border-color: var(--c4); color: var(--c4); }
+
+  .action-row { display: flex; gap: 10px; margin-top: 16px; }
+  .btn-copy {
+    flex: 1; padding: 13px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border: 1px solid var(--accent); color: #faf6ec;
+    border-radius: 8px; cursor: pointer;
+    font-family: inherit; font-size: 15px; font-weight: 600;
+    transition: all .2s;
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  .btn-copy:hover { background: linear-gradient(135deg, var(--accent2), var(--accent)); transform: translateY(-1px); }
+  .btn-copy:active { transform: translateY(0); }
+  .action-row .btn-reset { flex: 1; margin-top: 0; }
+
+  /* Vista previa del texto a copiar */
+  .copy-preview {
+    margin-top: 14px;
+    padding: 16px 18px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    line-height: 1.7;
+    color: var(--text2);
+    white-space: pre-wrap;
+    word-break: break-word;
+    max-height: 240px;
+    overflow-y: auto;
+    display: none;
+  }
+  .copy-preview.show { display: block; }
+
+  /* Toast */
+  #toast {
+    position: fixed;
+    bottom: 28px; left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    background: var(--text); color: #faf6ec;
+    padding: 13px 22px; border-radius: 8px;
+    font-size: 14px; font-weight: 500;
+    opacity: 0; pointer-events: none;
+    transition: transform .25s ease, opacity .25s ease;
+    z-index: 1000;
+    box-shadow: 0 6px 20px rgba(26,22,20,.2);
+  }
+  #toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 7px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 4px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--text4); }
+
+  @media (max-width: 900px) {
+    #sidebar { width: 210px; }
+    .score-grid { grid-template-columns: repeat(5,1fr); gap: 5px; }
+    .score-btn .stxt { display: none; }
+    #header { padding: 14px 18px; }
+    #main { padding: 22px 20px 36px; }
+    #header h1 { font-size: 24px; }
+  }
+</style>
+</head>
+<body>
+<div id="app">
+  <!-- Header -->
+  <div id="header">
+    <div>
+      <div class="mono subtitle">MDS-UPDRS · PARTE III</div>
+      <h1>Exploración Motora</h1>
+    </div>
+    <div class="hright">
+      <div class="hstat">
+        <div class="mono hlabel">COMPLETADO</div>
+        <div class="mono hval"><span id="hd-done">0</span><span style="color:var(--text4)">/<span id="hd-total">0</span></span></div>
+      </div>
+      <div class="hsep"></div>
+      <div class="hstat">
+        <div class="mono hlabel">PUNTUACIÓN</div>
+        <div class="mono hval" id="hd-score" style="color:var(--c0)">0<span style="color:var(--text4)">/<span id="hd-max">0</span></span></div>
+      </div>
+      <button id="btn-resumen" onclick="showSummary()">Ver Resumen</button>
+    </div>
+  </div>
+
+  <!-- Body -->
+  <div id="body">
+    <!-- Sidebar -->
+    <div id="sidebar">
+      <div id="nav-items"></div>
+      <div class="nav-progress">
+        <div class="mono plabel">PROGRESO TOTAL</div>
+        <div class="pbar-track"><div class="pbar-fill" id="global-bar" style="width:0%"></div></div>
+        <div class="pbar-meta mono">
+          <span id="global-pct" style="color:var(--text2)">0%</span>
+          <span id="global-pts" style="color:var(--c0)">0 pts</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main -->
+    <div id="main">
+      <div id="section-view"></div>
+      <div id="summary">
+        <div class="sum-hero">
+          <div class="mono sum-title">RESUMEN DE PUNTUACIÓN</div>
+          <div class="big-score" id="s-total">0</div>
+          <div class="mono big-of">de <span id="s-max">0</span> puntos totales</div>
+          <div class="sum-badge" id="s-badge">–</div>
+        </div>
+        <div class="sum-block">
+          <div class="mono sum-title">PUNTUACIÓN POR SECCIÓN</div>
+          <div id="s-bars"></div>
+        </div>
+        <div class="sum-block">
+          <div class="mono sum-title">DETALLE POR ÍTEM</div>
+          <div id="s-detail"></div>
+          <div class="total-row">
+            <div class="tlabel">Puntuación Total UPDRS-III</div>
+            <div class="tval">
+              <div class="mono tnum" id="s-total2">0</div>
+              <div class="tinterp" id="s-interp">–</div>
+            </div>
+          </div>
+          <div class="action-row">
+            <button class="btn-copy" onclick="copyForReport()">
+              <span>📋</span> Copiar para informe
+            </button>
+            <button class="btn-reset" onclick="resetAll()">Reiniciar evaluación</button>
+          </div>
+          <div class="copy-preview" id="copy-preview"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ── DATA ────────────────────────────────────────────────────────────────────
+const COLORS = ['#4a6741','#6b7a38','#b8862f','#a64a3a','#962934'];
+const BG_ALPHA = ['rgba(74, 103, 65,.12)','rgba(107, 122, 56,.12)','rgba(184, 134, 47,.12)','rgba(166, 74, 58,.12)','rgba(150, 41, 52,.12)'];
+const SCORE_SHORT = ['Normal','Leve','Mod-leve','Moderado','Severo'];
+
+const SECTIONS = [
+  {
+    id:'habla-cara', title:'Habla y Expresión Facial', icon:'💬',
+    items:[
+      { id:'3.1', label:'3.1 Habla',
+        desc:'Evalúa el volumen, modulación, claridad y fluidez del habla.',
+        scores:['Normal','Leve pérdida de expresión, dicción o volumen','Monótono, arrastrado pero comprensible; moderadamente afectado','Marcadamente afectado, difícil de entender','Ininteligible'] },
+      { id:'3.2', label:'3.2 Expresión facial',
+        desc:'Observar hipomimia, parpadeo reducido y babeo.',
+        scores:['Normal','Mínima hipomimia, podría ser normal','Leve pero claramente anormal. Reducción de la expresión facial','Hipomimia moderada; labios entreabiertos a veces','Cara de máscara o fija. Pérdida severa de expresión facial'] },
+    ]
+  },
+  {
+    id:'rigidez', title:'Rigidez', icon:'🦾',
+    items:[
+      { id:'3.3a', label:'3.3a Rigidez – Cuello',
+        desc:'Explorar con maniobras de activación en movimiento pasivo.',
+        scores:['Ausente','Leve o solo detectable cuando activada','Leve-moderada','Marcada, pero se consigue movilidad completa','Severa, dificultad para el movimiento'] },
+      { id:'3.3b', label:'3.3b Rigidez – ESD',
+        desc:'Extremidad superior derecha.',
+        scores:['Ausente','Leve o solo detectable cuando activada','Leve-moderada','Marcada, pero se consigue movilidad completa','Severa, dificultad para el movimiento'] },
+      { id:'3.3c', label:'3.3c Rigidez – ESI',
+        desc:'Extremidad superior izquierda.',
+        scores:['Ausente','Leve o solo detectable cuando activada','Leve-moderada','Marcada, pero se consigue movilidad completa','Severa, dificultad para el movimiento'] },
+      { id:'3.3d', label:'3.3d Rigidez – EID',
+        desc:'Extremidad inferior derecha.',
+        scores:['Ausente','Leve o solo detectable cuando activada','Leve-moderada','Marcada, pero se consigue movilidad completa','Severa, dificultad para el movimiento'] },
+      { id:'3.3e', label:'3.3e Rigidez – EII',
+        desc:'Extremidad inferior izquierda.',
+        scores:['Ausente','Leve o solo detectable cuando activada','Leve-moderada','Marcada, pero se consigue movilidad completa','Severa, dificultad para el movimiento'] },
+    ]
+  },
+  {
+    id:'bradi-sup', title:'Bradicinesia – EESS', icon:'🖐️',
+    items:[
+      { id:'3.4a', label:'3.4a Golpeteo dedos – Der.',
+        desc:'Índice golpea el pulgar 10 veces lo más rápido y amplio posible.',
+        scores:['Normal (≥15/5s)','Leve enlentecimiento y/o reducción de amplitud','Moderado. Deterioro definido. Se detiene ocasionalmente','Severo. Frecuentes interrupciones o pausas','Apenas puede realizar'] },
+      { id:'3.4b', label:'3.4b Golpeteo dedos – Izq.',
+        desc:'Índice golpea el pulgar 10 veces lo más rápido y amplio posible.',
+        scores:['Normal (≥15/5s)','Leve enlentecimiento y/o reducción de amplitud','Moderado. Deterioro definido. Se detiene ocasionalmente','Severo. Frecuentes interrupciones o pausas','Apenas puede realizar'] },
+      { id:'3.5a', label:'3.5a Movimientos mano – Der.',
+        desc:'Abrir y cerrar la mano en movimientos amplios y rápidos.',
+        scores:['Normal','Leve enlentecimiento y/o reducción de amplitud','Moderado. Deterioro definido. Se detiene ocasionalmente','Severo. Frecuentes interrupciones o pausas','Apenas puede realizar'] },
+      { id:'3.5b', label:'3.5b Movimientos mano – Izq.',
+        desc:'Abrir y cerrar la mano en movimientos amplios y rápidos.',
+        scores:['Normal','Leve enlentecimiento y/o reducción de amplitud','Moderado. Deterioro definido. Se detiene ocasionalmente','Severo. Frecuentes interrupciones o pausas','Apenas puede realizar'] },
+      { id:'3.6a', label:'3.6a Pronosupinación – Der.',
+        desc:'Movimientos de pronosupinación vertical u horizontalmente.',
+        scores:['Normal','Leve enlentecimiento y/o reducción de amplitud','Moderado. Deterioro definido. Se detiene ocasionalmente','Severo. Frecuentes interrupciones o pausas','Apenas puede realizar'] },
+      { id:'3.6b', label:'3.6b Pronosupinación – Izq.',
+        desc:'Movimientos de pronosupinación vertical u horizontalmente.',
+        scores:['Normal','Leve enlentecimiento y/o reducción de amplitud','Moderado. Deterioro definido. Se detiene ocasionalmente','Severo. Frecuentes interrupciones o pausas','Apenas puede realizar'] },
+    ]
+  },
+  {
+    id:'bradi-inf', title:'Bradicinesia – EEII', icon:'🦵',
+    items:[
+      { id:'3.7a', label:'3.7a Golpeteo pie – Der.',
+        desc:'Talón en el suelo, levantar la punta 10 veces lo más alto y rápido posible.',
+        scores:['Normal (≥15/5s)','Leve enlentecimiento y/o reducción de amplitud','Moderado. Deterioro definido. Se detiene ocasionalmente','Severo. Frecuentes interrupciones o pausas','Apenas puede realizar'] },
+      { id:'3.7b', label:'3.7b Golpeteo pie – Izq.',
+        desc:'Talón en el suelo, levantar la punta 10 veces lo más alto y rápido posible.',
+        scores:['Normal (≥15/5s)','Leve enlentecimiento y/o reducción de amplitud','Moderado. Deterioro definido. Se detiene ocasionalmente','Severo. Frecuentes interrupciones o pausas','Apenas puede realizar'] },
+      { id:'3.8a', label:'3.8a Agilidad pierna – Der.',
+        desc:'Levantar la pierna y golpear el talón en el suelo con amplitud de ~8 cm.',
+        scores:['Normal','Leve enlentecimiento y/o reducción de amplitud','Moderado. Deterioro definido. Se detiene ocasionalmente','Severo. Frecuentes interrupciones o pausas','Apenas puede realizar'] },
+      { id:'3.8b', label:'3.8b Agilidad pierna – Izq.',
+        desc:'Levantar la pierna y golpear el talón en el suelo con amplitud de ~8 cm.',
+        scores:['Normal','Leve enlentecimiento y/o reducción de amplitud','Moderado. Deterioro definido. Se detiene ocasionalmente','Severo. Frecuentes interrupciones o pausas','Apenas puede realizar'] },
+    ]
+  },
+  {
+    id:'marcha', title:'Marcha, Equilibrio y Postura', icon:'🚶',
+    items:[
+      { id:'3.9', label:'3.9 Levantarse de la silla',
+        desc:'Levantarse de silla con respaldo recto sin apoyar los brazos.',
+        scores:['Normal','Lento o puede necesitar más de un intento','Se empuja con los brazos de la silla','Tiende a caer hacia atrás; puede necesitar varios intentos','Incapaz sin ayuda'] },
+      { id:'3.10', label:'3.10 Marcha',
+        desc:'Observar paso, braceo, base de sustentación y dificultades.',
+        scores:['Normal','Camina lentamente; puede arrastrar los pies','Dificultad leve-moderada. Puede necesitar algún apoyo','Dificultad severa de la marcha, necesita apoyo','No puede caminar en absoluto'] },
+      { id:'3.11', label:'3.11 Bloqueos de la marcha',
+        desc:'Evaluar congelación al inicio o durante la marcha.',
+        scores:['Sin bloqueos','Bloqueo al inicio o al girar; se recupera solo','Bloqueo ocasional','Caídas por bloqueos','Caídas frecuentes por bloqueos'] },
+      { id:'3.12', label:'3.12 Estabilidad postural',
+        desc:'Respuesta a empujón repentino hacia atrás (test de retropulsión).',
+        scores:['Normal','Retrocede, pero se recupera sin ayuda','Ausencia de respuesta postural; caería sin apoyo','Muy inestable, tiende a perder el equilibrio espontáneamente','Incapaz de permanecer de pie sin ayuda'] },
+      { id:'3.13', label:'3.13 Postura',
+        desc:'Observar postura en bipedestación.',
+        scores:['Normal','No completamente erecto; podría ser normal en ancianos','Postura claramente anormal; inclinado hacia un lado','Flexión severa con postura muy anormal','Flexión marcada con postura extremadamente anormal'] },
+      { id:'3.14', label:'3.14 Espontaneidad global del movimiento',
+        desc:'Lentitud, vacilación, reducción del braceo y pobreza general de movimiento.',
+        scores:['Normal','Mínimamente lento, deliberado; podría ser normal en anciano','Leve lentitud y pobreza de movimiento claramente anormal','Moderada lentitud, pobreza o pequeña amplitud de movimiento','Marcada lentitud, pobreza o pequeña amplitud de movimiento'] },
+    ]
+  },
+  {
+    id:'temblor', title:'Temblor', icon:'〰️',
+    items:[
+      { id:'3.15a', label:'3.15a Temblor postural manos – Der.',
+        desc:'Observar temblor con brazos extendidos.',
+        scores:['Ausente','Leve; presente pero no siempre','Moderado en amplitud; perturbador','Moderado; interfiere con las actividades','Marcado; interfiere con la alimentación'] },
+      { id:'3.15b', label:'3.15b Temblor postural manos – Izq.',
+        desc:'Observar temblor con brazos extendidos.',
+        scores:['Ausente','Leve; presente pero no siempre','Moderado en amplitud; perturbador','Moderado; interfiere con las actividades','Marcado; interfiere con la alimentación'] },
+      { id:'3.16a', label:'3.16a Temblor cinético manos – Der.',
+        desc:'Observar durante la prueba dedo-nariz.',
+        scores:['Ausente','Leve; presente con la acción','Moderado en amplitud; perturbador','Moderado en amplitud; interfiere con las actividades','Marcado; interfiere con la alimentación'] },
+      { id:'3.16b', label:'3.16b Temblor cinético manos – Izq.',
+        desc:'Observar durante la prueba dedo-nariz.',
+        scores:['Ausente','Leve; presente con la acción','Moderado en amplitud; perturbador','Moderado en amplitud; interfiere con las actividades','Marcado; interfiere con la alimentación'] },
+      { id:'3.17a', label:'3.17a Temblor reposo – ESD',
+        desc:'Extremidad superior derecha en reposo.',
+        scores:['Ausente','Leve (<1 cm)','Moderado (1–3 cm)','Marcado (3–10 cm)','Severo (>10 cm)'] },
+      { id:'3.17b', label:'3.17b Temblor reposo – ESI',
+        desc:'Extremidad superior izquierda en reposo.',
+        scores:['Ausente','Leve (<1 cm)','Moderado (1–3 cm)','Marcado (3–10 cm)','Severo (>10 cm)'] },
+      { id:'3.17c', label:'3.17c Temblor reposo – EID',
+        desc:'Extremidad inferior derecha en reposo.',
+        scores:['Ausente','Leve (<1 cm)','Moderado (1–3 cm)','Marcado (3–10 cm)','Severo (>10 cm)'] },
+      { id:'3.17d', label:'3.17d Temblor reposo – EII',
+        desc:'Extremidad inferior izquierda en reposo.',
+        scores:['Ausente','Leve (<1 cm)','Moderado (1–3 cm)','Marcado (3–10 cm)','Severo (>10 cm)'] },
+      { id:'3.17e', label:'3.17e Temblor reposo – Labio/Mandíbula',
+        desc:'Evaluar temblor perioral.',
+        scores:['Ausente','Leve (<1 cm)','Moderado (1–3 cm)','Marcado (3–10 cm)','Severo (>10 cm)'] },
+      { id:'3.18', label:'3.18 Constancia del temblor de reposo',
+        desc:'Evaluar la presencia del temblor de reposo durante la exploración.',
+        scores:['Ausente','Presente ≤25% del tiempo de exploración','Presente 26–50% del tiempo de exploración','Presente 51–75% del tiempo de exploración','Presente >75% del tiempo de exploración'] },
+    ]
+  },
+];
+
+// ── STATE ───────────────────────────────────────────────────────────────────
+let scores = {};
+let activeSecIdx = 0;
+
+const totalItems = SECTIONS.reduce((s,sec) => s + sec.items.length, 0);
+const totalMax   = totalItems * 4;
+
+// ── HELPERS ─────────────────────────────────────────────────────────────────
+function getTotal() { return Object.values(scores).reduce((s,v)=>s+v,0); }
+function getDone()  { return Object.keys(scores).length; }
+function getSecScore(sec) { return sec.items.reduce((s,it)=>s+(scores[it.id]??0),0); }
+function getSecDone(sec)  { return sec.items.filter(it=>scores[it.id]!==undefined).length; }
+
+function interpretation(total) {
+  if (total<=10) return {label:'Normal o mínimo', color:COLORS[0]};
+  if (total<=20) return {label:'Leve',            color:COLORS[1]};
+  if (total<=40) return {label:'Moderado',         color:COLORS[2]};
+  if (total<=60) return {label:'Moderado-severo',  color:COLORS[3]};
+  return            {label:'Severo',               color:COLORS[4]};
+}
+
+function pctColor(pct) {
+  if (pct<=25) return COLORS[0];
+  if (pct<=50) return COLORS[2];
+  if (pct<=75) return COLORS[3];
+  return COLORS[4];
+}
+
+// Short label for score buttons
+const SHORT = {
+  'Normal':['Normal','Normal','Normal (≥15/5s)','Ausente','Sin bloqueos'],
+  1:['Leve'],
+  2:['Mod-leve','Moderado','Leve-mod.'],
+  3:['Marcado','Severo'],
+  4:['Severo','Incapaz','Apenas','No puede','Mínimo']
+};
+function shortLabel(txt, val) {
+  const map = ['Normal / Ausente','Leve','Mod-leve','Marcado','Severo / Incapaz'];
+  return map[val];
+}
+
+// ── RENDER ──────────────────────────────────────────────────────────────────
+function renderSidebar() {
+  const nav = document.getElementById('nav-items');
+  nav.innerHTML = SECTIONS.map((sec,i)=>{
+    const done  = getSecDone(sec);
+    const pts   = getSecScore(sec);
+    const act   = i===activeSecIdx;
+    return `<div class="nav-item ${act?'active':''}" onclick="goSection(${i})">
+      <div class="nav-title">
+        <span class="icon">${sec.icon}</span>
+        <span class="label">${sec.title}</span>
+      </div>
+      <div class="nav-meta mono">
+        <span style="color:${done===sec.items.length?'var(--c0)':'var(--text4)'}">${done}/${sec.items.length}</span>
+        <span>${pts}pts</span>
+      </div>
+    </div>`;
+  }).join('');
+
+  const done  = getDone();
+  const total = getTotal();
+  const pct   = Math.round((done/totalItems)*100);
+  const interp = interpretation(total);
+  document.getElementById('global-bar').style.width = pct+'%';
+  document.getElementById('global-pct').textContent = pct+'%';
+  document.getElementById('global-pts').style.color = interp.color;
+  document.getElementById('global-pts').textContent = total+' pts';
+}
+
+function renderHeader() {
+  const done  = getDone();
+  const total = getTotal();
+  const interp = interpretation(total);
+  document.getElementById('hd-done').textContent  = done;
+  document.getElementById('hd-total').textContent = totalItems;
+  document.getElementById('hd-max').textContent   = totalMax;
+  const sv = document.getElementById('hd-score');
+  sv.style.color = interp.color;
+  sv.innerHTML = total+'<span style="color:var(--text4)">/<span id="hd-max">'+totalMax+'</span></span>';
+}
+
+function renderSection() {
+  const sec = SECTIONS[activeSecIdx];
+  const secMax = sec.items.length*4;
+  const secScore = getSecScore(sec);
+
+  let html = `<div class="sec-header">
+    <h2><span>${sec.icon}</span>${sec.title}</h2>
+    <div class="mono sec-pts">PUNTUACIÓN SECCIÓN: <span style="color:var(--accent)">${secScore}</span> / ${secMax} pts</div>
+  </div>`;
+
+  sec.items.forEach(item=>{
+    const s = scores[item.id];
+    const hasScore = s !== undefined;
+    const borderC = hasScore ? COLORS[s]+'44' : 'var(--border)';
+    const bgC     = hasScore ? BG_ALPHA[s] : 'var(--bg3)';
+    html += `<div class="item-card" id="card-${item.id}" style="background:${bgC};border-color:${borderC}">
+      <div class="item-top">
+        <div>
+          <div class="item-name">${item.label}</div>
+          <div class="item-desc">${item.desc}</div>
+        </div>
+        <div class="mono item-score-badge" id="badge-${item.id}" style="color:${hasScore?COLORS[s]:'var(--text4)'}">${hasScore?s:'–'}</div>
+      </div>
+      <div class="score-grid">`;
+    for(let v=0;v<5;v++){
+      const sel = s===v;
+      html += `<button class="score-btn mono ${sel?'sel':''}" id="btn-${item.id}-${v}"
+        onclick="setScore('${item.id}',${v})"
+        style="border-color:${sel?COLORS[v]:'var(--border)'};background:${sel?COLORS[v]+'22':'var(--bg)'};color:${sel?COLORS[v]:'var(--text2)'}">
+        <span class="snum" style="color:${sel?COLORS[v]:'var(--text)'}">${v}</span>
+        <span class="stxt">${shortLabel(item.scores[v],v)}</span>
+      </button>`;
+    }
+    html += `</div>`;
+    if(hasScore){
+      html += `<div class="sel-desc" style="color:${COLORS[s]}">${s} – ${item.scores[s]}</div>`;
+    }
+    html += `</div>`;
+  });
+
+  // Navigation buttons
+  const isFirst = activeSecIdx===0;
+  const isLast  = activeSecIdx===SECTIONS.length-1;
+  html += `<div class="nav-buttons">
+    ${isFirst ? '<div></div>' : '<button class="btn-prev" onclick="goSection('+(activeSecIdx-1)+')">← Anterior</button>'}
+    ${isLast
+      ? '<button class="btn-finish" onclick="showSummary()">✓ Ver Resumen Final</button>'
+      : '<button class="btn-next" onclick="goSection('+(activeSecIdx+1)+')">Siguiente →</button>'
+    }
+  </div>`;
+
+  document.getElementById('section-view').innerHTML = html;
+}
+
+function setScore(itemId, val) {
+  scores[itemId] = val;
+  renderAll();
+}
+
+function goSection(idx) {
+  activeSecIdx = idx;
+  document.getElementById('summary').classList.remove('visible');
+  renderAll();
+  document.getElementById('main').scrollTo({top:0, behavior:'smooth'});
+}
+
+function renderAll() {
+  renderHeader();
+  renderSidebar();
+  renderSection();
+}
+
+// ── SUMMARY ─────────────────────────────────────────────────────────────────
+function showSummary() {
+  const total  = getTotal();
+  const interp = interpretation(total);
+
+  // Hero
+  document.getElementById('s-total').textContent = total;
+  document.getElementById('s-total').style.color = interp.color;
+  document.getElementById('s-max').textContent   = totalMax;
+  const badge = document.getElementById('s-badge');
+  badge.textContent = interp.label;
+  badge.style.color = interp.color;
+  badge.style.background = interp.color+'22';
+  badge.style.border = '1px solid '+interp.color+'55';
+
+  // Bars
+  let barsHtml = '';
+  SECTIONS.forEach(sec=>{
+    const ss  = getSecScore(sec);
+    const sm  = sec.items.length*4;
+    const pct = Math.round((ss/sm)*100);
+    const c   = pctColor(pct);
+    barsHtml += `<div class="sec-bar">
+      <div class="sec-bar-top">
+        <div class="sec-bar-label">${sec.icon} <span>${sec.title}</span></div>
+        <div class="mono sec-bar-val" style="color:${c}">${ss}<span style="color:var(--text4)">/${sm}</span></div>
+      </div>
+      <div class="bar-track"><div class="bar-fill" style="width:${pct}%;background:linear-gradient(90deg,${c}99,${c})"></div></div>
+      <div class="mono" style="font-size:12px;color:var(--text3);text-align:right;margin-top:3px">${pct}%</div>
+    </div>`;
+  });
+  document.getElementById('s-bars').innerHTML = barsHtml;
+
+  // Detail
+  let detHtml = '';
+  SECTIONS.forEach(sec=>{
+    detHtml += `<div class="detail-sec"><div class="detail-sec-title">${sec.icon} ${sec.title}</div>`;
+    sec.items.forEach(item=>{
+      const s = scores[item.id];
+      const hasS = s!==undefined;
+      const c = hasS?COLORS[s]:'var(--text4)';
+      detHtml += `<div class="detail-row" style="background:${hasS?BG_ALPHA[s]:'var(--bg)'};border-color:${hasS?COLORS[s]+'44':'var(--border)'}">
+        <div class="dlabel">${item.label}</div>
+        <div class="dright">
+          <div class="ddesc" style="color:var(--text3)">${hasS?item.scores[s]:'—'}</div>
+          <div class="mono dval" style="color:${c}">${hasS?s:'–'}</div>
+        </div>
+      </div>`;
+    });
+    detHtml += `</div>`;
+  });
+  document.getElementById('s-detail').innerHTML = detHtml;
+
+  // Total row
+  document.getElementById('s-total2').textContent = total;
+  document.getElementById('s-total2').style.color = interp.color;
+  document.getElementById('s-interp').textContent = interp.label;
+  document.getElementById('s-interp').style.color = interp.color;
+
+  // Show
+  document.getElementById('summary').classList.add('visible');
+  document.getElementById('main').scrollTo({top:99999, behavior:'smooth'});
+}
+
+function resetAll() {
+  scores = {};
+  activeSecIdx = 0;
+  document.getElementById('summary').classList.remove('visible');
+  document.getElementById('copy-preview').classList.remove('show');
+  renderAll();
+  document.getElementById('main').scrollTo({top:0, behavior:'smooth'});
+}
+
+// ── REPORT FOR CLINICAL NOTE ─────────────────────────────────────────────────
+// Mapa de etiquetas compactas para el informe (id → label corto)
+// Cuando varios ítems comparten prefijo (ej. Rigidez, Golpeteo dedos, Temblor reposo),
+// se agrupan: "Categoría: subítem1 x/4, subítem2 x/4, ..."
+const REPORT_GROUPS = [
+  { items: [['3.1', 'Habla']] },
+  { items: [['3.2', 'Expresión facial']] },
+  { prefix: 'Rigidez', items: [['3.3a','cuello'],['3.3b','ESD'],['3.3c','ESI'],['3.3d','EID'],['3.3e','EII']] },
+  { prefix: 'Golpeteo de dedos', items: [['3.4a','D'],['3.4b','I']] },
+  { prefix: 'Movimientos de manos', items: [['3.5a','D'],['3.5b','I']] },
+  { prefix: 'Pronosupinación', items: [['3.6a','D'],['3.6b','I']] },
+  { prefix: 'Golpeteo de pie', items: [['3.7a','D'],['3.7b','I']] },
+  { prefix: 'Agilidad de piernas', items: [['3.8a','D'],['3.8b','I']] },
+  { items: [['3.9', 'Levantarse de la silla']] },
+  { items: [['3.10', 'Marcha']] },
+  { items: [['3.11', 'Bloqueos de la marcha']] },
+  { items: [['3.12', 'Estabilidad postural']] },
+  { items: [['3.13', 'Postura']] },
+  { items: [['3.14', 'Espontaneidad global del movimiento']] },
+  { prefix: 'Temblor postural de manos', items: [['3.15a','D'],['3.15b','I']] },
+  { prefix: 'Temblor cinético de manos', items: [['3.16a','D'],['3.16b','I']] },
+  { prefix: 'Temblor de reposo', items: [['3.17a','ESD'],['3.17b','ESI'],['3.17c','EID'],['3.17d','EII'],['3.17e','labio/mandíbula']] },
+  { items: [['3.18', 'Constancia del temblor de reposo']] },
+];
+
+function val(id) {
+  const s = scores[id];
+  return s === undefined ? '—' : s;
+}
+
+function generateReportText() {
+  const parts = [];
+  REPORT_GROUPS.forEach(g => {
+    if (g.prefix) {
+      const sub = g.items.map(([id,lbl]) => `${lbl} ${val(id)}/4`).join(', ');
+      parts.push(`${g.prefix}: ${sub}`);
+    } else {
+      const [id, lbl] = g.items[0];
+      parts.push(`${lbl} ${val(id)}/4`);
+    }
+  });
+  const total = getTotal();
+  const done = getDone();
+  const interp = interpretation(total);
+  const totalLine = done === totalItems
+    ? `Total: ${total}/${totalMax} (${interp.label.toLowerCase()})`
+    : `Total parcial: ${total}/${totalMax} — ${done}/${totalItems} ítems evaluados`;
+  return `MDS-UPDRS parte III (motora). ${parts.join('. ')}. ${totalLine}.`;
+}
+
+async function copyForReport() {
+  const text = generateReportText();
+  const preview = document.getElementById('copy-preview');
+  preview.textContent = text;
+  preview.classList.add('show');
+  try {
+    await navigator.clipboard.writeText(text);
+    showToast('Copiado al portapapeles');
+  } catch (e) {
+    // Fallback: seleccionar el preview para copia manual
+    showToast('Selecciona el texto y cópialo manualmente');
+    const range = document.createRange();
+    range.selectNodeContents(preview);
+    const sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(range);
+  }
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(showToast._tid);
+  showToast._tid = setTimeout(() => t.classList.remove('show'), 2400);
+}
+
+// ── INIT ─────────────────────────────────────────────────────────────────────
+renderAll();
+</script>
+</body>
+</html>
