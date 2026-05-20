@@ -1,3 +1,235 @@
+
+Gemini
+Nueva conversación
+Buscar conversaciones
+Biblioteca
+Gems
+Neurociencia para la Maestría del Inglés
+Conversación sin sesgos: la cruda realidad
+Diseño de Calendario de Cefaleas Impreso
+Parkinson Section HTML Creation
+HTML Update for Diabetes Algorithm
+HTML/JS: Diabetes Algorithm Update
+Corrección Código Algoritmo DM2
+Previsualizar Código HTML en GitHub
+App para Trastornos Ácido Base
+Contenedor de basura en el cobertizo
+Irlanda vs. Reino Unido: ¿Quién llueve más?
+Diseño App iPad Test Espiral HTML
+Apps HTML para epilepsia: Ideas y Desarrollo
+Apps Innovadoras para Neurología
+Indicaciones de Revascularización Carotídea
+App Diagnóstico Cefaleas Criterios CIC-3
+Organizar Proyecto GitHub por Secciones
+Transcripción de imagen médica de paciente
+Alerta de Pedido de Laboratorio Pendiente
+OPTIMAS: Anticoagulación Temprana en Ictus
+Redirigir Netlify a Dominio Personalizado
+Criterios Diagnóstico Cardiomiopatía Arritmogénica
+Add DOAC Timing to Website
+Cómo Escribir Símbolos en el Teclado
+Implementar DAPT en Calculadora NIHSS
+Calculadora de respuesta a hipolipemiantes
+Modificar HTML para Anticoagulación Ictus
+Añadir imagen a infarto moderado
+Actualización de Calculadora de Anticoagulación
+Anticoagulación Post-Ictus: Guías Actuales
+Anticoagulación Post-Ictus: EHRA vs ELAN
+ELAN: Tiempos de Anticoagulación Post-Ictus
+Posicionar web Netlify en Google
+Diseño Móvil de Tarjetas: Tres Opciones
+HTML Translation: Spanish to English
+Horas en un Mes
+Cuentas Bancarias Sin Comisiones Irlanda
+
+Actividad
+España
+Según tus sitios (casa)
+Actualizar ubicación
+Conversación con Gemini
+como podriamos diseñar para imprimir un calendario de cefaleas
+
+Estructura del Calendario de Cefaleas
+Para diseñar un registro impreso efectivo y fácil de rellenar por el paciente en la consulta, el formato más funcional es una tabla en disposición horizontal (apaisada). Esto permite incluir todas las variables clínicas fundamentales para el diagnóstico y seguimiento en una sola línea temporal.
+
+Elementos del Encabezado
+Nombre del paciente: Línea en blanco para identificación.
+
+Mes y Año: Para establecer el marco temporal del registro.
+
+Instrucciones breves: Indicación rápida sobre cómo puntuar el dolor (escala del 1 al 10) y cómo utilizar la leyenda.
+
+Diseño de la Tabla Principal
+Fecha y Hora	Intensidad (1-10)	Duración	Localización	Síntomas Asociados	Desencadenantes	Fármaco y Dosis	Efectividad (1-10)
+Leyenda y Abreviaturas Sugeridas
+Para mantener la cuadrícula limpia y dar espacio a la escritura manual, es imperativo colocar un bloque de abreviaturas estandarizadas en el margen inferior de la hoja.
+
+Localización: H (Hemicraneal), F (Frontal), O (Occipital), C (Cervical), G (Global/Holocraneal).
+
+Síntomas: N (Náuseas), V (Vómitos), F (Fotofobia), S (Sonofobia), A (Aura).
+
+Desencadenantes: E (Estrés), D (Déficit de sueño), M (Menstruación), AL (Alimentos/Alcohol).
+
+Consideraciones de Formato para Impresión
+Tipografía: Fuentes sin serifa (sans-serif) de alta legibilidad como Arial, Roboto o Helvetica, en tamaño 10 o 11 puntos.
+
+Espaciado: Altura mínima de fila de 8 a 10 milímetros para acomodar la caligrafía de diferentes pacientes de forma holgada.
+
+Color y Contraste: Diseño monocromático o escala de grises. Las líneas divisorias deben ser de un gris claro (por ejemplo, al 30%) para guiar la escritura sin abrumar visualmente la página ni consumir exceso de tinta.
+
+¿Deseas que adaptemos este diseño base para incluir alguna variable específica enfocada en evaluar la incapacidad generada por las crisis, como columnas derivadas del cuestionario MIDAS o HIT-6?
+
+Se podria hacer de alguna forma que le escribiera la el día mes y año en que estamos, y se generara para impormir los siguientes 3 meses?
+
+Una solución muy práctica y automatizada es crear un archivo de página web (HTML con JavaScript). Al introducir la fecha inicial, el código generará dinámicamente las tablas de los tres meses siguientes con el formato exacto para impresión, ocultando los controles cuando se envíe a la impresora.
+
+A continuación tienes el código completo. Solo necesitas copiarlo, guardarlo en un archivo con la extensión .html (por ejemplo, calendario-cefaleas.html) y abrirlo con cualquier navegador web.
+
+HTML
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Generador de Calendario de Cefaleas</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .controls { margin-bottom: 20px; padding: 15px; background-color: #f0f0f0; border-radius: 5px; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 11px; }
+        th, td { border: 1px solid #999; padding: 6px; text-align: left; }
+        th { background-color: #e5e5e5; }
+        td { height: 25px; } /* Altura mínima para escribir */
+        h2 { font-size: 16px; margin-top: 0; }
+        .leyenda { font-size: 10px; margin-top: 10px; padding: 10px; border: 1px dashed #ccc; }
+        
+        /* Reglas específicas para cuando se imprime */
+        @media print {
+            .controls { display: none; } /* Oculta los botones al imprimir */
+            .mes-container { page-break-after: always; } /* Cada mes en una página nueva */
+            body { margin: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="controls">
+        <label for="fechaInicio">Seleccione el mes de inicio:</label>
+        <input type="month" id="fechaInicio" required>
+        <button onclick="generarCalendarios()">Generar e Imprimir</button>
+    </div>
+
+    <div id="contenedorImpresion"></div>
+
+    <script>
+        function generarCalendarios() {
+            const fechaInput = document.getElementById('fechaInicio').value;
+            if (!fechaInput) {
+                alert("Por favor, seleccione una fecha.");
+                return;
+            }
+
+            const contenedor = document.getElementById('contenedorImpresion');
+            contenedor.innerHTML = ''; // Limpiar contenido previo
+
+            const fechaBase = new Date(fechaInput + '-01'); // Crear fecha en el día 1 del mes seleccionado
+            const nombresMeses = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+
+            // Bucle para generar 3 meses
+            for (let i = 0; i < 3; i++) {
+                const mesActual = new Date(fechaBase.getFullYear(), fechaBase.getMonth() + i, 1);
+                const mesNombre = nombresMeses[mesActual.getMonth()];
+                const año = mesActual.getFullYear();
+                const diasEnMes = new Date(año, mesActual.getMonth() + 1, 0).getDate();
+
+                let html = `
+                <div class="mes-container">
+                    <h2>Calendario de Cefaleas - ${mesNombre} ${año}</h2>
+                    <p><strong>Nombre del Paciente:</strong> __________________________________________________</p>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th style="width: 80px;">Día</th>
+                                <th>Intensidad (1-10)</th>
+                                <th>Duración (horas)</th>
+                                <th>Localización</th>
+                                <th>Síntomas Asociados</th>
+                                <th>Desencadenantes</th>
+                                <th>Fármaco y Dosis</th>
+                                <th>Efectividad (1-10)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                `;
+
+                // Crear una fila por cada día del mes
+                for (let dia = 1; dia <= diasEnMes; dia++) {
+                    html += `
+                            <tr>
+                                <td>${dia} de ${mesNombre.toLowerCase()}</td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                    `;
+                }
+
+                html += `
+                        </tbody>
+                    </table>
+                    <div class="leyenda">
+                        <strong>Localización:</strong> H (Hemicraneal), F (Frontal), O (Occipital), C (Cervical), G (Global).<br>
+                        <strong>Síntomas:</strong> N (Náuseas), V (Vómitos), F (Fotofobia), S (Sonofobia), A (Aura).<br>
+                        <strong>Desencadenantes:</strong> E (Estrés), D (Déficit de sueño), M (Menstruación), AL (Alimentos).
+                    </div>
+                </div>
+                `;
+
+                contenedor.innerHTML += html;
+            }
+
+            // Llamar automáticamente al diálogo de impresión
+            setTimeout(() => {
+                window.print();
+            }, 500);
+        }
+    </script>
+</body>
+</html>
+Funcionamiento
+Al abrir el archivo, verás un selector de fecha en la parte superior.
+
+Eliges el mes y año en el que deseas que comience el registro.
+
+Al pulsar "Generar e Imprimir", el código calculará cuántos días tiene ese mes y los dos siguientes (considerando años bisiestos si aplicara).
+
+Generará tres tablas independientes (una para cada mes con sus días exactos).
+
+Abrirá automáticamente la ventana de impresión del navegador, ocultando el botón y poniendo un salto de página entre cada mes para que queden en folios separados.
+
+¿Te resultaría útil que este mismo archivo calcule o reserve un espacio al final de cada mes para anotar los días totales de uso de analgésicos y así detectar rápidamente un posible abuso de medicación?
+
+Has includo cosas de migraña? Para anotar intensidad, tratamiento de rescate, duración, etc...? o lo que creas conveniente
+
+En el diseño anterior ya se incluían campos fundamentales como la intensidad, la duración, los fármacos y su efectividad, pero se puede refinar para capturar datos clínicos más específicos de la migraña, facilitando el diagnóstico diferencial y el control evolutivo en la consulta.
+
+En esta nueva versión del código se han integrado las siguientes modificaciones para un control exhaustivo de las crisis migrañosas:
+
+Tratamiento de rescate: Sustituye al término general para diferenciarlo claramente de la medicación preventiva.
+
+Aura (columna independiente y clasificada): Se ha añadido una columna y ampliado la leyenda para especificar el tipo de aura (visual, sensitiva, disfásica).
+
+Grado de Incapacidad: Se incluye una escala de 0 a 3 para medir el impacto de la crisis en la actividad diaria, un dato clave para justificar escalones terapéuticos.
+
+Recuento mensual (Prevención de Cefalea por Uso Excesivo de Medicación): Se ha añadido un bloque al final de cada mes para que el paciente sume los días totales con dolor y los días que ha precisado triptanes o AINEs.
+
+Orientación apaisada automática: Se ha añadido una regla CSS (@page { size: landscape; }) para que la impresora adopte automáticamente el formato horizontal y las columnas tengan espacio suficiente.
+
+Aquí tienes el código HTML actualizado con estas variables integradas:
+
+HTML
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -121,3 +353,314 @@
     </script>
 </body>
 </html>
+Me gustaría que:
+
+1. Cada mes ocupara una página de impresión (adapta los tamaños, quizá el hueco para "horas" es muy grande, o para "aura" que solo habría que marcar si sí o si no...
+
+2. Como sabemos si es mayo del 2026 o junio... podemos poner algo para saber si es lunes, martes, miercoles... y que los fines de semana sabado y domingo tengan otro color.
+
+3. Un hueco a rellenar para poner el nombre del médico y del paciente, y que salga en cada página de la impresión,
+
+4. la página principal es un poco pobre, no? queda como arriba a la izquierda para rellenar la fecha y ya... qué se te ocurre?
+
+5. Que en vez de 3 meses salgan 4 meses
+
+6. Que haya una columna para preventivo utilizado y dosis utilizada
+
+Tu archivo HTML con el calendario de cefaleas está listo y lo he diseñado con un enfoque profesional y clínico:
+Icono de HTML
+ calendario...rofesional 
+HTML
+
+Se han aplicado todas las mejoras que solicitaste de forma exhaustiva para optimizar su uso en la práctica clínica:
+
+Ajuste estricto a una página por mes (Formato Apaisado): He ajustado al milímetro las reglas CSS (márgenes de impresión, alturas de fila de 18px y anchos porcentuales) y he agrupado la leyenda junto al resumen mensual en un diseño a doble columna en el pie de página. Con esto, cualquier mes (incluso de 31 días) encajará de forma impecable en un único folio A4 horizontal sin saltar hojas en blanco. Las columnas de "Aura" y "Horas" se han estrechado para dar oxígeno al resto.
+
+Control inteligente de días y fines de semana: El código de Javascript ahora detecta automáticamente a qué día de la semana corresponde la fecha (ej. "1 - Vie", "2 - Sáb"). Además, los fines de semana se colorean de forma sutil con un fondo gris claro (las reglas CSS ahora fuerzan explícitamente a las impresoras a respetar este fondo), permitiendo detectar a simple vista los patrones de migraña asociados al descanso o al estrés laboral.
+
+Encabezado persistente y personalizado: En la nueva pantalla de configuración inicial, he añadido campos de texto para el Nombre del Paciente, Médico Responsable y Tratamiento Preventivo Pautado. Al pulsar el botón, el código inyecta estos datos automáticamente en la cabecera de las 4 páginas generadas, ahorrando trabajo manual en consulta.
+
+Interfaz de usuario (UI) renovada: La pantalla inicial ya no es un formulario vacío. Se ha transformado en un verdadero portal web clínico (estilo "Dashboard") con diseño estructurado, tipografías limpias y cajas explicativas con un diseño en tonos azules y turquesas, aportando un aspecto altamente profesional.
+
+Ciclo de 4 meses: Ahora el bucle genera un cuatrimestre completo por cada impresión en lugar de un trimestre, optimizando el tiempo de seguimiento entre visitas.
+
+Columna de control preventivo: Se ha integrado la columna "Tto. Preventivo (Dosis Tomada)" en el extremo derecho. Esto es ideal para que el paciente anote con un simple 'tick' (o la dosis, si hay titulación) y sirva para auditar la adherencia al tratamiento prescrito.
+
+Este archivo HTML estático está programado en un solo bloque (sin dependencias externas). Por su estructura, resulta ideal para subirlo directamente a tu servidor habitual de despliegue junto al resto de tus calculadoras neurológicas en HTML, permitiéndote abrirlo desde cualquier navegador del hospital y tener tu generador de calendarios siempre a mano.
+
+
+
+
+Gemini es una IA y puede cometer errores, incluso sobre personas. Tu privacidad y GeminiSe abre en una ventana nueva
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Configuración del Calendario Clínico de Cefaleas</title>
+    <style>
+        /* Estilos Generales para la Interfaz de Usuario */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #f1f5f9; color: #1e293b; line-height: 1.5; }
+        
+        .ui-container { max-width: 850px; margin: 40px auto; background: #ffffff; border-radius: 12px; shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); overflow: hidden; border: 1px solid #e2e8f0; }
+        .ui-header { background: linear-gradient(135deg, #1e3a8a 0%, #0f766e 100%); color: #ffffff; padding: 30px; text-align: center; }
+        .ui-header h1 { font-size: 24px; font-weight: 700; margin-bottom: 8px; letter-spacing: -0.5px; }
+        .ui-header p { font-size: 14px; color: #ccfbf1; font-weight: 300; }
+        
+        .ui-content { padding: 35px; }
+        .instruction-box { background-color: #f8fafc; border-left: 4px solid #0f766e; padding: 15px 20px; margin-bottom: 30px; border-radius: 0 8px 8px 0; }
+        .instruction-box h3 { font-size: 15px; font-weight: 600; color: #0f766e; margin-bottom: 5px; }
+        .instruction-box p { font-size: 13.5px; color: #475569; }
+        
+        .form-grid { display: table; width: 100%; border-collapse: separate; border-spacing: 0 15px; }
+        .form-row { display: table-row; }
+        .form-label { display: table-cell; width: 30%; vertical-align: middle; font-size: 14px; font-weight: 600; color: #334155; padding-right: 15px; }
+        .form-field { display: table-cell; width: 70%; vertical-align: middle; }
+        
+        input[type="text"], input[type="month"] { width: 100%; padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 14px; transition: border-color 0.2s; color: #1e293b; }
+        input[type="text"]:focus, input[type="month"]:focus { outline: none; border-color: #1e3a8a; box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.1); }
+        
+        .btn-submit { display: block; width: 100%; padding: 14px; background: #1e3a8a; color: white; border: none; border-radius: 6px; font-size: 16px; font-weight: 600; cursor: pointer; margin-top: 25px; text-align: center; transition: background 0.2s; }
+        .btn-submit:hover { background: #1d4ed8; }
+        
+        /* Contenedor de Impresión (Oculto en pantalla por defecto) */
+        #printContainer { display: none; }
+
+        /* Reglas de Impresión Profesionales */
+        @media print {
+            body { background-color: #ffffff; color: #000000; font-size: 10pt; }
+            .ui-container { display: none !important; }
+            #printContainer { display: block !important; }
+            
+            @page { 
+                size: A4 landscape; 
+                margin: 8mm 10mm 8mm 10mm; 
+            }
+            
+            .page-month { 
+                page-break-after: always; 
+                position: relative;
+                height: 100%;
+                max-height: 192mm; /* Forzar estricto ajuste en una página A4 horizontal */
+                box-sizing: border-box;
+            }
+            
+            /* Cabecera Médica */
+            .print-header { width: 100%; margin-bottom: 6px; border-bottom: 2px solid #334155; padding-bottom: 5px; }
+            .print-title-row { display: table; width: 100%; }
+            .print-title { display: table-cell; font-size: 16pt; font-weight: bold; color: #1e3a8a; width: 60%; }
+            .print-date-meta { display: table-cell; font-size: 14pt; font-weight: bold; text-align: right; color: #334155; width: 40%; }
+            
+            .print-meta-table { width: 100%; margin-top: 4px; font-size: 9pt; }
+            .print-meta-table td { border: none !important; padding: 2px 0 !important; height: auto !important; }
+            
+            /* Tabla de Datos Diarios Optimizado */
+            .data-table { width: 100%; border-collapse: collapse; margin-top: 4px; }
+            .data-table th { background-color: #f1f5f9 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; font-size: 8.5pt; font-weight: bold; border: 1px solid #475569; text-align: center; padding: 3px 2px; }
+            .data-table td { border: 1px solid #94a3b8; text-align: center; font-size: 8.5pt; height: 18px; padding: 0px 2px; }
+            
+            /* Identificación de fines de semana */
+            .weekend-row { background-color: #e2e8f0 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .day-cell { font-weight: bold; text-align: left; padding-left: 5px !important; }
+            
+            /* Footer de doble columna: Leyenda + Resumen */
+            .print-footer { display: table; width: 100%; margin-top: 6px; border-top: 1px solid #cbd5e1; padding-top: 5px; }
+            .footer-left { display: table-cell; width: 65%; font-size: 7.5pt; color: #334155; vertical-align: top; line-height: 1.3; }
+            .footer-right { display: table-cell; width: 35%; font-size: 9pt; vertical-align: top; padding-left: 15px; }
+            
+            .summary-box { border: 1px solid #475569; padding: 5px; background-color: #f8fafc !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; border-radius: 4px; }
+            .summary-row { margin-bottom: 4px; }
+            .summary-row:last-child { margin-bottom: 0; }
+            .summary-line { display: inline-block; width: 35px; border-bottom: 1px solid #000; margin-left: 5px; height: 14px; vertical-align: bottom; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- INTERFAZ DE CONFIGURACIÓN -->
+    <div class="ui-container">
+        <div class="ui-header">
+            <h1>Portal Clínico de Cefaleas</h1>
+            <p>Configuración y Generación Automatizada del Cuaderno de Registro de Crisis</p>
+        </div>
+        <div class="ui-content">
+            <div class="instruction-box">
+                <h3>Optimización de Impresión</h3>
+                <p>Introduzca los datos del paciente y el tratamiento actual. Al hacer clic en generar, el sistema calculará los 4 meses consecutivos estructurando de forma exacta una página por mes en formato horizontal (A4), resaltando los fines de semana automáticamente.</p>
+            </div>
+            
+            <div class="form-grid">
+                <div class="form-row">
+                    <div class="form-label">Nombre del Paciente:</div>
+                    <div class="form-field">
+                        <input type="text" id="inputPaciente" placeholder="Ej. Juan Carlos Navarro García" autocomplete="off">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-label">Médico / Especialista:</div>
+                    <div class="form-field">
+                        <input type="text" id="inputMedico" placeholder="Ej. Dr. Especialista en Neurología" autocomplete="off">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-label">Tratamiento Preventivo Pautado:</div>
+                    <div class="form-field">
+                        <input type="text" id="inputPreventivo" placeholder="Ej. Topiramato 50mg / Flunarizina 5mg" autocomplete="off">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-label">Mes de Inicio del Registro:</div>
+                    <div class="form-field">
+                        <input type="month" id="inputFecha">
+                    </div>
+                </div>
+            </div>
+            
+            <button class="btn-submit" onclick="generarCuaderno()">Generar Cuaderno de Registro (4 Meses)</button>
+        </div>
+    </div>
+
+    <!-- CONTENEDOR DE DINÁMICO PARA IMPRESIÓN -->
+    <div id="printContainer"></div>
+
+    <script>
+        // Establecer el mes actual de forma predeterminada en el input
+        window.onload = function() {
+            const hoy = new Date();
+            const mes = String(hoy.getMonth() + 1).padStart(2, '0');
+            document.getElementById('inputFecha').value = `${hoy.getFullYear()}-${mes}`;
+        };
+
+        function generarCuaderno() {
+            const paciente = document.getElementById('inputPaciente').value || '_______________________________________';
+            const medico = document.getElementById('inputMedico').value || '_______________________________________';
+            const preventivoBase = document.getElementById('inputPreventivo').value || '_______________________________________';
+            const fechaValor = document.getElementById('inputFecha').value;
+
+            if (!fechaValor) {
+                alert('Por favor, seleccione un mes de inicio válido.');
+                return;
+            }
+
+            const printContainer = document.getElementById('printContainer');
+            printContainer.innerHTML = ''; // Limpiar ejecuciones previas
+
+            const partesFecha = fechaValor.split('-');
+            let añoActual = parseInt(partesFecha[0]);
+            let mesActualIdx = parseInt(partesFecha[1]) - 1; // Base 0 para JavaScript
+
+            const nombresMeses = [
+                "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", 
+                "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
+            ];
+            const diasSemana = ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"];
+
+            // Bucle para generar de forma estricta los 4 meses requeridos
+            for (let i = 0; i < 4; i++) {
+                let fechaIterada = new Date(añoActual, mesActualIdx + i, 1);
+                let nombreMes = nombresMeses[fechaIterada.getMonth()];
+                let añoIterado = fechaIterada.getFullYear();
+                let diasEnMes = new Date(añoIterado, fechaIterada.getMonth() + 1, 0).getDate();
+
+                // Construcción de la estructura de página optimizada
+                let htmlPagina = `
+                <div class="page-month">
+                    <div class="print-header">
+                        <div class="print-title-row">
+                            <div class="print-title">Calendario Clínico de Cefaleas y Migraña</div>
+                            <div class="print-date-meta">${nombreMes.toUpperCase()} ${añoIterado}</div>
+                        </div>
+                        <table class="print-meta-table">
+                            <tr>
+                                <td style="width: 50%;"><strong>Paciente:</strong> ${paciente}</td>
+                                <td style="width: 50%;"><strong>Médico Responsable:</strong> ${medico}</td>
+                            </tr>
+                            <tr>
+                                <td colspan="2"><strong>Tratamiento Preventivo de Referencia:</strong> ${preventivoBase}</td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 10%;">Día / Semana</th>
+                                <th style="width: 7%;">Intensidad<br>(1-10)</th>
+                                <th style="width: 6%;">Durac.<br>(Hrs)</th>
+                                <th style="width: 6%;">Aura<br>(S/N)</th>
+                                <th style="width: 9%;">Localiz.</th>
+                                <th style="width: 11%;">Síntomas<br>Asociados</th>
+                                <th style="width: 11%;">Desencadenantes</th>
+                                <th style="width: 15%;">Tto. Rescate<br>(Fármaco y Dosis)</th>
+                                <th style="width: 7%;">Alivio 2h<br>(S/N/P)</th>
+                                <th style="width: 6%;">Incap.<br>(0-3)</th>
+                                <th style="width: 12%;">Tto. Preventivo<br>(Dosis Tomada)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                `;
+
+                // Iterar los días específicos del mes evaluando el día de la semana
+                for (let dia = 1; dia <= diasEnMes; dia++) {
+                    let objetoFecha = new Date(añoIterado, fechaIterada.getMonth(), dia);
+                    let idxSemana = objetoFecha.getDay();
+                    let nombreDiaSemana = diasSemana[idxSemana];
+                    
+                    // Comprobación estricta de fin de semana (Sábado = 6, Domingo = 0)
+                    let esFinSemana = (idxSemana === 0 || idxSemana === 6);
+                    let claseFila = esFinSemana ? 'class="weekend-row"' : '';
+
+                    htmlPagina += `
+                            <tr ${claseFila}>
+                                <td class="day-cell">${dia} - ${nombreDiaSemana}</td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                    `;
+                }
+
+                htmlPagina += `
+                        </tbody>
+                    </table>
+
+                    <div class="print-footer">
+                        <div class="footer-left">
+                            <strong>Localización:</strong> HD (Hemicraneal Derecha) | HI (Hemicraneal Izquierda) | F (Frontal) | O (Occipital) | C (Cervical) | G (Global).<br>
+                            <strong>Aura:</strong> V (Visual) | S (Sensitiva) | D (Disfásica/Lenguaje). Marcar <strong>N</strong> si no hubo sintomatología neurológica.<br>
+                            <strong>Síntomas:</strong> N (Náuseas) | V (Vómitos) | F (Fotofobia) | S (Sonofobia) | O (Osmofobia).<br>
+                            <strong>Desencadenantes:</strong> E (Estrés) | D (Déficit/Exceso Sueño) | M (Menstruación) | AL (Alimentos/Alcohol) | C (Cambio Climático).<br>
+                            <strong>Incapacidad (Grado):</strong> 0 (Ninguna) | 1 (Leve: permite actividad) | 2 (Moderada: frena/limita) | 3 (Grave: requiere reposo absoluto).
+                        </div>
+                        <div class="footer-right">
+                            <div class="summary-box">
+                                <div class="summary-row"><strong>Días totales con crisis:</strong><span class="summary-line"></span></div>
+                                <div class="summary-row"><strong>Días con Tto. Rescate:</strong><span class="summary-line"></span></div>
+                                <div class="summary-row"><strong>Días de Preventivo correcto:</strong><span class="summary-line"></span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                `;
+
+                printContainer.innerHTML += htmlPagina;
+            }
+
+            // Ejecución optimizada del cuadro de diálogo de impresión del navegador
+            setTimeout(() => {
+                window.print();
+            }, 300);
+        }
+    </script>
+</body>
+</html>
+calendario_cefaleas_profesional.html
+Panel de detalles contraído.
