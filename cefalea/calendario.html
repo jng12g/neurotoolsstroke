@@ -2,16 +2,16 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Configuración del Calendario Clínico de Cefaleas</title>
+    <title>Cefalendar - Configuración</title>
     <style>
         /* Estilos Generales para la Interfaz de Usuario */
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #f1f5f9; color: #1e293b; line-height: 1.5; }
         
-        .ui-container { max-width: 850px; margin: 40px auto; background: #ffffff; border-radius: 12px; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); overflow: hidden; border: 1px solid #e2e8f0; }
+        .ui-container { max-width: 850px; margin: 40px auto 10px auto; background: #ffffff; border-radius: 12px; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); overflow: hidden; border: 1px solid #e2e8f0; }
         .ui-header { background: linear-gradient(135deg, #1e3a8a 0%, #0f766e 100%); color: #ffffff; padding: 30px; text-align: center; }
-        .ui-header h1 { font-size: 24px; font-weight: 700; margin-bottom: 8px; letter-spacing: -0.5px; }
-        .ui-header p { font-size: 14px; color: #ccfbf1; font-weight: 300; }
+        .ui-header h1 { font-size: 28px; font-weight: 700; margin-bottom: 4px; letter-spacing: -0.5px; }
+        .ui-header p { font-size: 15px; color: #ccfbf1; font-weight: 300; }
         
         .ui-content { padding: 35px; }
         .instruction-box { background-color: #f8fafc; border-left: 4px solid #0f766e; padding: 15px 20px; margin-bottom: 30px; border-radius: 0 8px 8px 0; }
@@ -28,6 +28,8 @@
         
         .btn-submit { display: block; width: 100%; padding: 14px; background: #1e3a8a; color: white; border: none; border-radius: 6px; font-size: 16px; font-weight: 600; cursor: pointer; margin-top: 25px; text-align: center; transition: background 0.2s; }
         .btn-submit:hover { background: #1d4ed8; }
+
+        .ui-footer-credits { text-align: center; font-size: 12px; color: #94a3b8; margin-top: 10px; padding-bottom: 30px; }
         
         /* Contenedor de Impresión (Oculto en pantalla por defecto) */
         #printContainer { display: none; }
@@ -35,20 +37,20 @@
         /* Reglas de Impresión Profesionales */
         @media print {
             body { background-color: #ffffff; color: #000000; font-size: 10pt; }
-            .ui-container { display: none !important; }
+            .ui-container, .ui-footer-credits { display: none !important; }
             #printContainer { display: block !important; }
             
             @page { 
                 size: A4 landscape; 
-                margin: 6mm 8mm; /* Márgenes reducidos para maximizar espacio */
+                margin: 6mm 8mm; 
             }
             
             .page-month { 
                 page-break-after: always;
                 page-break-inside: avoid;
-                height: 195mm; /* Altura máxima estricta para A4 apaisado */
+                height: 195mm; 
                 display: flex;
-                flex-direction: column; /* Estructura Flex para evitar solapes */
+                flex-direction: column; 
                 justify-content: space-between;
                 box-sizing: border-box;
                 overflow: hidden;
@@ -57,16 +59,17 @@
             /* Cabecera Médica */
             .print-header { width: 100%; flex-shrink: 0; margin-bottom: 4px; border-bottom: 2px solid #334155; padding-bottom: 4px; }
             .print-title-row { display: flex; justify-content: space-between; align-items: baseline; width: 100%; }
-            .print-title { font-size: 15pt; font-weight: bold; color: #1e3a8a; }
+            .print-title { font-size: 16pt; font-weight: bold; color: #1e3a8a; }
+            .print-subtitle { font-size: 10pt; font-weight: normal; color: #64748b; margin-left: 8px; }
             .print-date-meta { font-size: 13pt; font-weight: bold; color: #334155; }
             
             .print-meta-table { width: 100%; margin-top: 4px; font-size: 8.5pt; }
             .print-meta-table td { border: none !important; padding: 1px 0 !important; }
             
             /* Tabla de Datos Diarios Optimizada */
-            .data-table { width: 100%; border-collapse: collapse; margin-top: 2px; flex-grow: 1; /* Esto hace que la tabla ocupe todo el espacio disponible sin empujar la leyenda */ }
+            .data-table { width: 100%; border-collapse: collapse; margin-top: 2px; flex-grow: 1; }
             .data-table th { background-color: #f1f5f9 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; font-size: 8pt; font-weight: bold; border: 1px solid #475569; text-align: center; padding: 2px; height: 16px; }
-            .data-table td { border: 1px solid #94a3b8; text-align: center; font-size: 8pt; padding: 0; height: 10px; /* Altura base pequeña, flex-grow la expandirá */ }
+            .data-table td { border: 1px solid #94a3b8; text-align: center; font-size: 8pt; padding: 0; height: 10px; }
             
             /* Identificación de fines de semana */
             .weekend-row { background-color: #e2e8f0 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
@@ -81,6 +84,9 @@
             .summary-row { margin-bottom: 3px; }
             .summary-row:last-child { margin-bottom: 0; }
             .summary-line { display: inline-block; width: 35px; border-bottom: 1px solid #000; margin-left: 5px; height: 12px; vertical-align: bottom; }
+
+            /* Marca de agua discreta */
+            .print-watermark { flex-shrink: 0; text-align: right; font-size: 6pt; color: #94a3b8; margin-top: 2px; font-style: italic; }
         }
     </style>
 </head>
@@ -89,13 +95,13 @@
     <!-- INTERFAZ DE CONFIGURACIÓN -->
     <div class="ui-container">
         <div class="ui-header">
-            <h1>Calendario de cefaleas</h1>
-            <p>Generación automatizada de calendario de cefaleas para 4 meses</p>
+            <h1>Cefalendar</h1>
+            <p>Calendario de cefaleas automatizado</p>
         </div>
         <div class="ui-content">
             <div class="instruction-box">
                 <h3>Optimización de Impresión</h3>
-                <p>Introduzca los datos del paciente y el tratamiento actual. Al hacer clic en generar, el sistema calculará los 4 meses consecutivos estructurando de forma exacta una página por mes en formato horizontal (A4), resaltando los fines de semana automáticamente sin solapes.</p>
+                <p>Al introducir los datos y seleccionar el mes actual, se generarán 4 páginas imprimibles en formato A4 horizontal.</p>
             </div>
             
             <div class="form-grid">
@@ -128,6 +134,7 @@
             <button class="btn-submit" onclick="generarCuaderno()">Generar Cuaderno de Registro (4 Meses)</button>
         </div>
     </div>
+    <div class="ui-footer-credits">Creado por Dr. Juan Carlos Navarro García</div>
 
     <!-- CONTENEDOR DINÁMICO PARA IMPRESIÓN -->
     <div id="printContainer"></div>
@@ -176,7 +183,7 @@
                 <div class="page-month">
                     <div class="print-header">
                         <div class="print-title-row">
-                            <div class="print-title">Calendario Clínico de Cefaleas y Migraña</div>
+                            <div class="print-title">Cefalendar <span class="print-subtitle">Calendario de cefaleas automatizado</span></div>
                             <div class="print-date-meta">${nombreMes.toUpperCase()} ${añoIterado}</div>
                         </div>
                         <table class="print-meta-table">
@@ -255,6 +262,9 @@
                                 <div class="summary-row"><strong>Días de Preventivo correcto:</strong><span class="summary-line"></span></div>
                             </div>
                         </div>
+                    </div>
+                    <div class="print-watermark">
+                        Creado por Dr. Juan Carlos Navarro García
                     </div>
                 </div>
                 `;
