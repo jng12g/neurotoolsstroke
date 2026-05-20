@@ -1,170 +1,321 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Riesgo de Recurrencia tras Retirada de FAE — Herramientas de Predicción en Epilepsia</title>
-  <!-- Enlaza aquí la hoja de estilos de neurotools.es -->
-  <link rel="stylesheet" href="css/style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Retirada de FAE · NEUROTOOLS</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --paper: #f4efe4;
+      --paper-card: #faf6ec;
+      --ink: #1a1614;
+      --ink-soft: #4a3f38;
+      --ink-muted: #8a7d72;
+      --accent: #7a1f2b;
+      --hairline: #cfc4ad;
+      --ease: cubic-bezier(.2,.7,.3,1);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--paper);
+      color: var(--ink);
+      font-family: 'Instrument Sans', system-ui, sans-serif;
+      font-size: 16px;
+      line-height: 1.55;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+      background-image:
+        radial-gradient(at 15% 8%, rgba(122, 31, 43, 0.04) 0%, transparent 45%),
+        radial-gradient(at 85% 95%, rgba(166, 74, 58, 0.05) 0%, transparent 40%);
+    }
+
+    body::before {
+      content: "";
+      position: fixed; inset: 0; pointer-events: none;
+      z-index: 1; opacity: 0.3; mix-blend-mode: multiply;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.1 0 0 0 0 0.08 0 0 0 0 0.07 0 0 0 0.45 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+    }
+
+    .container {
+      max-width: 1080px; margin: 0 auto;
+      padding: 60px 32px; position: relative; z-index: 2;
+    }
+
+    /* Cabecera */
+    header { text-align: center; margin-bottom: 50px; }
+    .back-link { display: inline-block; margin-bottom: 24px; color: var(--ink-muted); text-decoration: none; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; transition: color 0.3s; }
+    .back-link:hover { color: var(--accent); }
+    h1 { font-family: 'Fraunces', Georgia, serif; font-size: clamp(2.5rem, 5vw, 3.5rem); font-weight: 400; line-height: 1.1; letter-spacing: -0.02em; margin-bottom: 16px; color: var(--ink); }
+    h1 em { font-style: italic; color: var(--accent); font-weight: 300; }
+    .subtitle { font-family: 'Fraunces', Georgia, serif; font-style: italic; font-weight: 300; font-size: clamp(1.1rem, 2vw, 1.3rem); color: var(--ink-soft); max-width: 700px; margin: 0 auto; line-height: 1.4; }
+
+    /* Contenedores tipo Tarjeta */
+    .card {
+      background: var(--paper-card); border: 1px solid var(--hairline); border-radius: 6px; padding: 40px;
+      margin-bottom: 24px; position: relative; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+    }
+    .card::before { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: var(--accent); opacity: 0; transition: opacity 0.3s; }
+    .card:hover::before { opacity: 1; }
+
+    /* Layout del Formulario */
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
+    .form-section { display: flex; flex-direction: column; gap: 24px; }
+    .form-group { display: flex; flex-direction: column; gap: 8px; }
+    .form-group hr { border: 0; height: 1px; background: var(--hairline); margin-bottom: 12px; }
+    .form-group p { font-family: 'Instrument Sans', sans-serif; font-weight: 600; color: var(--ink); font-size: 0.95rem; line-height: 1.3; }
+    
+    /* Inputs numéricos */
+    .input-wrapper { display: flex; align-items: center; gap: 12px; }
+    input[type="number"] { 
+      background: transparent; border: 1px solid var(--hairline); border-radius: 4px; padding: 10px 16px; 
+      font-family: 'JetBrains Mono', monospace; font-size: 1rem; color: var(--ink); width: 100px; transition: border-color 0.3s; 
+    }
+    input[type="number"]:focus { border-color: var(--accent); outline: none; background: #fff; }
+    .unit { font-size: 0.9rem; color: var(--ink-muted); font-style: italic; }
+
+    /* Botones tipo Radio */
+    .radios { display: flex; flex-wrap: wrap; gap: 8px; }
+    .radios input[type="radio"] { display: none; }
+    .radios label { 
+      background: transparent; border: 1px solid var(--hairline); border-radius: 4px; padding: 8px 16px; 
+      font-size: 0.9rem; color: var(--ink-soft); cursor: pointer; transition: all 0.2s var(--ease); user-select: none; 
+    }
+    .radios label:hover { border-color: var(--ink-muted); background: rgba(0,0,0,0.02); }
+    .radios input[type="radio"]:checked + label { 
+      background: var(--accent); color: var(--paper); border-color: var(--accent); font-weight: 500;
+    }
+
+    /* Botón de Calcular */
+    #calcButton { 
+      background: var(--accent); color: var(--paper); border: none; border-radius: 4px; padding: 20px 40px; 
+      font-family: 'Fraunces', serif; font-size: 1.3rem; font-weight: 400; cursor: pointer; width: 100%; max-width: 400px; 
+      margin: 40px auto; display: block; text-align: center; transition: all 0.3s var(--ease); box-shadow: 0 8px 24px rgba(122, 31, 43, 0.15);
+    }
+    #calcButton:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(122, 31, 43, 0.25); filter: brightness(1.1); }
+    #calcButton:active { transform: translateY(0); }
+
+    /* Bloque de resultados */
+    #resultBlock { border-color: var(--accent); background: #fff; text-align: center; font-size: 1.1rem; }
+
+    /* Bloque de Información / Aviso legal */
+    .info-block { background: transparent; border: 1px solid var(--hairline); border-radius: 6px; padding: 24px; margin-top: 40px; font-size: 0.85rem; color: var(--ink-soft); }
+    .info-block h4 { font-family: 'Fraunces', serif; color: var(--ink); margin-bottom: 12px; font-size: 1.1rem; }
+    .info-block a { color: var(--accent); text-decoration: none; border-bottom: 1px dotted var(--accent); transition: opacity 0.3s; }
+    .info-block a:hover { opacity: 0.7; }
+    .info-block p { margin-bottom: 12px; }
+    .info-block p:last-child { margin-bottom: 0; }
+
+    /* Pie de página */
+    footer { margin-top: 60px; text-align: center; font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-muted); line-height: 1.8; }
+    footer a { color: var(--ink-muted); text-decoration: underline; }
+    footer a:hover { color: var(--accent); }
+
+    /* Móviles */
+    @media (max-width: 768px) {
+      .container { padding: 40px 16px; }
+      h1 { font-size: 2rem; }
+      .form-grid { grid-template-columns: 1fr; gap: 32px; }
+      .card { padding: 24px 16px; }
+    }
+  </style>
 </head>
 <body>
-  <div id="mainwrapper">
 
-    <div id="header" class="shadow">
-      <table><tr>
-        <td class="fst"><a href="index.html"><div id="backbutton" class="clickable noselect">&larr;</div></a></td>
-        <td><h1 class="noselect nocursor">Riesgo de Recurrencia tras Retirada de FAE</h1></td>
-        <td class="lst"><div id="infobutton" class="clickable noselect">&#9432;</div></td>
-      </tr></table>
-    </div>
+<div class="container">
+  <header>
+    <a href="../epilepsia/index.html" class="back-link">&larr; Volver a Epilepsia</a>
+    <h1>Riesgo de Recurrencia tras <em>Retirada de FAE</em></h1>
+    <p class="subtitle">Estimación del riesgo de recurrencia de crisis y libertad de crisis a largo plazo en pacientes en remisión.</p>
+  </header>
 
-    <div id="content">
-      <div class="contentblock shadow">
-        <p>Este nomograma estima el riesgo de recurrencia de crisis tras la retirada de fármacos antiepilépticos (FAE) en pacientes con epilepsia en remisión. También estima la probabilidad de mantenerse libre de crisis a largo plazo. Esta herramienta no es aplicable tras cirugía de epilepsia.</p>
-
-        <form id="mainform">
-          <div class="half1"><div>
-
+  <div class="card">
+    <form id="mainform">
+      <div class="form-grid">
+        
+        <!-- Columna 1 -->
+        <div class="form-section">
+          
+          <div class="form-group">
             <hr>
-            <p><strong>Duración de la epilepsia antes de la remisión (desde la primera hasta la última crisis)</strong></p>
-            <input type="number" name="duration" id="duration" placeholder="0" min="0" max="40" class="shadow">
-            <span class="unit">años (0–40)</span>
+            <p>Duración de la epilepsia antes de la remisión (desde la primera hasta la última crisis)</p>
+            <div class="input-wrapper">
+              <input type="number" name="duration" id="duration" placeholder="0" min="0" max="40">
+              <span class="unit">años (0–40)</span>
+            </div>
+          </div>
 
+          <div class="form-group">
             <hr>
-            <p><strong>Tiempo desde la última crisis (intervalo libre de crisis)</strong></p>
-            <input type="number" name="ttr" id="ttr" placeholder="0" min="0" max="24" class="shadow">
-            <span class="unit">años (0–24)</span>
+            <p>Tiempo desde la última crisis (intervalo libre de crisis)</p>
+            <div class="input-wrapper">
+              <input type="number" name="ttr" id="ttr" placeholder="0" min="0" max="24">
+              <span class="unit">años (0–24)</span>
+            </div>
+          </div>
 
+          <div class="form-group">
             <hr>
-            <p><strong>Número de FAE en el momento de la retirada</strong></p>
-            <input type="number" name="naed" id="naed" placeholder="1" min="0" max="9" class="shadow">
-            <span class="unit">rango (0–9)</span>
+            <p>Número de FAE en el momento de la retirada</p>
+            <div class="input-wrapper">
+              <input type="number" name="naed" id="naed" placeholder="1" min="0" max="9">
+              <span class="unit">rango (0–9)</span>
+            </div>
+          </div>
 
+          <div class="form-group">
             <hr>
-            <p><strong>Edad de inicio de la epilepsia</strong></p>
-            <input type="number" name="ageonset" id="ageonset" placeholder="10" min="0" max="80" class="shadow">
-            <span class="unit">años (0–80)</span>
+            <p>Edad de inicio de la epilepsia</p>
+            <div class="input-wrapper">
+              <input type="number" name="ageonset" id="ageonset" placeholder="10" min="0" max="80">
+              <span class="unit">años (0–80)</span>
+            </div>
+          </div>
 
+          <div class="form-group">
             <hr>
-            <p><strong>Sexo</strong></p>
+            <p>Sexo</p>
             <div class="radios">
               <input type="radio" name="sex" value="male" id="sex_m" checked>
-              <label class="radio shadow noselect clickable" for="sex_m">Hombre</label>
+              <label for="sex_m">Hombre</label>
               <input type="radio" name="sex" value="female" id="sex_f">
-              <label class="radio shadow noselect clickable" for="sex_f">Mujer</label>
+              <label for="sex_f">Mujer</label>
             </div>
+          </div>
 
+          <div class="form-group">
             <hr>
-            <p><strong>Antecedentes familiares de epilepsia (1º o 2º grado)</strong></p>
+            <p>Antecedentes familiares de epilepsia (1º o 2º grado)</p>
             <div class="radios">
               <input type="radio" name="famhist" value="negative" id="fh_neg" checked>
-              <label class="radio shadow noselect clickable" for="fh_neg">Negativo</label>
+              <label for="fh_neg">Negativo</label>
               <input type="radio" name="famhist" value="positive" id="fh_pos">
-              <label class="radio shadow noselect clickable" for="fh_pos">Positivo</label>
+              <label for="fh_pos">Positivo</label>
             </div>
+          </div>
 
-          </div></div>
+        </div>
 
-          <div class="half2"><div>
-
+        <!-- Columna 2 -->
+        <div class="form-section">
+          
+          <div class="form-group">
             <hr>
-            <p><strong>Antecedentes de crisis febriles</strong></p>
+            <p>Antecedentes de crisis febriles</p>
             <div class="radios">
               <input type="radio" name="histfeb" value="negative" id="hf_neg" checked>
-              <label class="radio shadow noselect clickable" for="hf_neg">Negativo</label>
+              <label for="hf_neg">Negativo</label>
               <input type="radio" name="histfeb" value="positive" id="hf_pos">
-              <label class="radio shadow noselect clickable" for="hf_pos">Positivo</label>
+              <label for="hf_pos">Positivo</label>
             </div>
+          </div>
 
+          <div class="form-group">
             <hr>
-            <p><strong>Número total de crisis antes de la remisión</strong></p>
+            <p>Número total de crisis antes de la remisión</p>
             <div class="radios">
               <input type="radio" name="nseizures" value="0-9" id="ns_low" checked>
-              <label class="radio shadow noselect clickable" for="ns_low">0–9</label>
+              <label for="ns_low">0–9</label>
               <input type="radio" name="nseizures" value="10 or more" id="ns_high">
-              <label class="radio shadow noselect clickable" for="ns_high">10 o más</label>
+              <label for="ns_high">10 o más</label>
             </div>
+          </div>
 
+          <div class="form-group">
             <hr>
-            <p><strong>Síndrome epiléptico autolimitado (ej. epilepsia de ausencia, rolándica, síndrome de Panayiotopoulos)</strong></p>
+            <p>Síndrome epiléptico autolimitado (ej. ausencia, rolándica, Panayiotopoulos)</p>
             <div class="radios">
               <input type="radio" name="benign" value="no" id="ben_no" checked>
-              <label class="radio shadow noselect clickable" for="ben_no">No</label>
+              <label for="ben_no">No</label>
               <input type="radio" name="benign" value="yes" id="ben_yes">
-              <label class="radio shadow noselect clickable" for="ben_yes">Sí</label>
+              <label for="ben_yes">Sí</label>
             </div>
+          </div>
 
+          <div class="form-group">
             <hr>
-            <p><strong>Retraso del desarrollo (CI o CD &lt; 70)</strong></p>
+            <p>Retraso del desarrollo (CI o CD &lt; 70)</p>
             <div class="radios">
               <input type="radio" name="delay" value="no" id="del_no" checked>
-              <label class="radio shadow noselect clickable" for="del_no">No</label>
+              <label for="del_no">No</label>
               <input type="radio" name="delay" value="yes" id="del_yes">
-              <label class="radio shadow noselect clickable" for="del_yes">Sí</label>
+              <label for="del_yes">Sí</label>
             </div>
+          </div>
 
+          <div class="form-group">
             <hr>
-            <p><strong>Crisis focales</strong></p>
+            <p>Crisis focales</p>
             <div class="radios">
               <input type="radio" name="focal" value="no" id="foc_no" checked>
-              <label class="radio shadow noselect clickable" for="foc_no">No</label>
+              <label for="foc_no">No</label>
               <input type="radio" name="focal" value="yes" id="foc_yes">
-              <label class="radio shadow noselect clickable" for="foc_yes">Sí</label>
+              <label for="foc_yes">Sí</label>
             </div>
+          </div>
 
+          <div class="form-group">
             <hr>
-            <p><strong>EEG previo a la retirada de FAE</strong></p>
+            <p>EEG previo a la retirada de FAE</p>
             <div class="radios">
               <input type="radio" name="EEG" value="normal" id="eeg_n" checked>
-              <label class="radio shadow noselect clickable" for="eeg_n">Normal</label>
+              <label for="eeg_n">Normal</label>
               <input type="radio" name="EEG" value="not performed" id="eeg_np">
-              <label class="radio shadow noselect clickable" for="eeg_np">No realizado</label>
+              <label for="eeg_np">No realizado</label>
               <input type="radio" name="EEG" value="epileptiform abnormality" id="eeg_ea">
-              <label class="radio shadow noselect clickable" for="eeg_ea">Anomalía epileptiforme</label>
+              <label for="eeg_ea">Anomalía epileptiforme</label>
             </div>
+          </div>
 
-          </div></div>
-          <div class="cleared"></div>
-        </form>
-      </div>
-
-      <div id="resultBlock" class="contentblock shadow" style="display:none;"></div>
-
-      <div id="calcButton" class="button shadow blue clickable noselect">
-        <h2 class="centertext">Calcular Riesgo</h2>
-      </div>
-      
-      <!-- Bloque de exención de responsabilidad adaptado a neurotools.es -->
-      <div class="contentblock shadow disclaimer-block" style="margin-top: 20px; font-size: 0.85em; color: #555;">
-        <p><strong>Aviso legal e Información del Proyecto:</strong><br>
-        Versión en español no oficial de <em>Epilepsy Prediction Tools</em>, basada en el proyecto original desarrollado por UMC Utrecht y colaboradores. Traducción y adaptación de la interfaz al español realizada por <strong>Juan Carlos Navarro</strong> para su inclusión en neurotools.es. Esta versión no está afiliada, revisada ni aprobada por UMC Utrecht, salvo autorización expresa.</p>
-        <p>
-          &bull; <a href="https://github.com/wmotte/epilepsypredictiontools" target="_blank">Repositorio original en GitHub</a><br>
-          &bull; Distribuido bajo la <a href="https://www.apache.org/licenses/LICENSE-2.0" target="_blank">Licencia Apache-2.0</a><br>
-        </p>
-      </div>
-      
-    </div>
-
-    <!-- Contenido oculto para ventana modal de información -->
-    <div style="display:none;">
-      <div id="popUpTitle"><h2 class="popuptitle">Sobre esta calculadora</h2></div>
-      <div id="popupContent">
-        <div class="popcontent">
-          <p>Esta tabla de consulta se basa en nomogramas clínicos derivados de un metaanálisis de datos de participantes individuales, cuyo objetivo fue crear herramientas para la predicción individualizada de riesgos. El nomograma estima el riesgo de recurrencia de crisis y el pronóstico a largo plazo para personas con epilepsia actualmente libres de crisis, en caso de retirada de fármacos antiepilépticos (FAE) con el propósito de suspender el tratamiento. El modelo de predicción está basado y validado en diez poblaciones diferentes de niños y adultos. Esta herramienta no se aplica a personas que lograron la libertad de crisis mediante cirugía de epilepsia.</p>
-          <p><strong>Referencia:</strong></p>
-          <p>Lamberink HJ, Otte WM, Geerts AT, Pavlovic M, Ramos-Lizana J, Marson AG, Overweg J, Sauma L, Specchio LM, Tennison M, Cardoso TMO, Shinnar S, Schmidt D, Geleijns K, Braun KPJ. Individualised prediction model of seizure recurrence and long-term outcomes after withdrawal of antiepileptic drugs in seizure-free patients &ndash; a systematic review and individual participant data meta-analysis. <em>Lancet Neurology</em> 2017; 16(7):523&ndash;531. DOI: <a href="https://doi.org/10.1016/S1474-4422(17)30114-X" target="_blank">10.1016/S1474-4422(17)30114-X</a></p>
-          <p><strong>Descargo de responsabilidad médico:</strong> Exclusivamente para fines educativos y de investigación. Utilice siempre el juicio clínico al tomar decisiones de tratamiento.</p>
         </div>
-      </div>
-    </div>
 
-    <div id="footer" class="noselect nocursor">
-      <p>&copy; UMC Utrecht &mdash; <a href="https://github.com/wmotte/epilepsypredictiontools" target="_blank" style="color:inherit; cursor:pointer;">GitHub</a> | Adaptación al español: Juan Carlos Navarro</p>
-    </div>
+      </div>
+    </form>
   </div>
 
-  <script src="js/ui.js"></script>
-  <script src="js/aed-calc.js"></script>
+  <div id="resultBlock" class="card" style="display:none;"></div>
+
+  <div id="calcButton" role="button" tabindex="0">
+    Calcular Riesgo
+  </div>
+
+  <div class="info-block">
+    <h4>Información sobre la herramienta</h4>
+    <p>Esta tabla de consulta se basa en nomogramas clínicos derivados de un metaanálisis de datos de participantes individuales. Estima el riesgo de recurrencia y el pronóstico a largo plazo para personas con epilepsia actualmente libres de crisis, en caso de retirada de fármacos antiepilépticos. El modelo está basado en diez poblaciones diferentes de niños y adultos. <em>No aplicable a pacientes libres de crisis tras cirugía de epilepsia.</em></p>
+    <p><strong>Referencia:</strong> Lamberink HJ, et al. Individualised prediction model of seizure recurrence and long-term outcomes after withdrawal of antiepileptic drugs in seizure-free patients. <em>Lancet Neurology</em> 2017; 16(7):523–531. DOI: <a href="https://doi.org/10.1016/S1474-4422(17)30114-X" target="_blank">10.1016/S1474-4422(17)30114-X</a>.</p>
+    <p><strong>Aviso médico:</strong> Exclusivamente para fines educativos y de investigación. Utilice siempre el juicio clínico al tomar decisiones de tratamiento.</p>
+  </div>
+
+  <footer>
+    <p>Versión en español no oficial de <em>Epilepsy Prediction Tools</em>, basada en el proyecto original de UMC Utrecht.</p>
+    <p>Traducción y adaptación al español por <strong>Juan Carlos Navarro García</strong>.</p>
+    <p>Esta versión no está afiliada, revisada ni aprobada por UMC Utrecht.</p>
+    <p style="margin-top: 12px;">
+      <a href="https://github.com/wmotte/epilepsypredictiontools" target="_blank">Repositorio Original</a> | 
+      Distribuido bajo <a href="https://www.apache.org/licenses/LICENSE-2.0" target="_blank">Licencia Apache-2.0</a>
+    </p>
+    <p style="margin-top: 24px;">NEUROTOOLS · v. 2026.05 · © Dr. Juan Carlos Navarro García</p>
+  </footer>
+</div>
+
+<!-- Estructura oculta si js/ui.js requiere el modal original (mantenida por compatibilidad) -->
+<div style="display:none;">
+  <div id="popUpTitle"><h2>Sobre esta calculadora</h2></div>
+  <div id="popupContent">
+    <div class="popcontent">
+      <p>Consultar bloque de información en la página principal.</p>
+    </div>
+  </div>
+  <div id="infobutton"></div>
+</div>
+
+<script src="js/ui.js"></script>
+<script src="js/aed-calc.js"></script>
 </body>
 </html>
