@@ -293,6 +293,14 @@
   }
   .v-card.is-ehra { --accent: var(--ehra-color); }
   .v-card.is-elan { --accent: var(--elan-color); }
+  
+  /* Estado Missing */
+  .v-card.missing {
+    background: var(--bg-card);
+    border: 1px dashed var(--rule);
+    --accent: var(--ink-faint);
+  }
+  .v-card.missing .v-title { color: var(--ink-soft); }
 
   .v-source {
     font-family: var(--mono);
@@ -330,6 +338,28 @@
 
   .v-card.go   { background: linear-gradient(180deg, var(--go-bg) 0%, var(--bg-elevated) 60%); }
   .v-card.wait { background: linear-gradient(180deg, var(--wait-bg) 0%, var(--bg-elevated) 60%); }
+
+  /* Enlaces a fuentes */
+  .source-link {
+    display: inline-block;
+    margin-top: 14px;
+    font-family: var(--mono);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--ink-soft);
+    text-decoration: none;
+    border: 1px solid var(--rule-soft);
+    padding: 6px 10px;
+    border-radius: 8px;
+    align-self: flex-start;
+    transition: all 0.2s;
+  }
+  .source-link:hover {
+    color: var(--ink);
+    border-color: var(--ink);
+    background: rgba(26, 26, 26, 0.04);
+  }
 
   /* Divergencia warning */
   .diverge {
@@ -721,7 +751,7 @@
 
   <!-- ── Veredicto ── -->
   <section class="verdict-area" id="verdict">
-    <div class="verdict-incomplete">Completa los tres apartados para ver la comparativa.</div>
+    <div class="verdict-incomplete">Introduce el tiempo y al menos un criterio (clínica o imagen) para ver las recomendaciones.</div>
   </section>
 
   <footer class="foot">
@@ -797,18 +827,37 @@ function elanVerdict(hours, days) {
 }
 
 function computeVerdict() {
-  if (!state.nihss || !state.size || state.time === null || state.time === '' || isNaN(state.time)) {
-    return { kind: 'incomplete' };
+  if (state.time === null || state.time === '' || isNaN(state.time)) {
+    return { kind: 'incomplete', msg: 'Introduce el tiempo de evolución para comenzar.' };
   }
+  if (!state.nihss && !state.size) {
+    return { kind: 'incomplete', msg: 'Selecciona la gravedad clínica (NIHSS) o el tamaño en imagen (ELAN).' };
+  }
+
   const hours = state.unit === 'd' ? Number(state.time) * 24 : Number(state.time);
   const days = hours / 24;
-  return {
+
+  const result = {
     kind: 'ok',
     hours,
     days,
-    ehra: ehraVerdict(days),
-    elan: elanVerdict(hours, days)
+    ehra: null,
+    elan: null
   };
+
+  if (state.nihss) {
+    result.ehra = ehraVerdict(days);
+  } else {
+    result.ehra = { status: 'missing', title: 'Faltan datos', msg: 'Selecciona el NIHSS clínico para ver la recomendación de EHRA.' };
+  }
+
+  if (state.size) {
+    result.elan = elanVerdict(hours, days);
+  } else {
+    result.elan = { status: 'missing', title: 'Faltan datos', msg: 'Selecciona el tamaño del infarto para ver la recomendación de ELAN.' };
+  }
+
+  return result;
 }
 
 /* ─────────────────────────────────────────────────────────
@@ -820,17 +869,20 @@ function render() {
   const r = computeVerdict();
 
   if (r.kind === 'incomplete') {
-    verdictEl.innerHTML = `<div class="verdict-incomplete">Completa los tres apartados para ver la comparativa.</div>`;
+    const msg = r.msg || 'Introduce el tiempo y al menos un criterio (clínica o imagen) para ver las recomendaciones.';
+    verdictEl.innerHTML = `<div class="verdict-incomplete">${msg}</div>`;
     return;
   }
 
-  const divergent = r.ehra.status !== r.elan.status;
+  // La divergencia solo tiene sentido si ambos están calculados
+  const bothCalculated = r.ehra.status !== 'missing' && r.elan.status !== 'missing';
+  const divergent = bothCalculated && r.ehra.status !== r.elan.status;
 
   verdictEl.innerHTML = `
     <div class="verdict-head">Recomendación</div>
     <div class="dual">
-      ${cardHTML('ehra', r.ehra, ehraSubtitle(r.ehra))}
-      ${cardHTML('elan', r.elan, elanSubtitle(r.elan))}
+      ${cardHTML('ehra', r.ehra, r.ehra.status === 'missing' ? r.ehra.msg : ehraSubtitle(r.ehra))}
+      ${cardHTML('elan', r.elan, r.elan.status === 'missing' ? r.elan.msg : elanSubtitle(r.elan))}
     </div>
     ${divergent ? divergenceHTML(r) : ''}
     <button class="why-btn" id="openSheet">Ver justificación y citas <span class="arrow">→</span></button>
@@ -842,12 +894,17 @@ function render() {
 function cardHTML(which, v, sub) {
   const sourceLabel = which === 'ehra' ? 'EHRA 2021' : 'ELAN 2023';
   const meta = which === 'ehra' ? 'Regla 1-3-6-12 (NIHSS)' : 'Basado en imagen';
+  const url = which === 'ehra' 
+    ? 'https://watermark02.silverchair.com/euab065.pdf?token=AQECAHi208BE49Ooan9kkhW_Ercy7Dm3ZL_9Cf3qfKAc485ysgAAA3QwggNwBgkqhkiG9w0BBwagggNhMIIDXQIBADCCA1YGCSqGSIb3DQEHATAeBglghkgBZQMEAS4wEQQMnptMpn4fI66CyQOmAgEQgIIDJwOGZ-SJ_zt7dERpjNE6azF_xTpYJfkfIphinMdqVW-QqfpemX1d7ebJonF5jrJc93fbwk34aYFcbSdG48bmbPACjNE9EIazjVE7-1yv8lcU6Id-R-V2YOxcT7_Kaooyff--8Q55TmK9uxkiPpxrgxLejcvo_ca273j4zRUZc_d5tLyMAMnuUKs-g8yc1d_TpS900yn0smdhstkjM5EcPlsou3937xbYW-0IhLM8zK-ddD3EVpKBnDrUGakWMnSWL9fsCjQBVBlitzgqzKSEa9Dfkt4EMZNfwaQcBqMKmkhk5Yd_01UsHUAnjyJkCVr67rYYkL_JpGys3i6WpM-nMTr130DEjgcixCeeTfIfmt4z87eYblC1QnoWahXK0VaM7m-J1LlQSYXIiHKf4DwTc-ipFY-dO7x9lXLBPkqOhHWhc6WQI7oee0GULhtgFN6AiifWxZ2Uc2fdfOYWRkjyz9vcjWtrXkcdWGo-RDcKr81I7L-DzVOcTI2ldlCceX3jF_HJR2XImU-h-kxhYEEHtUB28c2aBxoRF5xvtbJD2CdRhSJjXGPt4nAefTmd2PLow2p1YhOXeq8jOIotSjh5JsAKt2a5-yjR9RDpY8-fmyuE-RHFp2dXX64YoOk4XlV_68UBz51daVmND4Tl4Zrfv1wAVUd6anNq-BLxv4IiKh1xDQU1Vkcyb83aPMscnJTMJ00Q8Dclgl18IaoICIv8T91yBsWCg_GUXdjnkKuLJgIufjLgzN_f4W3WdwFTy9iaWw_zy_AUm2yDCdw40aN_SSdcGMaVkCr0FY7v6F7PgRSWHuGI586wFA2oVrTyiZzF-B975l_x2V3hY2X48tbtTdaCFPhOpWmYXgOjx9ZGODboDsXHDalVLq-SQ7xCCsojOM1s4DMHtzJhd02DYb4XV-q0DuogOX6QdpKubhRj9b5iSkC-kxlLK6K4n2ipqZlnX7W1_bp8Iq-lV5Zfd3PlAkXuNQwh3P_BTwDbTG6Jwga8BmIQFCDb90mI7WB1UjV6hswp-MmP_QbSvQDrrmgydvPjT9B4yA2urSChEh62375wVu-NPLufbA' 
+    : 'https://www.nejm.org/doi/full/10.1056/NEJMoa2303048';
+
   return `
     <div class="v-card is-${which} ${v.status}">
       <div class="v-source">${sourceLabel}</div>
       <div class="v-meta">${meta}</div>
       <div class="v-title">${v.title}</div>
       <div class="v-sub">${sub}</div>
+      <a href="${url}" target="_blank" rel="noopener noreferrer" class="source-link">Ver fuente original ↗</a>
     </div>
   `;
 }
@@ -952,14 +1009,14 @@ function panelContent(r) {
   return `
     <div class="summary-box">
       <span class="label">Tu caso</span>
-      <div class="row"><span class="k">Gravedad clínica</span><span class="v">NIHSS ${nihssWord(state.nihss)}</span></div>
-      <div class="row"><span class="k">Tamaño en imagen</span><span class="v">${sizeWord(state.size)}</span></div>
       <div class="row"><span class="k">Tiempo de evolución</span><span class="v">${days} d (${Math.round(r.hours)} h)</span></div>
+      ${state.nihss ? `<div class="row"><span class="k">Gravedad clínica</span><span class="v">NIHSS ${nihssWord(state.nihss)}</span></div>` : ''}
+      ${state.size ? `<div class="row"><span class="k">Tamaño en imagen</span><span class="v">${sizeWord(state.size)}</span></div>` : ''}
     </div>
 
-    ${ehraSection(r)}
-    ${elanSection(r)}
-    ${(r.ehra.status !== r.elan.status) ? divergenceSection(r) : ''}
+    ${state.nihss ? ehraSection(r) : ''}
+    ${state.size ? elanSection(r) : ''}
+    ${(state.nihss && state.size && r.ehra.status !== r.elan.status) ? divergenceSection(r) : ''}
     ${limitationsSection()}
   `;
 }
@@ -1168,8 +1225,14 @@ document.querySelectorAll('.cards').forEach(group => {
   const field = group.dataset.field;
   group.querySelectorAll('.card').forEach(btn => {
     btn.addEventListener('click', () => {
-      state[field] = btn.dataset.val;
-      group.querySelectorAll('.card').forEach(b => b.setAttribute('aria-pressed', b === btn ? 'true' : 'false'));
+      // Toggle
+      if (state[field] === btn.dataset.val) {
+        state[field] = null;
+        btn.setAttribute('aria-pressed', 'false');
+      } else {
+        state[field] = btn.dataset.val;
+        group.querySelectorAll('.card').forEach(b => b.setAttribute('aria-pressed', b === btn ? 'true' : 'false'));
+      }
       render();
     });
   });
