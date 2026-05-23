@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CHA₂DS₂-VA · NEUROTOOLS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<link rel="apple-touch-icon" href="/icono-app.png">
+<link rel="manifest" href="/manifest.json">
+
+<style>
+  :root {
+    --paper: #f4efe4;
+    --paper-card: #faf6ec;
+    --paper-deep: #ece5d2;
+    --ink: #1a1614;
+    --ink-soft: #4a3f38;
+    --ink-muted: #8a7d72;
+    --accent: #7a1f2b;
+    --accent-soft: #a64a3a;
+    --hairline: #cfc4ad;
+    --hairline-soft: #ddd3bc;
+    --olive: #5e6b3a;
+    --ochre: #a86b1c;
+    --ease: cubic-bezier(.2,.7,.3,1);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Instrument Sans', system-ui, sans-serif;
+    font-size: 16px;
+    line-height: 1.55;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+    background-image:
+      radial-gradient(at 15% 8%, rgba(122, 31, 43, 0.04) 0%, transparent 45%),
+      radial-gradient(at 85% 95%, rgba(166, 74, 58, 0.05) 0%, transparent 40%);
+  }
+
+  body::before {
+    content: "";
+    position: fixed; inset: 0; pointer-events: none;
+    z-index: 1; opacity: 0.3; mix-blend-mode: multiply;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.1 0 0 0 0 0.08 0 0 0 0 0.07 0 0 0 0.45 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  }
+
+  .container {
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 80px 32px;
+    position: relative;
+    z-index: 2;
+  }
+
+  /* ───── Header ───── */
+  header { text-align: center; margin-bottom: 64px; }
+
+  .eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+    margin-bottom: 18px;
+  }
+
+  h1 {
+    font-family: 'Fraunces', Georgia, serif;
+    font-size: clamp(2.8rem, 6.5vw, 4.2rem);
+    font-weight: 400;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    margin-bottom: 16px;
+    color: var(--ink);
+  }
+
+  h1 em {
+    font-style: italic;
+    color: var(--accent);
+    font-weight: 300;
+  }
+
+  h1 sub {
+    font-size: 0.55em;
+    vertical-align: baseline;
+    line-height: 0;
+    position: relative;
+    bottom: -0.1em;
+    font-weight: 400;
+  }
+
+  .subtitle {
+    font-family: 'Fraunces', Georgia, serif;
+    font-style: italic;
+    font-weight: 300;
+    font-size: clamp(1.05rem, 2vw, 1.25rem);
+    color: var(--ink-soft);
+    max-width: 580px;
+    margin: 0 auto;
+    line-height: 1.45;
+  }
+
+  /* ───── Section header ───── */
+  .section { margin-bottom: 32px; }
+
+  .section-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--hairline);
+  }
+
+  /* ───── Card / Factor list ───── */
+  .card {
+    background: var(--paper-card);
+    border: 1px solid var(--hairline);
+    border-radius: 4px;
+    overflow: hidden;
+    transition: border-color 0.3s var(--ease);
+  }
+
+  .factor,
+  .age-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 18px 24px;
+    border-bottom: 1px solid var(--hairline-soft);
+    cursor: pointer;
+    transition: background 0.18s var(--ease);
+  }
+
+  .factor:last-child,
+  .age-row:last-child { border-bottom: none; }
+
+  .factor:hover { background: rgba(122, 31, 43, 0.025); }
+
+  .factor input[type="checkbox"] {
+    appearance: none;
+    width: 18px; height: 18px;
+    border: 1.5px solid var(--ink-muted);
+    border-radius: 2px;
+    cursor: pointer;
+    position: relative;
+    flex-shrink: 0;
+    background: var(--paper);
+    transition: all 0.15s;
+  }
+
+  .factor input[type="checkbox"]:checked {
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+
+  .factor input[type="checkbox"]:checked::after {
+    content: '';
+    position: absolute;
+    left: 4px; top: 0;
+    width: 6px; height: 11px;
+    border: solid #fff;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+  }
+
+  .factor-letter {
+    font-family: 'Fraunces', Georgia, serif;
+    font-size: 1.6rem;
+    font-weight: 400;
+    font-style: italic;
+    color: var(--accent);
+    width: 28px;
+    text-align: center;
+    flex-shrink: 0;
+    line-height: 1;
+  }
+
+  .factor-text { flex: 1; min-width: 0; }
+
+  .factor-name {
+    font-family: 'Instrument Sans', sans-serif;
+    font-weight: 500;
+    font-size: 0.98rem;
+    color: var(--ink);
+    letter-spacing: -0.005em;
+  }
+
+  .factor-desc {
+    font-size: 0.82rem;
+    color: var(--ink-muted);
+    margin-top: 4px;
+    line-height: 1.45;
+  }
+
+  .factor-points {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    font-weight: 500;
+    color: var(--ink-soft);
+    background: var(--paper-deep);
+    padding: 5px 9px;
+    border-radius: 2px;
+    flex-shrink: 0;
+    letter-spacing: 0.04em;
+    border: 1px solid var(--hairline-soft);
+    transition: all 0.2s;
+  }
+
+  .factor-points.active {
+    background: var(--ink);
+    color: var(--paper);
+    border-color: var(--ink);
+  }
+
+  /* Age input */
+  .age-row { cursor: default; }
+
+  .age-row input[type="number"] {
+    width: 88px;
+    padding: 8px 10px;
+    border: 1px solid var(--ink-muted);
+    border-radius: 2px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.95rem;
+    background: var(--paper);
+    color: var(--ink);
+    text-align: center;
+  }
+
+  .age-row input[type="number"]:focus {
+    outline: 2px solid var(--accent);
+    outline-offset: -1px;
+  }
+
+  .age-row input[type="number"]::-webkit-outer-spin-button,
+  .age-row input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  /* ───── Special conditions ───── */
+  .special {
+    background: var(--paper-card);
+    border: 1px solid var(--hairline);
+    border-radius: 4px;
+    padding: 20px 24px;
+  }
+
+  .special-header {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 14px;
+    font-weight: 500;
+  }
+
+  .special label {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 6px 0;
+    cursor: pointer;
+    font-size: 0.95rem;
+    color: var(--ink);
+  }
+
+  .special input[type="checkbox"] {
+    appearance: none;
+    width: 16px; height: 16px;
+    border: 1.5px solid var(--ink-muted);
+    border-radius: 2px;
+    cursor: pointer;
+    position: relative;
+    background: var(--paper);
+    flex-shrink: 0;
+  }
+
+  .special input[type="checkbox"]:checked {
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+
+  .special input[type="checkbox"]:checked::after {
+    content: '';
+    position: absolute;
+    left: 3px; top: -1px;
+    width: 5px; height: 10px;
+    border: solid #fff;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+  }
+
+  /* ───── Result panel ───── */
+  .result {
+    background: var(--ink);
+    color: var(--paper);
+    border-radius: 4px;
+    padding: 44px 36px;
+    margin: 40px 0 24px;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 40px;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .result::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 300px; height: 300px;
+    background: radial-gradient(circle, rgba(122, 31, 43, 0.35) 0%, transparent 65%);
+    pointer-events: none;
+  }
+
+  .result::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 0.95 0 0 0 0 0.85 0 0 0 0.08 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+    mix-blend-mode: overlay;
+    opacity: 0.5;
+  }
+
+  .score-number {
+    font-family: 'Fraunces', Georgia, serif;
+    font-size: 6.5rem;
+    line-height: 0.95;
+    font-weight: 300;
+    letter-spacing: -0.04em;
+    position: relative;
+    z-index: 1;
+  }
+
+  .score-info { position: relative; z-index: 1; }
+
+  .score-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    opacity: 0.55;
+    margin-bottom: 8px;
+  }
+
+  .score-tier {
+    font-family: 'Fraunces', Georgia, serif;
+    font-style: italic;
+    font-weight: 300;
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+    letter-spacing: -0.01em;
+  }
+
+  .score-detail {
+    font-size: 0.92rem;
+    opacity: 0.78;
+    line-height: 1.5;
+    max-width: 440px;
+  }
+
+  /* ───── Recommendation ───── */
+  .recommendation {
+    background: var(--paper-card);
+    border: 1px solid var(--hairline);
+    border-radius: 4px;
+    padding: 30px 32px;
+    margin-bottom: 32px;
+    border-left: 4px solid var(--ink-muted);
+    transition: border-color 0.3s var(--ease);
+  }
+
+  .recommendation.strong { border-left-color: var(--olive); }
+  .recommendation.consider { border-left-color: var(--ochre); }
+  .recommendation.none { border-left-color: var(--ink-muted); }
+
+  .rec-class {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    background: var(--ink);
+    color: var(--paper);
+    padding: 5px 10px;
+    border-radius: 2px;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+  }
+
+  .rec-headline {
+    font-family: 'Fraunces', Georgia, serif;
+    font-size: 1.55rem;
+    font-weight: 400;
+    line-height: 1.2;
+    margin-bottom: 14px;
+    letter-spacing: -0.015em;
+    color: var(--ink);
+  }
+
+  .rec-headline em {
+    font-style: italic;
+    color: var(--accent);
+    font-weight: 300;
+  }
+
+  .rec-body {
+    font-size: 0.98rem;
+    color: var(--ink-soft);
+    line-height: 1.6;
+  }
+
+  .rec-body + .rec-body { margin-top: 12px; }
+
+  .rec-body strong { color: var(--ink); font-weight: 600; }
+
+  /* ───── Notes ───── */
+  .notes {
+    margin-top: 36px;
+    padding-top: 28px;
+    border-top: 1px solid var(--hairline);
+  }
+
+  .notes-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+    margin-bottom: 18px;
+  }
+
+  .note {
+    display: flex;
+    gap: 16px;
+    padding: 10px 0;
+    font-size: 0.9rem;
+    color: var(--ink-soft);
+    line-height: 1.55;
+  }
+
+  .note-marker {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9.5px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    padding: 5px 8px;
+    border-radius: 2px;
+    height: fit-content;
+    flex-shrink: 0;
+    margin-top: 2px;
+    min-width: 68px;
+    text-align: center;
+  }
+
+  .note-marker.danger { color: var(--accent); background: rgba(122, 31, 43, 0.07); border: 1px solid rgba(122, 31, 43, 0.15); }
+  .note-marker.info { color: var(--ink-soft); background: var(--paper-deep); border: 1px solid var(--hairline-soft); }
+
+  .note strong { color: var(--ink); font-weight: 600; }
+
+  /* ───── Footer ───── */
+  footer {
+    margin-top: 80px;
+    text-align: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+    line-height: 1.8;
+  }
+
+  footer a {
+    color: var(--ink-muted);
+    text-decoration: underline;
+  }
+
+  footer a:hover { color: var(--accent); }
+
+  /* ───── Responsive ───── */
+  @media (max-width: 640px) {
+    .container { padding: 40px 16px; }
+    header { margin-bottom: 40px; }
+    h1 { font-size: 2.5rem; }
+    .subtitle { font-size: 1rem; }
+
+    .factor, .age-row { padding: 14px 16px; gap: 12px; }
+    .factor-letter { font-size: 1.35rem; width: 22px; }
+    .factor-name { font-size: 0.92rem; }
+    .factor-desc { font-size: 0.78rem; }
+    .factor-points { font-size: 0.68rem; padding: 4px 7px; }
+
+    .result {
+      grid-template-columns: 1fr;
+      gap: 20px;
+      padding: 28px 22px;
+    }
+    .score-number { font-size: 4.5rem; }
+    .score-tier { font-size: 1.3rem; }
+
+    .recommendation { padding: 22px 20px; }
+    .rec-headline { font-size: 1.3rem; }
+
+    .note { font-size: 0.85rem; gap: 12px; }
+    .note-marker { min-width: 56px; font-size: 9px; }
+
+    footer { margin-top: 50px; font-size: 9px; }
+  }
+
+  /* ───── Animation ───── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .score-number, .rec-headline, .score-tier, .score-detail {
+    animation: fadeUp 0.35s var(--ease);
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <header>
+    <div class="eyebrow">ESC Guidelines · 2024 · Fibrilación auricular</div>
+    <h1>CHA<sub>2</sub>DS<sub>2</sub>‑<em>VA</em></h1>
+    <p class="subtitle">Estratificación del riesgo tromboembólico en fibrilación auricular y decisión de anticoagulación oral.</p>
+  </header>
+
+  <section class="section">
+    <div class="section-label">01 · Factores de riesgo</div>
+    <div class="card" id="factors"></div>
+  </section>
+
+  <section class="section">
+    <div class="section-label">02 · Indicaciones independientes del score</div>
+    <div class="special">
+      <div class="special-header">Clase I · Nivel B — ACO con independencia del CHA₂DS₂-VA</div>
+      <label><input type="checkbox" id="hcm"><span>Miocardiopatía hipertrófica</span></label>
+      <label><input type="checkbox" id="amyloid"><span>Amiloidosis cardíaca</span></label>
+    </div>
+  </section>
+
+  <div class="result">
+    <div class="score-number" id="score">0</div>
+    <div class="score-info">
+      <div class="score-label">CHA₂DS₂-VA · Puntuación total</div>
+      <div class="score-tier" id="score-tier">Sin factores de riesgo</div>
+      <div class="score-detail" id="score-detail">Introducir factores para calcular el riesgo tromboembólico.</div>
+    </div>
+  </div>
+
+  <div class="recommendation" id="recommendation"></div>
+
+  <div class="notes">
+    <div class="notes-title">Recomendaciones complementarias · ESC 2024</div>
+    <div class="note">
+      <span class="note-marker danger">III · A</span>
+      <span>La <strong>antiagregación no se recomienda</strong> como alternativa a la anticoagulación para prevenir el ictus isquémico y el tromboembolismo en FA.</span>
+    </div>
+    <div class="note">
+      <span class="note-marker danger">III · B</span>
+      <span>El <strong>patrón temporal</strong> de la FA (paroxística, persistente o permanente) <strong>no debe utilizarse</strong> para decidir la indicación de anticoagulación oral.</span>
+    </div>
+    <div class="note">
+      <span class="note-marker info">I · B</span>
+      <span>Se recomienda <strong>reevaluación individualizada periódica</strong> del riesgo tromboembólico para asegurar el inicio de anticoagulación en los pacientes que la necesiten.</span>
+    </div>
+    <div class="note">
+      <span class="note-marker info">IIb · B</span>
+      <span>En FA <strong>subclínica asintomática detectada por dispositivo</strong> y riesgo elevado, puede considerarse un DOAC, excluyendo pacientes con alto riesgo hemorrágico.</span>
+    </div>
+  </div>
+
+  <footer>
+    NEUROTOOLS · v. 2026.05 · © Dr. Juan Carlos Navarro García · navarroneurologia@gmail.com (MIT License)<br>
+    <a href="https://neurotools.es/vascular/code-of-conduct.html">Code of Conduct</a>
+  </footer>
+
+</div>
+
+<script>
+const factorsData = [
+  { id: 'chf', letter: 'C',
+    name: 'Insuficiencia cardíaca crónica',
+    desc: 'Sintomática con cualquier FEVI (HFpEF, HFmrEF, HFrEF) o FEVI ≤40 % asintomática',
+    points: 1 },
+  { id: 'htn', letter: 'H',
+    name: 'Hipertensión arterial',
+    desc: 'PA >140/90 mmHg en al menos dos ocasiones, o tratamiento antihipertensivo actual',
+    points: 1 },
+  { id: 'age', letter: 'A',
+    name: 'Edad del paciente',
+    desc: '65–74 años: 1 punto · ≥75 años: 2 puntos',
+    points: 'edad' },
+  { id: 'dm', letter: 'D',
+    name: 'Diabetes mellitus',
+    desc: 'Tipo 1 o tipo 2 según criterios actuales, o tratamiento hipoglucemiante',
+    points: 1 },
+  { id: 'stroke', letter: 'S',
+    name: 'Ictus, AIT o tromboembolismo arterial previo',
+    desc: 'Tromboembolismo previo: riesgo de recurrencia muy elevado',
+    points: 2 },
+  { id: 'vasc', letter: 'V',
+    name: 'Enfermedad vascular',
+    desc: 'EAC (IAM, angina, revascularización, CAD significativa) o vasculopatía periférica / placa aórtica compleja',
+    points: 1 }
+];
+
+const container = document.getElementById('factors');
+
+factorsData.forEach(f => {
+  if (f.id === 'age') {
+    const row = document.createElement('div');
+    row.className = 'age-row';
+    row.innerHTML = `
+      <div style="width:18px;flex-shrink:0;"></div>
+      <span class="factor-letter">${f.letter}</span>
+      <div class="factor-text">
+        <div class="factor-name">${f.name}</div>
+        <div class="factor-desc">${f.desc}</div>
+      </div>
+      <input type="number" id="age-input" min="0" max="120" placeholder="años" inputmode="numeric">
+      <span class="factor-points" id="age-points">0 pt</span>
+    `;
+    container.appendChild(row);
+  } else {
+    const label = document.createElement('label');
+    label.className = 'factor';
+    label.innerHTML = `
+      <input type="checkbox" data-points="${f.points}" id="${f.id}">
+      <span class="factor-letter">${f.letter}</span>
+      <div class="factor-text">
+        <div class="factor-name">${f.name}</div>
+        <div class="factor-desc">${f.desc}</div>
+      </div>
+      <span class="factor-points" data-for="${f.id}">${f.points} pt</span>
+    `;
+    container.appendChild(label);
+  }
+});
+
+const ageInput = document.getElementById('age-input');
+const agePointsEl = document.getElementById('age-points');
+
+function getAgePoints() {
+  const age = parseInt(ageInput.value, 10);
+  if (isNaN(age) || age < 0) return 0;
+  if (age >= 75) return 2;
+  if (age >= 65) return 1;
+  return 0;
+}
+
+function triggerAnim(el) {
+  el.style.animation = 'none';
+  void el.offsetHeight;
+  el.style.animation = '';
+}
+
+function calculate() {
+  let score = 0;
+  document.querySelectorAll('#factors input[type="checkbox"]').forEach(cb => {
+    const pts = parseInt(cb.dataset.points, 10);
+    const badge = document.querySelector(`.factor-points[data-for="${cb.id}"]`);
+    if (cb.checked) {
+      score += pts;
+      badge.classList.add('active');
+    } else {
+      badge.classList.remove('active');
+    }
+  });
+
+  const agePts = getAgePoints();
+  score += agePts;
+  agePointsEl.textContent = agePts + ' pt';
+  agePointsEl.classList.toggle('active', agePts > 0);
+
+  const hcm = document.getElementById('hcm').checked;
+  const amyloid = document.getElementById('amyloid').checked;
+  const specialIndication = hcm || amyloid;
+
+  const scoreEl = document.getElementById('score');
+  const tierEl = document.getElementById('score-tier');
+  const detailEl = document.getElementById('score-detail');
+
+  scoreEl.textContent = score;
+  triggerAnim(scoreEl);
+
+  if (score === 0) {
+    tierEl.textContent = 'Sin factores de riesgo';
+    detailEl.textContent = 'No se identifican factores del CHA₂DS₂-VA. Reevaluar periódicamente.';
+  } else if (score === 1) {
+    tierEl.textContent = 'Riesgo elevado';
+    detailEl.textContent = 'Un factor presente. La guía ESC 2024 lo considera ya indicador de riesgo elevado.';
+  } else {
+    tierEl.textContent = 'Riesgo elevado';
+    detailEl.textContent = `${score} factores presentes. Riesgo tromboembólico claramente elevado.`;
+  }
+  triggerAnim(tierEl);
+  triggerAnim(detailEl);
+
+  const recEl = document.getElementById('recommendation');
+  recEl.className = 'recommendation';
+  let html = '';
+
+  if (specialIndication) {
+    const conds = [];
+    if (hcm) conds.push('miocardiopatía hipertrófica');
+    if (amyloid) conds.push('amiloidosis cardíaca');
+    const condText = conds.length === 2 ? conds.join(' y ') : conds[0];
+    recEl.classList.add('strong');
+    html = `
+      <span class="rec-class">Clase I · Nivel B</span>
+      <div class="rec-headline">Anticoagulación oral <em>recomendada</em></div>
+      <p class="rec-body">Indicada en todo paciente con FA y <strong>${condText}</strong>, con independencia del CHA₂DS₂-VA, para prevenir el ictus isquémico y el tromboembolismo.</p>
+      <p class="rec-body">CHA₂DS₂-VA calculado: <strong>${score}</strong>. La indicación deriva de la condición de base, no del score.</p>
+    `;
+  } else if (score >= 2) {
+    recEl.classList.add('strong');
+    html = `
+      <span class="rec-class">Clase I · Nivel A</span>
+      <div class="rec-headline">Anticoagulación oral <em>recomendada</em></div>
+      <p class="rec-body">Un CHA₂DS₂-VA ≥ 2 identifica un riesgo tromboembólico elevado en el que la anticoagulación oral está indicada para prevenir el ictus isquémico y el tromboembolismo sistémico.</p>
+      <p class="rec-body">Decisión a contextualizar con la valoración del riesgo hemorrágico y la preferencia del paciente.</p>
+    `;
+  } else if (score === 1) {
+    recEl.classList.add('consider');
+    html = `
+      <span class="rec-class">Clase IIa · Nivel C</span>
+      <div class="rec-headline"><em>Considerar</em> anticoagulación oral</div>
+      <p class="rec-body">Un CHA₂DS₂-VA de 1 debe considerarse indicador de riesgo tromboembólico elevado al decidir el inicio de anticoagulación oral.</p>
+      <p class="rec-body">La decisión final debe individualizarse ponderando el riesgo hemorrágico, las preferencias del paciente y la presencia de modificadores de riesgo (ERC, cáncer, biomarcadores, dilatación auricular, etnia).</p>
+    `;
+  } else {
+    recEl.classList.add('none');
+    html = `
+      <span class="rec-class">Sin indicación por score</span>
+      <div class="rec-headline">No hay indicación por <em>CHA₂DS₂-VA</em></div>
+      <p class="rec-body">Sin factores de riesgo registrados en la escala. Se recomienda <strong>reevaluación periódica</strong>, dado que el riesgo tromboembólico evoluciona con el tiempo y con la aparición de nuevas comorbilidades.</p>
+    `;
+  }
+
+  recEl.innerHTML = html;
+  triggerAnim(recEl.querySelector('.rec-headline'));
+}
+
+document.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+  cb.addEventListener('change', calculate);
+});
+ageInput.addEventListener('input', calculate);
+
+calculate();
+</script>
+</body>
+</html>
