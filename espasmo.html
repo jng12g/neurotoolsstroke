@@ -9,9 +9,6 @@
             font-family: Arial, sans-serif;
             margin: 20px;
             color: #333;
-            /* Fuerza a la impresora/PDF a mantener los colores de fondo */
-            -webkit-print-color-adjust: exact !important;
-            print-color-adjust: exact !important;
         }
         .header-info {
             display: grid;
@@ -55,36 +52,23 @@
             border-color: #0056b3;
             background-color: #e6f2ff;
         }
-        /* Iconos de las herramientas en los botones */
         .icon-circle { display: inline-block; width: 14px; height: 14px; background-color: rgba(255, 0, 0, 0.6); border-radius: 50%; border: 1px solid red; }
         .icon-square { display: inline-block; width: 14px; height: 14px; background-color: rgba(0, 0, 255, 0.6); border: 1px solid blue; }
         .icon-cross { display: inline-block; font-weight: bold; color: green; font-size: 16px; line-height: 1; }
 
-        .image-area {
-            position: relative;
-            display: inline-block;
+        .canvas-container {
             border: 1px solid #ddd;
-            cursor: crosshair;
-            max-width: 100%; /* Asegura que no se desborde al imprimir */
-        }
-        .image-area img {
+            display: inline-block;
             max-width: 100%;
-            display: block;
-            height: auto;
         }
         
-        /* Marcas sobre la imagen */
-        .marker {
-            position: absolute;
-            width: 16px;
-            height: 16px;
-            transform: translate(-50%, -50%);
-            cursor: pointer;
-            z-index: 10;
+        /* El canvas se adaptará al tamaño de la pantalla, pero mantendrá su resolución interna */
+        canvas {
+            display: block;
+            max-width: 100%;
+            height: auto;
+            cursor: crosshair;
         }
-        .marker.circle { background-color: rgba(255, 0, 0, 0.6); border-radius: 50%; border: 1px solid red; }
-        .marker.square { background-color: rgba(0, 0, 255, 0.6); border: 1px solid blue; }
-        .marker.cross { display: flex; align-items: center; justify-content: center; color: green; font-weight: bold; font-size: 18px; text-shadow: 1px 1px 0px white, -1px -1px 0px white; }
 
         .footer {
             margin-top: 20px;
@@ -105,11 +89,8 @@
         }
         .print-btn:hover { background-color: #004494; }
 
-        /* Estilos específicos para el PDF / Impresión */
         @media print {
-            .no-print {
-                display: none !important;
-            }
+            .no-print { display: none !important; }
             .header-info input {
                 border: none;
                 border-bottom: 1px solid #000;
@@ -117,10 +98,7 @@
                 padding: 0;
             }
             body { margin: 0; }
-            .image-area { 
-                border: none; 
-                page-break-inside: avoid; /* Evita que la imagen se corte a la mitad en dos páginas */
-            }
+            .canvas-container { border: none; page-break-inside: avoid; }
         }
     </style>
 </head>
@@ -155,8 +133,8 @@
         <span style="margin-left:auto; font-size: 0.9em; color: #555;">(Click en una marca para borrarla)</span>
     </div>
 
-    <div class="image-area" id="image-container">
-        <img src="Gemini_Generated_Image_k1jpcek1jpcek1jp.png" alt="Modelo anatómico" id="base-image">
+    <div class="canvas-container">
+        <canvas id="mapaCanvas"></canvas>
     </div>
 
     <div class="footer">
@@ -169,68 +147,110 @@
 
         let currentTool = null;
         let totalUI = 0;
-        const doses = {
-            circle: 5,
-            square: 2.5,
-            cross: 1.25
+        let markers = []; // Array para guardar las coordenadas de las marcas
+        
+        const doses = { circle: 5, square: 2.5, cross: 1.25 };
+
+        // Configuración del Canvas
+        const canvas = document.getElementById('mapaCanvas');
+        const ctx = canvas.getContext('2d');
+        const baseImage = new Image();
+        
+        // Carga la imagen de fondo
+        baseImage.src = 'Gemini_Generated_Image_k1jpcek1jpcek1jp.png'; 
+        
+        baseImage.onload = function() {
+            // Ajustar el canvas al tamaño real de la imagen
+            canvas.width = baseImage.width;
+            canvas.height = baseImage.height;
+            dibujarTodo(); // Dibuja la imagen inicial
         };
 
         function selectTool(toolName) {
             currentTool = toolName;
-            
             document.querySelectorAll('.tool-btn').forEach(btn => {
                 btn.classList.remove('active');
-                if(btn.dataset.tool === toolName) {
-                    btn.classList.add('active');
+                if(btn.dataset.tool === toolName) btn.classList.add('active');
+            });
+        }
+
+        // Función principal de dibujo
+        function dibujarTodo() {
+            // 1. Limpiar el lienzo y redibujar la imagen base
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(baseImage, 0, 0, canvas.width, canvas.height);
+
+            // 2. Redibujar todas las marcas guardadas
+            markers.forEach(marker => {
+                ctx.lineWidth = 2;
+                if (marker.type === 'circle') {
+                    ctx.beginPath();
+                    ctx.arc(marker.x, marker.y, 8, 0, 2 * Math.PI);
+                    ctx.fillStyle = 'rgba(255, 0, 0, 0.6)';
+                    ctx.fill();
+                    ctx.strokeStyle = 'red';
+                    ctx.stroke();
+                } 
+                else if (marker.type === 'square') {
+                    ctx.beginPath();
+                    ctx.rect(marker.x - 8, marker.y - 8, 16, 16);
+                    ctx.fillStyle = 'rgba(0, 0, 255, 0.6)';
+                    ctx.fill();
+                    ctx.strokeStyle = 'blue';
+                    ctx.stroke();
+                } 
+                else if (marker.type === 'cross') {
+                    ctx.font = 'bold 20px Arial';
+                    ctx.fillStyle = 'green';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    // Sombra blanca para que resalte
+                    ctx.shadowColor = "white";
+                    ctx.shadowOffsetX = 1;
+                    ctx.shadowOffsetY = 1;
+                    ctx.shadowBlur = 2;
+                    ctx.fillText('✖', marker.x, marker.y);
+                    // Quitar sombra para el resto
+                    ctx.shadowColor = "transparent"; 
                 }
             });
         }
 
-        document.getElementById('image-container').addEventListener('click', function(e) {
-            // Borrar marca existente
-            if (e.target.classList.contains('marker')) {
-                const type = e.target.dataset.type;
-                totalUI -= doses[type];
-                e.target.remove();
-                updateTotal();
-                return;
+        canvas.addEventListener('click', function(e) {
+            // Calcular coordenadas exactas relativas al tamaño real del canvas (no al CSS)
+            const rect = canvas.getBoundingClientRect();
+            const scaleX = canvas.width / rect.width;
+            const scaleY = canvas.height / rect.height;
+            const x = (e.clientX - rect.left) * scaleX;
+            const y = (e.clientY - rect.top) * scaleY;
+
+            // Comprobar si se ha hecho clic cerca de una marca existente (radio de 12 píxeles) para borrarla
+            let marcaBorrada = false;
+            for (let i = markers.length - 1; i >= 0; i--) {
+                const marker = markers[i];
+                const distancia = Math.sqrt(Math.pow(x - marker.x, 2) + Math.pow(y - marker.y, 2));
+                
+                if (distancia < 15) { 
+                    totalUI -= doses[marker.type];
+                    markers.splice(i, 1); // Elimina la marca del array
+                    marcaBorrada = true;
+                    break; // Solo borra una marca por clic
+                }
             }
 
-            if (!currentTool) {
-                alert("Por favor, selecciona primero una dosis en la barra de herramientas superior.");
-                return;
+            // Si no se ha borrado ninguna y hay herramienta seleccionada, añadir nueva
+            if (!marcaBorrada) {
+                if (!currentTool) {
+                    alert("Por favor, selecciona primero una dosis en la barra de herramientas superior.");
+                    return;
+                }
+                markers.push({ type: currentTool, x: x, y: y });
+                totalUI += doses[currentTool];
             }
 
-            // Calcular posición relativa
-            const rect = this.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
-
-            // CONVERSIÓN A PORCENTAJES PARA QUE ESCALE EN LA IMPRESIÓN
-            const percentX = (x / rect.width) * 100;
-            const percentY = (y / rect.height) * 100;
-
-            const marker = document.createElement('div');
-            marker.className = `marker ${currentTool}`;
-            marker.dataset.type = currentTool;
-            
-            // Aplicar posiciones en porcentaje
-            marker.style.left = `${percentX}%`;
-            marker.style.top = `${percentY}%`;
-            
-            if (currentTool === 'cross') {
-                marker.innerHTML = '✖';
-            }
-
-            this.appendChild(marker);
-            totalUI += doses[currentTool];
-            updateTotal();
-        });
-
-        function updateTotal() {
+            dibujarTodo();
             document.getElementById('total-ui').innerText = totalUI.toFixed(2);
-        }
+        });
     </script>
-
 </body>
 </html>
