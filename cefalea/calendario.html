@@ -239,7 +239,7 @@
         #printContainer { display: none; }
 
         /* ==========================================================================
-           Reglas de Impresión Profesionales
+           Reglas de Impresión Profesionales (Corrección 31 días)
            ========================================================================== */
         @media print {
             body { 
@@ -257,14 +257,13 @@
             
             @page { 
                 size: A4 landscape; 
-                margin: 5mm 6mm; 
+                margin: 5mm; 
             }
             
             .page-month { 
                 page-break-after: always;
                 page-break-inside: avoid;
-                height: 100vh; 
-                max-height: 198mm; 
+                height: 185mm; /* Altura máxima estricta y conservadora */
                 display: flex;
                 flex-direction: column; 
                 justify-content: space-between;
@@ -275,32 +274,59 @@
             /* Cabecera Médica (Impresión) */
             .print-header { width: 100%; flex-shrink: 0; margin-bottom: 2px; border-bottom: 2px solid var(--ink); padding-bottom: 2px; }
             .print-title-row { display: flex; justify-content: space-between; align-items: baseline; width: 100%; }
-            .print-title { font-family: 'Fraunces', serif; font-size: 16pt; font-weight: 400; color: var(--ink); }
+            .print-title { font-family: 'Fraunces', serif; font-size: 15pt; font-weight: 400; color: var(--ink); }
             .print-title em { font-style: normal; font-weight: 300; }
-            .print-subtitle { font-family: 'Fraunces', serif; font-style: italic; font-size: 10pt; font-weight: 300; color: var(--ink-soft); margin-left: 8px; }
+            .print-subtitle { font-family: 'Fraunces', serif; font-style: italic; font-size: 9pt; font-weight: 300; color: var(--ink-soft); margin-left: 8px; }
             .print-date-meta { font-family: 'JetBrains Mono', monospace; font-size: 11pt; font-weight: bold; color: var(--ink); text-transform: uppercase; letter-spacing: 0.05em; }
             
-            .print-meta-table { width: 100%; margin-top: 2px; font-size: 8.5pt; color: var(--ink); }
+            .print-meta-table { width: 100%; margin-top: 2px; font-size: 8pt; color: var(--ink); }
             .print-meta-table td { border: none !important; padding: 1px 0 !important; }
             
-            /* Tabla de Datos Diarios */
-            .data-table { width: 100%; border-collapse: collapse; margin-top: 2px; flex-grow: 1; height: 100%; border: 1px solid var(--ink); }
-            .data-table th { background-color: var(--paper-card) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; font-size: 7.5pt; font-weight: 600; border: 1px solid var(--hairline); text-align: center; padding: 1px; height: 14px; }
-            .data-table td { border: 1px solid var(--hairline); text-align: center; font-size: 8pt; padding: 0; height: auto; }
+            /* Tabla de Datos Diarios Estricta */
+            .data-table { 
+                width: 100%; 
+                border-collapse: collapse; 
+                margin-top: 2px; 
+                flex-grow: 1; 
+                height: 100%; /* Ocupa el espacio restante exacto */
+                border: 1px solid var(--ink); 
+            }
+            .data-table tr {
+                height: 1%; /* TRUCO CLAVE: Obliga a las filas a repartirse el espacio sin crecer más de lo necesario */
+            }
+            .data-table th { 
+                background-color: var(--paper-card) !important; 
+                -webkit-print-color-adjust: exact; print-color-adjust: exact; 
+                font-size: 7.5pt; font-weight: 600; 
+                border: 1px solid var(--hairline); text-align: center; padding: 0; 
+            }
+            .data-table td { 
+                border: 1px solid var(--hairline); 
+                text-align: center; 
+                font-size: 8pt; 
+                padding: 0; 
+                line-height: 1; /* Elimina espaciado vertical residual */
+            }
             
             /* Identificación de fines de semana */
             .weekend-row { background-color: var(--paper) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-            .day-cell { font-weight: 600; text-align: left; padding-left: 4px !important; }
+            
+            /* TRUCO CLAVE 2: Evitar que el texto rompa de línea y ensanche la celda verticalmente */
+            .day-cell { 
+                font-weight: 600; text-align: left; padding-left: 4px !important; 
+                white-space: nowrap; 
+                overflow: hidden;
+            }
             
             /* Footer de impresión */
             .print-footer { flex-shrink: 0; display: flex; justify-content: space-between; width: 100%; margin-top: 3px; border-top: 1px solid var(--hairline); padding-top: 3px; }
-            .footer-left { width: 68%; font-size: 7pt; color: var(--ink); line-height: 1.15; }
-            .footer-right { width: 30%; font-size: 8pt; }
+            .footer-left { width: 68%; font-size: 6.5pt; color: var(--ink); line-height: 1.15; }
+            .footer-right { width: 30%; font-size: 7.5pt; }
             
-            .summary-box { border: 1px solid var(--hairline); padding: 4px; background-color: var(--paper-card) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; border-radius: 4px; }
+            .summary-box { border: 1px solid var(--hairline); padding: 2px 4px; background-color: var(--paper-card) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; border-radius: 4px; }
             .summary-row { margin-bottom: 2px; color: var(--ink); }
             .summary-row:last-child { margin-bottom: 0; }
-            .summary-line { display: inline-block; width: 35px; border-bottom: 1px dotted var(--ink); margin-left: 5px; height: 10px; vertical-align: bottom; }
+            .summary-line { display: inline-block; width: 35px; border-bottom: 1px dotted var(--ink); margin-left: 5px; height: 8px; vertical-align: bottom; }
 
             .print-watermark { flex-shrink: 0; text-align: right; font-family: 'JetBrains Mono', monospace; font-size: 6pt; color: var(--ink-muted); margin-top: 2px; line-height: 1; letter-spacing: 0.05em; text-transform: uppercase; }
         }
@@ -409,15 +435,15 @@
                     <table class="data-table">
                         <thead>
                             <tr>
-                                <th style="width: 10%;">Día / Semana</th>
+                                <th style="width: 11%;">Día / Semana</th>
                                 <th style="width: 7%;">Intensidad<br>(1-10)</th>
                                 <th style="width: 6%;">Durac.<br>(Hrs)</th>
                                 <th style="width: 6%;">Aura<br>(S/N)</th>
-                                <th style="width: 9%;">Localiz.</th>
-                                <th style="width: 11%;">Síntomas<br>Asociados</th>
-                                <th style="width: 11%;">Desencadenantes</th>
-                                <th style="width: 15%;">Tto. Rescate<br>(Fármaco y Dosis)</th>
-                                <th style="width: 7%;">Alivio 2h<br>(S/N/P)</th>
+                                <th style="width: 8%;">Localiz.</th>
+                                <th style="width: 10%;">Síntomas<br>Asociados</th>
+                                <th style="width: 10%;">Desencadenantes</th>
+                                <th style="width: 16%;">Tto. Rescate<br>(Fármaco y Dosis)</th>
+                                <th style="width: 8%;">Alivio 2h<br>(S/N/P)</th>
                                 <th style="width: 6%;">Incap.<br>(0-3)</th>
                                 <th style="width: 12%;">Tto. Preventivo<br>(Dosis Tomada)</th>
                             </tr>
