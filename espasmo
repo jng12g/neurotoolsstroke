@@ -148,7 +148,7 @@
     </div>
 
     <div class="image-area" id="image-container">
-        <img src="imagen_musculos.jpg" alt="Modelo anatómico" id="base-image">
+        <img src="cara.png" alt="Modelo anatómico" id="base-image">
     </div>
 
     <div class="footer">
