@@ -1,1 +1,259 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Infiltración - Espasmo Hemifacial</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            color: #333;
+        }
+        .header-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .header-info label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+        }
+        .header-info input {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .toolbar {
+            margin-bottom: 15px;
+            padding: 10px;
+            background-color: #f5f5f5;
+            border-radius: 5px;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+        .tool-btn {
+            padding: 10px 15px;
+            border: 2px solid #ccc;
+            background-color: white;
+            cursor: pointer;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: bold;
+        }
+        .tool-btn.active {
+            border-color: #0056b3;
+            background-color: #e6f2ff;
+        }
+        .icon-circle { display: inline-block; width: 14px; height: 14px; background-color: rgba(255, 0, 0, 0.6); border-radius: 50%; border: 1px solid red; }
+        .icon-square { display: inline-block; width: 14px; height: 14px; background-color: rgba(0, 0, 255, 0.6); border: 1px solid blue; }
+        .icon-cross { display: inline-block; font-weight: bold; color: green; font-size: 16px; line-height: 1; }
 
+        .canvas-container {
+            border: 1px solid #ddd;
+            display: inline-block;
+            max-width: 100%;
+        }
+        
+        /* El canvas se adaptará al tamaño de la pantalla, pero mantendrá su resolución interna */
+        canvas {
+            display: block;
+            max-width: 100%;
+            height: auto;
+            cursor: crosshair;
+        }
+
+        .footer {
+            margin-top: 20px;
+            font-size: 1.2em;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .print-btn {
+            padding: 10px 20px;
+            background-color: #0056b3;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1em;
+        }
+        .print-btn:hover { background-color: #004494; }
+
+        @media print {
+            .no-print { display: none !important; }
+            .header-info input {
+                border: none;
+                border-bottom: 1px solid #000;
+                border-radius: 0;
+                padding: 0;
+            }
+            body { margin: 0; }
+            .canvas-container { border: none; page-break-inside: avoid; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header-info">
+        <div>
+            <label for="doctor">Médico:</label>
+            <input type="text" id="doctor" value="Dr. Juan Carlos Navarro" placeholder="Nombre del médico">
+        </div>
+        <div>
+            <label for="paciente">Paciente:</label>
+            <input type="text" id="paciente" placeholder="Nombre del paciente">
+        </div>
+        <div>
+            <label for="fecha">Fecha:</label>
+            <input type="date" id="fecha">
+        </div>
+    </div>
+
+    <div class="toolbar no-print">
+        <span style="font-weight: bold;">Selecciona dosis:</span>
+        <button class="tool-btn" data-tool="circle" onclick="selectTool('circle')">
+            <span class="icon-circle"></span> Círculo (5 UI)
+        </button>
+        <button class="tool-btn" data-tool="square" onclick="selectTool('square')">
+            <span class="icon-square"></span> Cuadrado (2.5 UI)
+        </button>
+        <button class="tool-btn" data-tool="cross" onclick="selectTool('cross')">
+            <span class="icon-cross">✖</span> Cruz (1.25 UI)
+        </button>
+        <span style="margin-left:auto; font-size: 0.9em; color: #555;">(Click en una marca para borrarla)</span>
+    </div>
+
+    <div class="canvas-container">
+        <canvas id="mapaCanvas"></canvas>
+    </div>
+
+    <div class="footer">
+        <div>Total Toxina Botulínica: <span id="total-ui">0.00</span> UI</div>
+        <button class="print-btn no-print" onclick="window.print()">Imprimir / Guardar PDF</button>
+    </div>
+
+    <script>
+        document.getElementById('fecha').valueAsDate = new Date();
+
+        let currentTool = null;
+        let totalUI = 0;
+        let markers = []; // Array para guardar las coordenadas de las marcas
+        
+        const doses = { circle: 5, square: 2.5, cross: 1.25 };
+
+// Configuración del Canvas
+        const canvas = document.getElementById('mapaCanvas');
+        const ctx = canvas.getContext('2d');
+        const baseImage = new Image();
+        
+        // Permite que el Canvas procese la imagen desde GitHub sin bloquear la exportación a PDF
+        baseImage.crossOrigin = "anonymous"; 
+        
+        // Ruta directa (Raw) a tu repositorio de GitHub
+        baseImage.src = 'https://raw.githubusercontent.com/jng12g/neurotoolsstroke/main/cara.png'; 
+        
+        baseImage.onload = function() {
+            // Ajustar el canvas al tamaño real de la imagen
+            canvas.width = baseImage.width;
+            canvas.height = baseImage.height;
+            dibujarTodo(); 
+        };
+
+        function selectTool(toolName) {
+            currentTool = toolName;
+            document.querySelectorAll('.tool-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if(btn.dataset.tool === toolName) btn.classList.add('active');
+            });
+        }
+
+        // Función principal de dibujo
+        function dibujarTodo() {
+            // 1. Limpiar el lienzo y redibujar la imagen base
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(baseImage, 0, 0, canvas.width, canvas.height);
+
+            // 2. Redibujar todas las marcas guardadas
+            markers.forEach(marker => {
+                ctx.lineWidth = 2;
+                if (marker.type === 'circle') {
+                    ctx.beginPath();
+                    ctx.arc(marker.x, marker.y, 8, 0, 2 * Math.PI);
+                    ctx.fillStyle = 'rgba(255, 0, 0, 0.6)';
+                    ctx.fill();
+                    ctx.strokeStyle = 'red';
+                    ctx.stroke();
+                } 
+                else if (marker.type === 'square') {
+                    ctx.beginPath();
+                    ctx.rect(marker.x - 8, marker.y - 8, 16, 16);
+                    ctx.fillStyle = 'rgba(0, 0, 255, 0.6)';
+                    ctx.fill();
+                    ctx.strokeStyle = 'blue';
+                    ctx.stroke();
+                } 
+                else if (marker.type === 'cross') {
+                    ctx.font = 'bold 20px Arial';
+                    ctx.fillStyle = 'green';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    // Sombra blanca para que resalte
+                    ctx.shadowColor = "white";
+                    ctx.shadowOffsetX = 1;
+                    ctx.shadowOffsetY = 1;
+                    ctx.shadowBlur = 2;
+                    ctx.fillText('✖', marker.x, marker.y);
+                    // Quitar sombra para el resto
+                    ctx.shadowColor = "transparent"; 
+                }
+            });
+        }
+
+        canvas.addEventListener('click', function(e) {
+            // Calcular coordenadas exactas relativas al tamaño real del canvas (no al CSS)
+            const rect = canvas.getBoundingClientRect();
+            const scaleX = canvas.width / rect.width;
+            const scaleY = canvas.height / rect.height;
+            const x = (e.clientX - rect.left) * scaleX;
+            const y = (e.clientY - rect.top) * scaleY;
+
+            // Comprobar si se ha hecho clic cerca de una marca existente (radio de 12 píxeles) para borrarla
+            let marcaBorrada = false;
+            for (let i = markers.length - 1; i >= 0; i--) {
+                const marker = markers[i];
+                const distancia = Math.sqrt(Math.pow(x - marker.x, 2) + Math.pow(y - marker.y, 2));
+                
+                if (distancia < 15) { 
+                    totalUI -= doses[marker.type];
+                    markers.splice(i, 1); // Elimina la marca del array
+                    marcaBorrada = true;
+                    break; // Solo borra una marca por clic
+                }
+            }
+
+            // Si no se ha borrado ninguna y hay herramienta seleccionada, añadir nueva
+            if (!marcaBorrada) {
+                if (!currentTool) {
+                    alert("Por favor, selecciona primero una dosis en la barra de herramientas superior.");
+                    return;
+                }
+                markers.push({ type: currentTool, x: x, y: y });
+                totalUI += doses[currentTool];
+            }
+
+            dibujarTodo();
+            document.getElementById('total-ui').innerText = totalUI.toFixed(2);
+        });
+    </script>
+</body>
+</html>
