@@ -58,9 +58,8 @@
         .icon-square { display: inline-block; width: 14px; height: 14px; background-color: rgba(0, 0, 255, 0.6); border: 1px solid blue; }
         .icon-cross { display: inline-block; font-weight: bold; color: green; font-size: 16px; line-height: 1; }
 
-        /* Estilos de la leyenda para impresión */
         .print-legend {
-            display: none; /* Oculto por defecto en pantalla */
+            display: none; 
             margin-bottom: 15px;
             padding: 10px;
             border: 1px solid #000;
@@ -79,13 +78,17 @@
 
         .canvas-container {
             border: 1px solid #ddd;
-            display: inline-block;
+            display: block; /* Cambiado para permitir centrado */
+            text-align: center; /* Centra el canvas en la pantalla */
             max-width: 100%;
+            background-color: #fafafa;
         }
         
         canvas {
-            display: block;
+            display: inline-block;
             max-width: 100%;
+            max-height: 60vh; /* LÍMITE DE ALTURA: 60% de la pantalla para ver la barra */
+            width: auto;
             height: auto;
             cursor: crosshair;
         }
@@ -111,7 +114,7 @@
 
         @media print {
             .no-print { display: none !important; }
-            .print-legend { display: block; } /* Visible solo al imprimir */
+            .print-legend { display: block; } 
             .header-info input {
                 border: none;
                 border-bottom: 1px solid #000;
@@ -119,7 +122,16 @@
                 padding: 0;
             }
             body { margin: 0; }
-            .canvas-container { border: none; page-break-inside: avoid; }
+            .canvas-container { 
+                border: none; 
+                page-break-inside: avoid; 
+                background-color: transparent;
+                text-align: left; /* Restaura alineación en impresión */
+            }
+            canvas {
+                max-height: none !important; /* QUITA EL LÍMITE DE ALTURA AL IMPRIMIR */
+                width: 100% !important; /* Fuerza tamaño completo en el PDF */
+            }
         }
     </style>
 </head>
@@ -179,7 +191,6 @@
         
         const doses = { circle: 5, square: 2.5, cross: 1.25 };
 
-        // Configuración del Canvas
         const canvas = document.getElementById('mapaCanvas');
         const ctx = canvas.getContext('2d');
         const baseImage = new Image();
