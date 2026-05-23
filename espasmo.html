@@ -9,6 +9,8 @@
             font-family: Arial, sans-serif;
             margin: 20px;
             color: #333;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
         }
         .header-info {
             display: grid;
@@ -56,13 +58,31 @@
         .icon-square { display: inline-block; width: 14px; height: 14px; background-color: rgba(0, 0, 255, 0.6); border: 1px solid blue; }
         .icon-cross { display: inline-block; font-weight: bold; color: green; font-size: 16px; line-height: 1; }
 
+        /* Estilos de la leyenda para impresión */
+        .print-legend {
+            display: none; /* Oculto por defecto en pantalla */
+            margin-bottom: 15px;
+            padding: 10px;
+            border: 1px solid #000;
+            background-color: #fff;
+        }
+        .legend-title {
+            font-weight: bold;
+            margin-right: 15px;
+        }
+        .legend-item { 
+            display: inline-flex; 
+            align-items: center; 
+            gap: 5px; 
+            margin-right: 20px; 
+        }
+
         .canvas-container {
             border: 1px solid #ddd;
             display: inline-block;
             max-width: 100%;
         }
         
-        /* El canvas se adaptará al tamaño de la pantalla, pero mantendrá su resolución interna */
         canvas {
             display: block;
             max-width: 100%;
@@ -91,6 +111,7 @@
 
         @media print {
             .no-print { display: none !important; }
+            .print-legend { display: block; } /* Visible solo al imprimir */
             .header-info input {
                 border: none;
                 border-bottom: 1px solid #000;
@@ -117,6 +138,13 @@
             <label for="fecha">Fecha:</label>
             <input type="date" id="fecha">
         </div>
+    </div>
+
+    <div class="print-legend">
+        <span class="legend-title">Leyenda de dosis:</span>
+        <span class="legend-item"><span class="icon-circle"></span> = 5 UI</span>
+        <span class="legend-item"><span class="icon-square"></span> = 2.5 UI</span>
+        <span class="legend-item"><span class="icon-cross">✖</span> = 1.25 UI</span>
     </div>
 
     <div class="toolbar no-print">
@@ -147,23 +175,19 @@
 
         let currentTool = null;
         let totalUI = 0;
-        let markers = []; // Array para guardar las coordenadas de las marcas
+        let markers = []; 
         
         const doses = { circle: 5, square: 2.5, cross: 1.25 };
 
-// Configuración del Canvas
+        // Configuración del Canvas
         const canvas = document.getElementById('mapaCanvas');
         const ctx = canvas.getContext('2d');
         const baseImage = new Image();
         
-        // Permite que el Canvas procese la imagen desde GitHub sin bloquear la exportación a PDF
         baseImage.crossOrigin = "anonymous"; 
-        
-        // Ruta directa (Raw) a tu repositorio de GitHub
         baseImage.src = 'https://raw.githubusercontent.com/jng12g/neurotoolsstroke/main/cara.png'; 
         
         baseImage.onload = function() {
-            // Ajustar el canvas al tamaño real de la imagen
             canvas.width = baseImage.width;
             canvas.height = baseImage.height;
             dibujarTodo(); 
@@ -177,13 +201,10 @@
             });
         }
 
-        // Función principal de dibujo
         function dibujarTodo() {
-            // 1. Limpiar el lienzo y redibujar la imagen base
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             ctx.drawImage(baseImage, 0, 0, canvas.width, canvas.height);
 
-            // 2. Redibujar todas las marcas guardadas
             markers.forEach(marker => {
                 ctx.lineWidth = 2;
                 if (marker.type === 'circle') {
@@ -207,27 +228,23 @@
                     ctx.fillStyle = 'green';
                     ctx.textAlign = 'center';
                     ctx.textBaseline = 'middle';
-                    // Sombra blanca para que resalte
                     ctx.shadowColor = "white";
                     ctx.shadowOffsetX = 1;
                     ctx.shadowOffsetY = 1;
                     ctx.shadowBlur = 2;
                     ctx.fillText('✖', marker.x, marker.y);
-                    // Quitar sombra para el resto
                     ctx.shadowColor = "transparent"; 
                 }
             });
         }
 
         canvas.addEventListener('click', function(e) {
-            // Calcular coordenadas exactas relativas al tamaño real del canvas (no al CSS)
             const rect = canvas.getBoundingClientRect();
             const scaleX = canvas.width / rect.width;
             const scaleY = canvas.height / rect.height;
             const x = (e.clientX - rect.left) * scaleX;
             const y = (e.clientY - rect.top) * scaleY;
 
-            // Comprobar si se ha hecho clic cerca de una marca existente (radio de 12 píxeles) para borrarla
             let marcaBorrada = false;
             for (let i = markers.length - 1; i >= 0; i--) {
                 const marker = markers[i];
@@ -235,13 +252,12 @@
                 
                 if (distancia < 15) { 
                     totalUI -= doses[marker.type];
-                    markers.splice(i, 1); // Elimina la marca del array
+                    markers.splice(i, 1); 
                     marcaBorrada = true;
-                    break; // Solo borra una marca por clic
+                    break; 
                 }
             }
 
-            // Si no se ha borrado ninguna y hay herramienta seleccionada, añadir nueva
             if (!marcaBorrada) {
                 if (!currentTool) {
                     alert("Por favor, selecciona primero una dosis en la barra de herramientas superior.");
