@@ -2,53 +2,269 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Cefalendar - Configuración</title>
-    <style>
-        /* Estilos Generales para la Interfaz de Usuario */
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #f1f5f9; color: #1e293b; line-height: 1.5; }
-        
-        .ui-container { max-width: 850px; margin: 40px auto 10px auto; background: #ffffff; border-radius: 12px; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); overflow: hidden; border: 1px solid #e2e8f0; }
-        .ui-header { background: linear-gradient(135deg, #1e3a8a 0%, #0f766e 100%); color: #ffffff; padding: 30px; text-align: center; }
-        .ui-header h1 { font-size: 28px; font-weight: 700; margin-bottom: 4px; letter-spacing: -0.5px; }
-        .ui-header p { font-size: 15px; color: #ccfbf1; font-weight: 300; }
-        
-        .ui-content { padding: 35px; }
-        .instruction-box { background-color: #f8fafc; border-left: 4px solid #0f766e; padding: 15px 20px; margin-bottom: 30px; border-radius: 0 8px 8px 0; }
-        .instruction-box h3 { font-size: 15px; font-weight: 600; color: #0f766e; margin-bottom: 5px; }
-        .instruction-box p { font-size: 13.5px; color: #475569; }
-        
-        .form-grid { display: table; width: 100%; border-collapse: separate; border-spacing: 0 15px; }
-        .form-row { display: table-row; }
-        .form-label { display: table-cell; width: 30%; vertical-align: middle; font-size: 14px; font-weight: 600; color: #334155; padding-right: 15px; }
-        .form-field { display: table-cell; width: 70%; vertical-align: middle; }
-        
-        input[type="text"], input[type="month"] { width: 100%; padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 14px; transition: border-color 0.2s; color: #1e293b; }
-        input[type="text"]:focus, input[type="month"]:focus { outline: none; border-color: #1e3a8a; box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.1); }
-        
-        .btn-submit { display: block; width: 100%; padding: 14px; background: #1e3a8a; color: white; border: none; border-radius: 6px; font-size: 16px; font-weight: 600; cursor: pointer; margin-top: 25px; text-align: center; transition: background 0.2s; }
-        .btn-submit:hover { background: #1d4ed8; }
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cefalendar - Neurotools</title>
+    
+    <!-- Fuentes Precargadas -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..400;1,9..144,300&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
 
-        .ui-footer-credits { text-align: center; font-size: 12px; color: #94a3b8; margin-top: 10px; padding-bottom: 30px; }
+    <style>
+        /* ==========================================================================
+           Estética NEUROTOOLS — Guía de Estilo Oficial
+           ========================================================================== */
+        :root {
+            --paper: #f4efe4;          
+            --paper-card: #faf6ec;     
+            --ink: #1a1614;            
+            --ink-soft: #4a3f38;       
+            --ink-muted: #8a7d72;      
+            --accent: #7a1f2b;         
+            --hairline: #cfc4ad;       
+            --ease: cubic-bezier(.2,.7,.3,1);
+        }
+
+        * { 
+            box-sizing: border-box; 
+            margin: 0; 
+            padding: 0; 
+        }
         
-        /* Contenedor de Impresión (Oculto en pantalla por defecto) */
+        body { 
+            font-family: 'Instrument Sans', sans-serif;
+            background-color: var(--paper);
+            color: var(--ink); 
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            z-index: 0;
+        }
+
+        /* Textura de fondo y gradientes radiales */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: 
+                radial-gradient(circle at 0% 0%, rgba(122, 31, 43, 0.04) 0%, transparent 40%),
+                radial-gradient(circle at 100% 100%, rgba(204, 75, 44, 0.05) 0%, transparent 40%);
+            z-index: -2;
+            pointer-events: none;
+        }
+        body::after {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            opacity: 0.3;
+            mix-blend-mode: multiply;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        /* Estructura Principal */
+        .wrapper {
+            max-width: 1080px;
+            margin: 0 auto;
+            padding: 80px 32px;
+            width: 100%;
+            flex-grow: 1;
+        }
+
+        /* Cabecera */
+        .ui-header { 
+            text-align: center; 
+            margin-bottom: 40px; 
+        }
+
+        .ui-header h1 { 
+            font-family: 'Fraunces', serif;
+            font-size: clamp(3rem, 7vw, 4.5rem);
+            font-weight: 400;
+            letter-spacing: -0.02em;
+            line-height: 1.05;
+            color: var(--ink);
+            margin-bottom: 8px;
+        }
+
+        .ui-header h1 em {
+            font-style: normal;
+            font-weight: 300;
+            color: var(--accent);
+        }
+        
+        .ui-header p { 
+            font-family: 'Fraunces', serif;
+            font-style: italic;
+            font-weight: 300;
+            font-size: 1.25rem;
+            color: var(--ink-soft);
+        }
+
+        /* Tarjeta Principal (Formulario) */
+        .ui-card {
+            background-color: var(--paper-card);
+            border: 1px solid var(--hairline);
+            border-radius: 4px;
+            padding: 40px 28px;
+            max-width: 700px;
+            margin: 0 auto;
+            position: relative;
+            transition: all 0.3s var(--ease);
+        }
+
+        .ui-card::before {
+            content: '';
+            position: absolute;
+            top: -1px; left: -1px; right: -1px; height: 4px;
+            background-color: var(--accent);
+            border-top-left-radius: 4px;
+            border-top-right-radius: 4px;
+            opacity: 0;
+            transition: opacity 0.3s var(--ease);
+        }
+
+        .ui-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--accent);
+            box-shadow: 0 12px 32px rgba(122, 31, 43, 0.08);
+            background-color: #ffffff;
+        }
+
+        .ui-card:hover::before {
+            opacity: 1;
+        }
+
+        /* Caja de Instrucciones */
+        .instruction-box {
+            border-left: 2px solid var(--accent);
+            padding: 16px 20px;
+            margin-bottom: 32px;
+            background-color: rgba(122, 31, 43, 0.03);
+        }
+        .instruction-box h3 { 
+            font-family: 'Fraunces', serif;
+            font-weight: 400; 
+            color: var(--accent); 
+            margin-bottom: 4px; 
+            font-size: 1.1rem;
+        }
+        .instruction-box p { 
+            font-size: 0.95rem; 
+            color: var(--ink-soft); 
+        }
+
+        /* Formulario */
+        .form-grid { display: flex; flex-direction: column; gap: 24px; }
+        .form-group { display: flex; flex-direction: column; gap: 8px; }
+        .form-label { font-size: 0.9rem; font-weight: 500; color: var(--ink-soft); }
+        
+        input[type="text"], input[type="month"] { 
+            width: 100%; 
+            padding: 12px 14px; 
+            background-color: var(--paper);
+            border: 1px solid var(--hairline); 
+            border-radius: 4px; 
+            font-size: 1rem; 
+            font-family: 'Instrument Sans', sans-serif;
+            color: var(--ink);
+            transition: all 0.3s var(--ease);
+        }
+        
+        input[type="text"]:focus, input[type="month"]:focus { 
+            outline: none; 
+            border-color: var(--accent); 
+            background-color: #ffffff;
+            box-shadow: 0 0 0 3px rgba(122, 31, 43, 0.1); 
+        }
+
+        /* Botón */
+        .btn-submit { 
+            display: block;
+            width: 100%; 
+            padding: 14px; 
+            background-color: var(--ink); 
+            color: var(--paper); 
+            border: 1px solid var(--ink); 
+            border-radius: 4px; 
+            font-size: 1rem; 
+            font-family: 'Instrument Sans', sans-serif;
+            font-weight: 500; 
+            cursor: pointer; 
+            margin-top: 32px; 
+            transition: all 0.3s var(--ease);
+        }
+        
+        .btn-submit:hover { 
+            background-color: var(--accent);
+            border-color: var(--accent);
+            box-shadow: 0 8px 24px rgba(122, 31, 43, 0.15);
+        }
+
+        /* Footer */
+        .ui-footer-credits { 
+            text-align: center; 
+            font-family: 'JetBrains Mono', monospace;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            font-size: 10px; 
+            color: var(--ink-muted); 
+            padding-bottom: 40px; 
+        }
+        .ui-footer-credits a {
+            color: inherit;
+            text-decoration: none;
+            transition: color 0.3s var(--ease);
+        }
+        .ui-footer-credits a:hover {
+            color: var(--accent);
+        }
+
+        /* Media Queries Móvil */
+        @media (max-width: 600px) {
+            .wrapper { padding: 40px 12px; }
+            .ui-header { margin-bottom: 40px; }
+            .ui-header h1 { font-size: 2.5rem; }
+            .ui-card { padding: 24px 16px; }
+            .instruction-box h3 { font-size: 1.15rem; }
+            .instruction-box p { font-size: 0.8rem; }
+            .ui-footer-credits { font-size: 9px; }
+        }
+
+        /* Contenedor de Impresión */
         #printContainer { display: none; }
 
-        /* Reglas de Impresión Profesionales */
+        /* ==========================================================================
+           Reglas de Impresión Profesionales
+           ========================================================================== */
         @media print {
-            body { background-color: #ffffff; color: #000000; font-size: 10pt; }
-            .ui-container, .ui-footer-credits { display: none !important; }
+            body { 
+                background: none !important; 
+                background-color: #ffffff !important; 
+                color: #000000; 
+                font-family: 'Instrument Sans', sans-serif;
+                display: block; 
+                padding: 0; 
+                margin: 0; 
+            }
+            body::before, body::after { display: none !important; }
+            .wrapper, .ui-footer-credits { display: none !important; }
             #printContainer { display: block !important; }
             
             @page { 
                 size: A4 landscape; 
-                margin: 6mm 8mm; 
+                margin: 5mm 6mm; 
             }
             
             .page-month { 
                 page-break-after: always;
                 page-break-inside: avoid;
-                height: 195mm; 
+                height: 100vh; 
+                max-height: 198mm; 
                 display: flex;
                 flex-direction: column; 
                 justify-content: space-between;
@@ -56,91 +272,86 @@
                 overflow: hidden;
             }
             
-            /* Cabecera Médica */
-            .print-header { width: 100%; flex-shrink: 0; margin-bottom: 4px; border-bottom: 2px solid #334155; padding-bottom: 4px; }
+            /* Cabecera Médica (Impresión) */
+            .print-header { width: 100%; flex-shrink: 0; margin-bottom: 2px; border-bottom: 2px solid var(--ink); padding-bottom: 2px; }
             .print-title-row { display: flex; justify-content: space-between; align-items: baseline; width: 100%; }
-            .print-title { font-size: 16pt; font-weight: bold; color: #1e3a8a; }
-            .print-subtitle { font-size: 10pt; font-weight: normal; color: #64748b; margin-left: 8px; }
-            .print-date-meta { font-size: 13pt; font-weight: bold; color: #334155; }
+            .print-title { font-family: 'Fraunces', serif; font-size: 16pt; font-weight: 400; color: var(--ink); }
+            .print-title em { font-style: normal; font-weight: 300; }
+            .print-subtitle { font-family: 'Fraunces', serif; font-style: italic; font-size: 10pt; font-weight: 300; color: var(--ink-soft); margin-left: 8px; }
+            .print-date-meta { font-family: 'JetBrains Mono', monospace; font-size: 11pt; font-weight: bold; color: var(--ink); text-transform: uppercase; letter-spacing: 0.05em; }
             
-            .print-meta-table { width: 100%; margin-top: 4px; font-size: 8.5pt; }
+            .print-meta-table { width: 100%; margin-top: 2px; font-size: 8.5pt; color: var(--ink); }
             .print-meta-table td { border: none !important; padding: 1px 0 !important; }
             
-            /* Tabla de Datos Diarios Optimizada */
-            .data-table { width: 100%; border-collapse: collapse; margin-top: 2px; flex-grow: 1; }
-            .data-table th { background-color: #f1f5f9 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; font-size: 8pt; font-weight: bold; border: 1px solid #475569; text-align: center; padding: 2px; height: 16px; }
-            .data-table td { border: 1px solid #94a3b8; text-align: center; font-size: 8pt; padding: 0; height: 10px; }
+            /* Tabla de Datos Diarios */
+            .data-table { width: 100%; border-collapse: collapse; margin-top: 2px; flex-grow: 1; height: 100%; border: 1px solid var(--ink); }
+            .data-table th { background-color: var(--paper-card) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; font-size: 7.5pt; font-weight: 600; border: 1px solid var(--hairline); text-align: center; padding: 1px; height: 14px; }
+            .data-table td { border: 1px solid var(--hairline); text-align: center; font-size: 8pt; padding: 0; height: auto; }
             
             /* Identificación de fines de semana */
-            .weekend-row { background-color: #e2e8f0 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-            .day-cell { font-weight: bold; text-align: left; padding-left: 4px !important; }
+            .weekend-row { background-color: var(--paper) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .day-cell { font-weight: 600; text-align: left; padding-left: 4px !important; }
             
-            /* Footer de doble columna: Leyenda + Resumen */
-            .print-footer { flex-shrink: 0; display: flex; justify-content: space-between; width: 100%; margin-top: 4px; border-top: 1px solid #cbd5e1; padding-top: 4px; }
-            .footer-left { width: 68%; font-size: 7pt; color: #334155; line-height: 1.2; }
+            /* Footer de impresión */
+            .print-footer { flex-shrink: 0; display: flex; justify-content: space-between; width: 100%; margin-top: 3px; border-top: 1px solid var(--hairline); padding-top: 3px; }
+            .footer-left { width: 68%; font-size: 7pt; color: var(--ink); line-height: 1.15; }
             .footer-right { width: 30%; font-size: 8pt; }
             
-            .summary-box { border: 1px solid #475569; padding: 4px; background-color: #f8fafc !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; border-radius: 4px; }
-            .summary-row { margin-bottom: 3px; }
+            .summary-box { border: 1px solid var(--hairline); padding: 4px; background-color: var(--paper-card) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; border-radius: 4px; }
+            .summary-row { margin-bottom: 2px; color: var(--ink); }
             .summary-row:last-child { margin-bottom: 0; }
-            .summary-line { display: inline-block; width: 35px; border-bottom: 1px solid #000; margin-left: 5px; height: 12px; vertical-align: bottom; }
+            .summary-line { display: inline-block; width: 35px; border-bottom: 1px dotted var(--ink); margin-left: 5px; height: 10px; vertical-align: bottom; }
 
-            /* Marca de agua discreta */
-            .print-watermark { flex-shrink: 0; text-align: right; font-size: 6pt; color: #94a3b8; margin-top: 2px; font-style: italic; }
+            .print-watermark { flex-shrink: 0; text-align: right; font-family: 'JetBrains Mono', monospace; font-size: 6pt; color: var(--ink-muted); margin-top: 2px; line-height: 1; letter-spacing: 0.05em; text-transform: uppercase; }
         }
     </style>
 </head>
 <body>
 
     <!-- INTERFAZ DE CONFIGURACIÓN -->
-    <div class="ui-container">
-        <div class="ui-header">
-            <h1>Cefalendar</h1>
+    <div class="wrapper">
+        <header class="ui-header">
+            <h1>CEFAL<em>ENDAR</em></h1>
             <p>Calendario de cefaleas automatizado</p>
-        </div>
-        <div class="ui-content">
+        </header>
+
+        <main class="ui-card">
             <div class="instruction-box">
                 <h3>Optimización de Impresión</h3>
-                <p>Al introducir los datos y seleccionar el mes actual, se generarán 4 páginas imprimibles en formato A4 horizontal.</p>
+                <p>Al introducir los datos y seleccionar el mes actual, se generarán 4 páginas imprimibles en formato A4 horizontal listas para entregar al paciente.</p>
             </div>
             
             <div class="form-grid">
-                <div class="form-row">
-                    <div class="form-label">Nombre del Paciente:</div>
-                    <div class="form-field">
-                        <input type="text" id="inputPaciente" placeholder="" autocomplete="off">
-                    </div>
+                <div class="form-group">
+                    <label class="form-label">Nombre del Paciente</label>
+                    <input type="text" id="inputPaciente" placeholder="Nombre completo" autocomplete="off">
                 </div>
-                <div class="form-row">
-                    <div class="form-label">Médico / Especialista:</div>
-                    <div class="form-field">
-                        <input type="text" id="inputMedico" placeholder="" autocomplete="off">
-                    </div>
+                <div class="form-group">
+                    <label class="form-label">Médico / Especialista</label>
+                    <input type="text" id="inputMedico" placeholder="Nombre del facultativo" autocomplete="off">
                 </div>
-                <div class="form-row">
-                    <div class="form-label">Tratamiento Preventivo Pautado:</div>
-                    <div class="form-field">
-                        <input type="text" id="inputPreventivo" placeholder="" autocomplete="off">
-                    </div>
+                <div class="form-group">
+                    <label class="form-label">Tratamiento Preventivo Pautado</label>
+                    <input type="text" id="inputPreventivo" placeholder="Ej. Topiramato 50mg / Amitriptilina 25mg" autocomplete="off">
                 </div>
-                <div class="form-row">
-                    <div class="form-label">Mes de Inicio del Registro:</div>
-                    <div class="form-field">
-                        <input type="month" id="inputFecha">
-                    </div>
+                <div class="form-group">
+                    <label class="form-label">Mes de Inicio del Registro</label>
+                    <input type="month" id="inputFecha">
                 </div>
             </div>
             
             <button class="btn-submit" onclick="generarCuaderno()">Generar Cuaderno de Registro (4 Meses)</button>
-        </div>
+        </main>
     </div>
-    <div class="ui-footer-credits">Creado por Dr. Juan Carlos Navarro García</div>
+
+    <footer class="ui-footer-credits">
+        NEUROTOOLS · v. 2026.05 · © Dr. Juan Carlos Navarro García · <a href="#">MIT License</a>
+    </footer>
 
     <!-- CONTENEDOR DINÁMICO PARA IMPRESIÓN -->
     <div id="printContainer"></div>
 
     <script>
-        // Establecer el mes actual de forma predeterminada en el input
         window.onload = function() {
             const hoy = new Date();
             const mes = String(hoy.getMonth() + 1).padStart(2, '0');
@@ -159,11 +370,11 @@
             }
 
             const printContainer = document.getElementById('printContainer');
-            printContainer.innerHTML = ''; // Limpiar ejecuciones previas
+            printContainer.innerHTML = ''; 
 
             const partesFecha = fechaValor.split('-');
             let añoActual = parseInt(partesFecha[0]);
-            let mesActualIdx = parseInt(partesFecha[1]) - 1; // Base 0 para JavaScript
+            let mesActualIdx = parseInt(partesFecha[1]) - 1; 
 
             const nombresMeses = [
                 "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", 
@@ -171,20 +382,18 @@
             ];
             const diasSemana = ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"];
 
-            // Bucle para generar de forma estricta los 4 meses requeridos
             for (let i = 0; i < 4; i++) {
                 let fechaIterada = new Date(añoActual, mesActualIdx + i, 1);
                 let nombreMes = nombresMeses[fechaIterada.getMonth()];
                 let añoIterado = fechaIterada.getFullYear();
                 let diasEnMes = new Date(añoIterado, fechaIterada.getMonth() + 1, 0).getDate();
 
-                // Construcción de la estructura de página optimizada
                 let htmlPagina = `
                 <div class="page-month">
                     <div class="print-header">
                         <div class="print-title-row">
-                            <div class="print-title">Cefalendar <span class="print-subtitle">Calendario de cefaleas automatizado</span></div>
-                            <div class="print-date-meta">${nombreMes.toUpperCase()} ${añoIterado}</div>
+                            <div class="print-title">CEFAL<em>ENDAR</em> <span class="print-subtitle">Calendario de cefaleas automatizado</span></div>
+                            <div class="print-date-meta">${nombreMes} ${añoIterado}</div>
                         </div>
                         <table class="print-meta-table">
                             <tr>
@@ -216,13 +425,11 @@
                         <tbody>
                 `;
 
-                // Iterar los días específicos del mes evaluando el día de la semana
                 for (let dia = 1; dia <= diasEnMes; dia++) {
                     let objetoFecha = new Date(añoIterado, fechaIterada.getMonth(), dia);
                     let idxSemana = objetoFecha.getDay();
                     let nombreDiaSemana = diasSemana[idxSemana];
                     
-                    // Comprobación estricta de fin de semana (Sábado = 6, Domingo = 0)
                     let esFinSemana = (idxSemana === 0 || idxSemana === 6);
                     let claseFila = esFinSemana ? 'class="weekend-row"' : '';
 
@@ -264,7 +471,7 @@
                         </div>
                     </div>
                     <div class="print-watermark">
-                        Creado por Dr. Juan Carlos Navarro García
+                        NEUROTOOLS · © DR. JUAN CARLOS NAVARRO GARCÍA
                     </div>
                 </div>
                 `;
@@ -272,7 +479,6 @@
                 printContainer.innerHTML += htmlPagina;
             }
 
-            // Ejecución optimizada del cuadro de diálogo de impresión del navegador
             setTimeout(() => {
                 window.print();
             }, 300);
