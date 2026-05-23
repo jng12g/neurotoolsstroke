@@ -9,6 +9,9 @@
             font-family: Arial, sans-serif;
             margin: 20px;
             color: #333;
+            /* Fuerza a la impresora/PDF a mantener los colores de fondo */
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
         }
         .header-info {
             display: grid;
@@ -62,10 +65,12 @@
             display: inline-block;
             border: 1px solid #ddd;
             cursor: crosshair;
+            max-width: 100%; /* Asegura que no se desborde al imprimir */
         }
         .image-area img {
             max-width: 100%;
             display: block;
+            height: auto;
         }
         
         /* Marcas sobre la imagen */
@@ -73,7 +78,7 @@
             position: absolute;
             width: 16px;
             height: 16px;
-            transform: translate(-50%, -50%); /* Centra el click exacto */
+            transform: translate(-50%, -50%);
             cursor: pointer;
             z-index: 10;
         }
@@ -100,7 +105,7 @@
         }
         .print-btn:hover { background-color: #004494; }
 
-        /* Estilos específicos para cuando se imprime */
+        /* Estilos específicos para el PDF / Impresión */
         @media print {
             .no-print {
                 display: none !important;
@@ -112,7 +117,10 @@
                 padding: 0;
             }
             body { margin: 0; }
-            .image-area { border: none; }
+            .image-area { 
+                border: none; 
+                page-break-inside: avoid; /* Evita que la imagen se corte a la mitad en dos páginas */
+            }
         }
     </style>
 </head>
@@ -134,7 +142,7 @@
     </div>
 
     <div class="toolbar no-print">
-        <span style="font-weight: bold;">Selecciona dosis (Herramienta actual):</span>
+        <span style="font-weight: bold;">Selecciona dosis:</span>
         <button class="tool-btn" data-tool="circle" onclick="selectTool('circle')">
             <span class="icon-circle"></span> Círculo (5 UI)
         </button>
@@ -148,7 +156,7 @@
     </div>
 
     <div class="image-area" id="image-container">
-        <img src="cara.png" alt="Modelo anatómico" id="base-image">
+        <img src="Gemini_Generated_Image_k1jpcek1jpcek1jp.png" alt="Modelo anatómico" id="base-image">
     </div>
 
     <div class="footer">
@@ -157,7 +165,6 @@
     </div>
 
     <script>
-        // Establecer la fecha de hoy por defecto
         document.getElementById('fecha').valueAsDate = new Date();
 
         let currentTool = null;
@@ -171,7 +178,6 @@
         function selectTool(toolName) {
             currentTool = toolName;
             
-            // Actualizar el estado visual de los botones
             document.querySelectorAll('.tool-btn').forEach(btn => {
                 btn.classList.remove('active');
                 if(btn.dataset.tool === toolName) {
@@ -181,7 +187,7 @@
         }
 
         document.getElementById('image-container').addEventListener('click', function(e) {
-            // Si hacemos clic en una marca existente, la eliminamos y restamos la dosis
+            // Borrar marca existente
             if (e.target.classList.contains('marker')) {
                 const type = e.target.dataset.type;
                 totalUI -= doses[type];
@@ -190,29 +196,32 @@
                 return;
             }
 
-            // Si no hay herramienta seleccionada, no hacemos nada
             if (!currentTool) {
                 alert("Por favor, selecciona primero una dosis en la barra de herramientas superior.");
                 return;
             }
 
-            // Calcular posición del click relativa al contenedor de la imagen
+            // Calcular posición relativa
             const rect = this.getBoundingClientRect();
             const x = e.clientX - rect.left;
             const y = e.clientY - rect.top;
 
-            // Crear la nueva marca
+            // CONVERSIÓN A PORCENTAJES PARA QUE ESCALE EN LA IMPRESIÓN
+            const percentX = (x / rect.width) * 100;
+            const percentY = (y / rect.height) * 100;
+
             const marker = document.createElement('div');
             marker.className = `marker ${currentTool}`;
             marker.dataset.type = currentTool;
-            marker.style.left = `${x}px`;
-            marker.style.top = `${y}px`;
+            
+            // Aplicar posiciones en porcentaje
+            marker.style.left = `${percentX}%`;
+            marker.style.top = `${percentY}%`;
             
             if (currentTool === 'cross') {
                 marker.innerHTML = '✖';
             }
 
-            // Añadir al DOM y sumar la dosis
             this.appendChild(marker);
             totalUI += doses[currentTool];
             updateTotal();
