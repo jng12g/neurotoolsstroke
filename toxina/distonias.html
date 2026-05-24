@@ -1,0 +1,97 @@
+const dystoniaPatterns = {
+  collis: {
+    laterocollis: {
+      name: "Laterocollis",
+      lateralidad: "Ipsilateral",
+      muscles: [
+        { name: "M. levator scapulae", role: "Main", side: "Ipsi" },
+        { name: "M. semispinalis cervicis", role: "Main", side: "Ipsi" },
+        { name: "M. scalenus medius", role: "Secondary", side: "Ipsi" },
+        { name: "M. longissimus cervicis", role: "Secondary", side: "Ipsi" }
+      ]
+    },
+    torticollis: {
+      name: "Torticollis",
+      lateralidad: "Ipsilateral",
+      muscles: [
+        { name: "M. semispinalis cervicis", role: "Main", side: "Ipsi" },
+        { name: "M. levator scapulae", role: "Main", side: "Ipsi" },
+        { name: "M. splenius cervicis", role: "Secondary", side: "Ipsi" },
+        { name: "M. longissimus cervicis", role: "Secondary", side: "Ipsi" }
+      ]
+    },
+    anterocollis: {
+      name: "Anterocollis",
+      lateralidad: "Bilateral",
+      muscles: [
+        { name: "M. scalenus medius", role: "Main", side: "Bilateral" },
+        { name: "M. levator scapulae", role: "Main", side: "Bilateral" },
+        { name: "M. longus colli", role: "Secondary", side: "Bilateral" }
+      ]
+    },
+    retrocollis: {
+      name: "Retrocollis",
+      lateralidad: "Bilateral",
+      muscles: [
+        { name: "M. semispinalis cervicis", role: "Main", side: "Bilateral" }
+      ]
+    }
+  },
+  caput: {
+    laterocaput: {
+      name: "Laterocaput",
+      lateralidad: "Ipsilateral",
+      muscles: [
+        { name: "M. sternocleidomastoideus", role: "Main", side: "Ipsi" },
+        { name: "M. trapezius pars descendens", role: "Main", side: "Ipsi" },
+        { name: "M. splenius capitis", role: "Main", side: "Ipsi" },
+        { name: "M. semispinalis capitis", role: "Secondary", side: "Ipsi" },
+        { name: "M. longissimus capitis", role: "Secondary", side: "Ipsi" },
+        { name: "M. levator scapulae", role: "Secondary", side: "Ipsi" }
+      ]
+    },
+    torticaput: {
+      name: "Torticaput",
+      lateralidad: "Mixta",
+      muscles: [
+        { name: "M. trapezius pars descendens", role: "Main", side: "Contra" },
+        { name: "M. sternocleidomastoideus", role: "Main", side: "Contra" },
+        { name: "M. semispinalis capitis pars med.", role: "Secondary", side: "Contra" },
+        { name: "M. obliquus capitis inferior", role: "Main", side: "Ipsi" },
+        { name: "M. longissimus capitis", role: "Secondary", side: "Ipsi" },
+        { name: "M. splenius capitis", role: "Secondary", side: "Ipsi" }
+      ]
+    },
+    anterocaput: {
+      name: "Anterocaput",
+      lateralidad: "Bilateral",
+      muscles: [
+        { name: "M. longus capitis", role: "Main", side: "Bilateral" },
+        { name: "M. levator scapulae", role: "Main", side: "Bilateral" },
+        { name: "M. sternocleidomastoideus", role: "Secondary", side: "Bilateral" }
+      ]
+    },
+    retrocaput: {
+      name: "Retrocaput",
+      lateralidad: "Bilateral",
+      muscles: [
+        { name: "M. obliquus capitis inferior", role: "Main", side: "Bilateral" },
+        { name: "M. semispinalis capitis", role: "Main", side: "Bilateral" },
+        { name: "M. trapezius pars descendens", role: "Main", side: "Bilateral" },
+        { name: "M. splenius capitis", role: "Secondary", side: "Bilateral" }
+      ]
+    }
+  },
+  shifts: {
+    lateral_shift: {
+      name: "Lateral Shift (Desplazamiento Lateral)",
+      description: "Combinación de laterocollis hacia un lado y laterocaput hacia el lado opuesto.",
+      composition: ["collis.laterocollis", "caput.laterocaput"] // Requiere lógica en JS para invertir el lado del laterocaput
+    },
+    sagittal_shift: {
+      name: "Sagittal Shift / Anterior Shift",
+      description: "Combinación de anterocollis y retrocaput.",
+      composition: ["collis.anterocollis", "caput.retrocaput"]
+    }
+  }
+};
