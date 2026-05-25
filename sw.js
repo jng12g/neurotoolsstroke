@@ -12,6 +12,7 @@ const urlsToCache = [
   '/cefalea/parks.html',
   '/cognitivo/FAB.html',
   '/cognitivo/gds.html',
+  '/cognitivo/pentagonos.png',
   '/cognitivo/index.html',
   '/cognitivo/mmse.html',
   '/cognitivo/mrs.html',
