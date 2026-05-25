@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Criterios de Boston 2.0 — Angiopatía Amiloide Cerebral | NEUROTOOLS</title>
+<style>
+  :root {
+    --bg: #f4efe4;
+    --bg2: #ebe4d3;
+    --bg3: #faf6ec;
+    --border: #cfc4ad;
+    --border2: #b8a98b;
+    --ink: #1a1614;
+    --ink2: #4a3f38;
+    --ink3: #8a7d72;
+    --ink4: #a89a86;
+    --accent-warm: #7a1f2b;
+    --accent2: #a64a3a;
+    --c-green: #4a6741;
+    --c-olive: #6b7a38;
+    --c-amber: #b8862f;
+    --c-terra: #a64a3a;
+    --c-red: #962934;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.5;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .back-bar {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 1.25rem 1.5rem 0;
+  }
+
+  header {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 1.25rem 1.5rem 1.25rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .brand {
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    color: var(--ink3);
+    font-weight: 600;
+    margin-bottom: 0.55rem;
+    text-transform: uppercase;
+  }
+
+  .brand .dot { color: var(--accent-warm); margin: 0 0.35em; }
+
+  h1 {
+    font-size: 1.85rem;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 0.25rem;
+    letter-spacing: -0.02em;
+  }
+
+  .subtitle {
+    font-size: 0.95rem;
+    color: var(--ink2);
+    font-weight: 400;
+  }
+
+  main {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 1.5rem;
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    gap: 1.5rem;
+  }
+
+  @media (max-width: 960px) {
+    main { grid-template-columns: 1fr; }
+    .result-sidebar { position: static !important; }
+    h1 { font-size: 1.45rem; }
+  }
+
+  .panel {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 1.4rem;
+    margin-bottom: 1rem;
+  }
+
+  .panel-num {
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    color: var(--accent-warm);
+    font-weight: 700;
+    margin-bottom: 0.45rem;
+    text-transform: uppercase;
+  }
+
+  .panel-title {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 0.85rem;
+    padding-bottom: 0.85rem;
+    border-bottom: 1px solid var(--border);
+    letter-spacing: -0.01em;
+  }
+
+  .section-label {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--ink3);
+    margin: 1rem 0 0.55rem;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+  }
+
+  .panel-desc {
+    font-size: 0.85rem;
+    color: var(--ink2);
+    margin-bottom: 1rem;
+  }
+
+  .checkbox-group, .pathology-options {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+  }
+
+  .checkbox-item, .radio-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.7rem;
+    padding: 0.8rem 0.9rem;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .checkbox-item:hover, .radio-item:hover {
+    border-color: var(--accent-warm);
+    background: var(--bg2);
+  }
+
+  .checkbox-item input, .radio-item input {
+    margin-top: 2px;
+    width: 16px;
+    height: 16px;
+    accent-color: var(--accent-warm);
+    flex-shrink: 0;
+    cursor: pointer;
+  }
+
+  .checkbox-item label, .radio-item label {
+    flex: 1;
+    cursor: pointer;
+    font-size: 0.9rem;
+    color: var(--ink);
+  }
+
+  .hint {
+    display: block;
+    font-size: 0.78rem;
+    color: var(--ink3);
+    margin-top: 0.25rem;
+    line-height: 1.5;
+  }
+
+  .counter-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.7rem 0.9rem;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    gap: 0.75rem;
+    margin-bottom: 0.45rem;
+  }
+
+  .counter-label {
+    font-size: 0.9rem;
+    flex: 1;
+    color: var(--ink);
+  }
+
+  .counter-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .counter-btn {
+    width: 30px;
+    height: 30px;
+    border-radius: 4px;
+    border: 1px solid var(--border2);
+    background: var(--bg3);
+    cursor: pointer;
+    font-weight: 700;
+    color: var(--accent-warm);
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+    line-height: 1;
+    font-family: inherit;
+  }
+
+  .counter-btn:hover:not(:disabled) {
+    background: var(--accent-warm);
+    color: var(--bg);
+    border-color: var(--accent-warm);
+  }
+
+  .counter-value {
+    min-width: 26px;
+    text-align: center;
+    font-weight: 700;
+    font-size: 1.05rem;
+    color: var(--accent-warm);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .total-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 0.75rem;
+    padding: 0.7rem 1rem;
+    background: var(--bg2);
+    border: 1px solid var(--border2);
+    border-radius: 4px;
+    font-weight: 600;
+    color: var(--ink);
+    font-size: 0.88rem;
+  }
+
+  .total-row .total-value {
+    color: var(--accent-warm);
+    font-variant-numeric: tabular-nums;
+    font-size: 1.15rem;
+    font-weight: 700;
+  }
+
+  .exclusion-panel {
+    border-left: 3px solid var(--c-amber);
+  }
+
+  .notes-toggle {
+    margin-top: 1rem;
+    padding: 0.7rem 0.9rem;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.82rem;
+    color: var(--ink2);
+    user-select: none;
+    transition: all 0.15s;
+  }
+
+  .notes-toggle:hover { border-color: var(--accent-warm); }
+
+  .notes-content {
+    display: none;
+    margin-top: 0.6rem;
+    padding: 0.9rem 1rem;
+    background: #f9f0d8;
+    border: 1px solid #d6c189;
+    border-left: 3px solid var(--c-amber);
+    border-radius: 4px;
+    font-size: 0.85rem;
+    line-height: 1.6;
+    color: var(--ink2);
+  }
+
+  .notes-content.open { display: block; }
+  .notes-content strong { color: var(--ink); }
+
+  /* Resultado */
+  .result-sidebar {
+    position: sticky;
+    top: 1rem;
+    align-self: start;
+  }
+
+  .result-card {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 1.4rem;
+  }
+
+  .result-label {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--ink3);
+    letter-spacing: 0.16em;
+    margin-bottom: 0.7rem;
+    text-transform: uppercase;
+  }
+
+  .result-category {
+    font-size: 1.05rem;
+    font-weight: 800;
+    padding: 1.15rem 1rem;
+    border-radius: 4px;
+    text-align: center;
+    margin-bottom: 1rem;
+    transition: all 0.3s;
+    line-height: 1.4;
+    letter-spacing: -0.01em;
+    text-transform: uppercase;
+  }
+
+  .result-category.none {
+    background: var(--bg);
+    color: var(--ink3);
+    border: 1px solid var(--border);
+  }
+
+  .result-category.possible {
+    background: #f5e8c4;
+    color: #6b4a0e;
+    border: 1px solid var(--c-amber);
+  }
+
+  .result-category.probable {
+    background: #f2dcdf;
+    color: var(--accent-warm);
+    border: 1px solid var(--accent-warm);
+  }
+
+  .result-category.probable-path {
+    background: #dde5d4;
+    color: #2e4520;
+    border: 1px solid var(--c-green);
+  }
+
+  .result-category.definite {
+    background: #c4d3b5;
+    color: #1f3214;
+    border: 1px solid #3a5234;
+  }
+
+  .result-detail {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 0.9rem;
+    font-size: 0.86rem;
+    line-height: 1.6;
+    color: var(--ink2);
+    margin-bottom: 1rem;
+  }
+
+  .result-detail strong { color: var(--ink); }
+  .result-detail em { color: var(--ink3); font-style: italic; }
+
+  .result-criteria-list {
+    list-style: none;
+    padding: 0;
+  }
+
+  .result-criteria-list li {
+    padding: 0.5rem 0;
+    font-size: 0.84rem;
+    color: var(--ink2);
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+    border-bottom: 1px dashed var(--border);
+  }
+
+  .result-criteria-list li:last-child { border-bottom: none; }
+
+  .check-icon { color: var(--c-green); font-weight: 700; flex-shrink: 0; }
+  .cross-icon { color: var(--accent-warm); font-weight: 700; flex-shrink: 0; }
+
+  .result-stats {
+    margin-top: 0.9rem;
+    padding: 0.75rem 0.9rem;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    font-size: 0.78rem;
+    color: var(--ink2);
+    line-height: 1.55;
+    font-style: italic;
+  }
+
+  .result-stats:empty { display: none; }
+
+  .reset-btn {
+    width: 100%;
+    margin-top: 1rem;
+    padding: 0.75rem;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--ink3);
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 11px;
+    transition: all 0.15s;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    font-family: inherit;
+  }
+
+  .reset-btn:hover {
+    background: var(--accent-warm);
+    color: var(--bg);
+    border-color: var(--accent-warm);
+  }
+
+  footer {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 1.5rem;
+    font-size: 0.8rem;
+    color: var(--ink2);
+    line-height: 1.6;
+    border-top: 1px solid var(--border);
+  }
+
+  footer strong { color: var(--ink); }
+
+  footer .ref-list {
+    margin-top: 0.75rem;
+    padding-left: 1.5rem;
+  }
+
+  footer .ref-list li {
+    margin-bottom: 0.4rem;
+    color: var(--ink2);
+  }
+
+  footer .ref-list em { color: var(--ink); font-style: italic; }
+
+  .footer-meta {
+    margin-top: 1rem;
+    font-style: italic;
+    font-size: 0.74rem;
+    color: var(--ink3);
+  }
+
+  .badge {
+    display: inline-block;
+    padding: 0.15rem 0.5rem;
+    border: 1px solid var(--border2);
+    background: var(--bg);
+    color: var(--ink3);
+    border-radius: 3px;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-left: 0.5rem;
+    vertical-align: middle;
+  }
+</style>
+</head>
+<body>
+
+<div class="back-bar">
+  <a href="index.html" style="color: var(--accent-warm); text-decoration: none; font-weight: 600; font-size: 11px;">← VOLVER AL ÍNDICE</a>
+</div>
+
+<header>
+  <div class="brand">NEUROTOOLS<span class="dot">·</span>Neurología Vascular</div>
+  <h1>Criterios de Boston 2.0</h1>
+  <div class="subtitle">Diagnóstico de angiopatía amiloide cerebral (AAC)</div>
+</header>
+
+<main>
+  <div class="inputs">
+
+    <!-- 1. DATOS CLÍNICOS -->
+    <section class="panel">
+      <div class="panel-num">01 · Datos clínicos</div>
+      <h2 class="panel-title">Edad y presentación</h2>
+
+      <div class="checkbox-group">
+        <div class="checkbox-item">
+          <input type="checkbox" id="age50" onchange="calc()">
+          <label for="age50">
+            Edad ≥ 50 años
+            <span class="hint">Requisito para AAC probable o posible sin patología.</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="section-label">Presentación clínica (al menos una)</div>
+
+      <div class="checkbox-group">
+        <div class="checkbox-item">
+          <input type="checkbox" id="presICH" onchange="calc()">
+          <label for="presICH">Hemorragia intracerebral espontánea sintomática</label>
+        </div>
+        <div class="checkbox-item">
+          <input type="checkbox" id="presTFNE" onchange="calc()">
+          <label for="presTFNE">
+            Episodios neurológicos focales transitorios (TFNE)
+            <span class="hint">Síntomas focales transitorios, habitualmente asociados a HSA de la convexidad o siderosis superficial.</span>
+          </label>
+        </div>
+        <div class="checkbox-item">
+          <input type="checkbox" id="presCognitive" onchange="calc()">
+          <label for="presCognitive">Deterioro cognitivo o demencia</label>
+        </div>
+        <div class="checkbox-item">
+          <input type="checkbox" id="presCSAH" onchange="calc()">
+          <label for="presCSAH">
+            HSA de la convexidad
+            <span class="hint">Solo válida como presentación clínica para las categorías con confirmación patológica (biopsia o autopsia). No cuenta como presentación en las categorías por RM.</span>
+          </label>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. LESIONES HEMORRÁGICAS LOBARES -->
+    <section class="panel">
+      <div class="panel-num">02 · Imagen</div>
+      <h2 class="panel-title">Lesiones hemorrágicas lobares en RM T2*</h2>
+      <div class="panel-desc">Contabilizar lesiones <strong>estrictamente lobares</strong>. Las lesiones cerebelosas no cuentan como lobares ni profundas.</div>
+
+      <div>
+        <div class="counter-item">
+          <span class="counter-label">HIC lobar</span>
+          <div class="counter-controls">
+            <button class="counter-btn" onclick="adjust('numICH', -1)" aria-label="Restar">−</button>
+            <span class="counter-value" id="val_numICH">0</span>
+            <button class="counter-btn" onclick="adjust('numICH', 1)" aria-label="Sumar">+</button>
+          </div>
+        </div>
+        <div class="counter-item">
+          <span class="counter-label">Microsangrados cerebrales (lobares)</span>
+          <div class="counter-controls">
+            <button class="counter-btn" onclick="adjust('numMicrobleeds', -1)">−</button>
+            <span class="counter-value" id="val_numMicrobleeds">0</span>
+            <button class="counter-btn" onclick="adjust('numMicrobleeds', 1)">+</button>
+          </div>
+        </div>
+        <div class="counter-item">
+          <span class="counter-label">Focos de siderosis superficial cortical</span>
+          <div class="counter-controls">
+            <button class="counter-btn" onclick="adjust('numCSS', -1)">−</button>
+            <span class="counter-value" id="val_numCSS">0</span>
+            <button class="counter-btn" onclick="adjust('numCSS', 1)">+</button>
+          </div>
+        </div>
+        <div class="counter-item">
+          <span class="counter-label">Focos de HSA de la convexidad</span>
+          <div class="counter-controls">
+            <button class="counter-btn" onclick="adjust('numCSAH', -1)">−</button>
+            <span class="counter-value" id="val_numCSAH">0</span>
+            <button class="counter-btn" onclick="adjust('numCSAH', 1)">+</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="total-row">
+        <span>Total de lesiones hemorrágicas lobares</span>
+        <span class="total-value" id="totalLobar">0</span>
+      </div>
+    </section>
+
+    <!-- 3. SUSTANCIA BLANCA -->
+    <section class="panel">
+      <div class="panel-num">03 · Imagen</div>
+      <h2 class="panel-title">Características de sustancia blanca</h2>
+      <div class="panel-desc">Cada característica equivale a un hallazgo de SB para combinarse con una lesión hemorrágica lobar (AAC probable) o para sostener AAC posible de forma aislada.</div>
+
+      <div class="checkbox-group">
+        <div class="checkbox-item">
+          <input type="checkbox" id="wmPVS" onchange="calc()">
+          <label for="wmPVS">
+            Espacios perivasculares severos en centrum semiovale
+            <span class="hint">&gt; 20 visibles en un hemisferio.</span>
+          </label>
+        </div>
+        <div class="checkbox-item">
+          <input type="checkbox" id="wmMultispot" onchange="calc()">
+          <label for="wmMultispot">
+            Hiperintensidades de SB en patrón multispot
+            <span class="hint">&gt; 10 puntos subcorticales en FLAIR de forma bilateral.</span>
+          </label>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. EXCLUSIONES -->
+    <section class="panel exclusion-panel">
+      <div class="panel-num">04 · Exclusión</div>
+      <h2 class="panel-title">Criterios de exclusión</h2>
+
+      <div class="checkbox-group">
+        <div class="checkbox-item">
+          <input type="checkbox" id="deepHem" onchange="calc()">
+          <label for="deepHem">
+            Lesiones hemorrágicas profundas en T2*
+            <span class="hint">Ganglios basales, tálamo, tronco. Excluye el diagnóstico en las categorías por RM.</span>
+          </label>
+        </div>
+        <div class="checkbox-item">
+          <input type="checkbox" id="otherCause" onchange="calc()">
+          <label for="otherCause">
+            <span id="otherCauseLabel">Otra causa de las lesiones hemorrágicas</span>
+            <span class="hint" id="otherCauseHint">TCE previo, transformación hemorrágica de ictus isquémico, MAV, tumor hemorrágico, warfarina con INR &gt; 3, vasculitis.</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="notes-toggle" onclick="this.nextElementSibling.classList.toggle('open')">ℹ Nota sobre microsangrados profundos</div>
+      <div class="notes-content">
+        Aunque los criterios excluyen estrictamente las lesiones profundas, hasta un <strong>15 %</strong> de pacientes con AAC confirmada presentan microsangrados profundos. Esta exclusión mejora la especificidad. Si coexisten lesiones lobares y profundas <em>sin siderosis superficial cortical</em>, la hipertensión es la causa más probable; si hay siderosis superficial, la AAC sigue siendo plausible.
+      </div>
+    </section>
+
+    <!-- 5. PATOLOGÍA -->
+    <section class="panel">
+      <div class="panel-num">05 · Anatomía patológica</div>
+      <h2 class="panel-title">Datos anatomopatológicos <span class="badge">opcional</span></h2>
+      <div class="panel-desc">Si dispone de muestra histológica, seleccione la opción correspondiente para acceder a las categorías de mayor certeza.</div>
+
+      <div class="pathology-options">
+        <div class="radio-item">
+          <input type="radio" name="pathology" value="none" id="pathNone" checked onchange="calc()">
+          <label for="pathNone">Sin datos anatomopatológicos</label>
+        </div>
+        <div class="radio-item">
+          <input type="radio" name="pathology" value="biopsy" id="pathBiopsy" onchange="calc()">
+          <label for="pathBiopsy">
+            Hematoma evacuado o biopsia cortical con AAC en muestra
+            <span class="hint">Permite la categoría AAC probable con patología de soporte.</span>
+          </label>
+        </div>
+        <div class="radio-item">
+          <input type="radio" name="pathology" value="autopsy" id="pathAutopsy" onchange="calc()">
+          <label for="pathAutopsy">
+            Autopsia completa con AAC severa y vasculopatía
+            <span class="hint">Permite la categoría AAC definitiva.</span>
+          </label>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- RESULTADO -->
+  <aside class="result-sidebar">
+    <div class="result-card">
+      <div class="result-label">Diagnóstico según Boston 2.0</div>
+      <div class="result-category none" id="resultCategory">No cumple criterios</div>
+      <div class="result-detail" id="resultDetail">
+        Complete los datos clínicos y de imagen para obtener el resultado.
+      </div>
+      <ul class="result-criteria-list" id="resultCriteria"></ul>
+      <div class="result-stats" id="resultStats"></div>
+      <button class="reset-btn" onclick="resetAll()">Reiniciar</button>
+    </div>
+  </aside>
+</main>
+
+<footer>
+  <div><strong>Validación.</strong> Para AAC probable: sensibilidad 74,5 % (IC 95 % 65,4 %–82,4 %) y especificidad 95 % (IC 95 % 83,1 %–99,4 %) frente a autopsia. En pacientes asintomáticos o con deterioro cognitivo aislado, la sensibilidad cae al 28,6 % y la especificidad al 65,3 %.</div>
+
+  <ol class="ref-list">
+    <li>Charidimou A, Boulouis G, Frosch M, et al. The Boston Criteria Version 2.0 for Cerebral Amyloid Angiopathy: A Multicentre, Retrospective, MRI-Neuropathology Diagnostic Accuracy Study. <em>Lancet Neurol</em>. 2022;21(8):714–25.</li>
+    <li>Switzer A, Charidimou A, McCarter S, et al. Boston Criteria V2.0 for Cerebral Amyloid Angiopathy Without Hemorrhage. <em>Neurology</em>. 2024;102(10):e209386.</li>
+  </ol>
+
+  <div class="footer-meta">NEUROTOOLS · Herramienta de apoyo a la decisión clínica. El juicio clínico final corresponde al neurólogo responsable.</div>
+</footer>
+
+<script>
+  const counts = { numICH: 0, numMicrobleeds: 0, numCSS: 0, numCSAH: 0 };
+
+  function adjust(key, delta) {
+    counts[key] = Math.max(0, counts[key] + delta);
+    document.getElementById('val_' + key).textContent = counts[key];
+    calc();
+  }
+
+  function resetAll() {
+    document.querySelectorAll('input[type="checkbox"]').forEach(el => el.checked = false);
+    document.getElementById('pathNone').checked = true;
+    Object.keys(counts).forEach(k => {
+      counts[k] = 0;
+      document.getElementById('val_' + k).textContent = 0;
+    });
+    calc();
+  }
+
+  function calc() {
+    const age50 = document.getElementById('age50').checked;
+    const presICH = document.getElementById('presICH').checked;
+    const presTFNE = document.getElementById('presTFNE').checked;
+    const presCognitive = document.getElementById('presCognitive').checked;
+    const presCSAH = document.getElementById('presCSAH').checked;
+    const wmPVS = document.getElementById('wmPVS').checked;
+    const wmMultispot = document.getElementById('wmMultispot').checked;
+    const deepHem = document.getElementById('deepHem').checked;
+    const otherCause = document.getElementById('otherCause').checked;
+    const pathology = document.querySelector('input[name="pathology"]:checked').value;
+
+    // Presentación: cSAH solo computa como válida en ramas patológicas
+    const presentationMRI = presICH || presTFNE || presCognitive;
+    const presentationPath = presentationMRI || presCSAH;
+    const lobarLesions = counts.numICH + counts.numMicrobleeds + counts.numCSS + counts.numCSAH;
+    const wmFeatures = (wmPVS ? 1 : 0) + (wmMultispot ? 1 : 0);
+
+    document.getElementById('totalLobar').textContent = lobarLesions;
+
+    // Label/hint dinámicos del checkbox de exclusión según contexto
+    const ocLabel = document.getElementById('otherCauseLabel');
+    const ocHint = document.getElementById('otherCauseHint');
+    if (pathology === 'none') {
+      ocLabel.textContent = 'Otra causa de las lesiones hemorrágicas';
+      ocHint.textContent = 'TCE previo, transformación hemorrágica de ictus isquémico, MAV, tumor hemorrágico, warfarina con INR > 3, vasculitis.';
+    } else {
+      ocLabel.textContent = 'Otra lesión diagnóstica en la muestra';
+      ocHint.textContent = 'Lesión alternativa identificada en el estudio histológico que explique los hallazgos (p. ej. neoplasia, vasculitis confirmada, otra angiopatía).';
+    }
+
+    let category = 'none';
+    let categoryLabel = 'No cumple criterios';
+    let detail = '';
+    let criteria = [];
+    let stats = '';
+
+    if (pathology === 'autopsy') {
+      if (presentationPath && !otherCause) {
+        category = 'definite';
+        categoryLabel = 'AAC definitiva';
+        detail = 'Confirmación por <strong>examen post-mortem completo</strong> con AAC severa y vasculopatía, presentación clínica compatible y ausencia de otra lesión diagnóstica en la muestra.';
+      } else {
+        detail = 'Patología disponible pero faltan criterios clínicos o existe otra lesión diagnóstica en la muestra.';
+      }
+      criteria = [
+        { ok: true, text: 'Autopsia con AAC severa y vasculopatía' },
+        { ok: presentationPath, text: 'Presentación clínica compatible' },
+        { ok: !otherCause, text: 'Ausencia de otra lesión diagnóstica' }
+      ];
+      stats = category === 'definite' ? 'Diagnóstico con máxima certeza histopatológica.' : '';
+
+    } else if (pathology === 'biopsy') {
+      if (presentationPath && !otherCause) {
+        category = 'probable-path';
+        categoryLabel = 'AAC probable con patología de soporte';
+        detail = 'Patología (hematoma evacuado o biopsia cortical) que muestra <strong>algún grado de AAC</strong>, con presentación clínica compatible y ausencia de otra lesión diagnóstica en la muestra.';
+      } else {
+        detail = 'Patología disponible pero faltan criterios clínicos o existe otra lesión diagnóstica en la muestra.';
+      }
+      criteria = [
+        { ok: true, text: 'Patología con AAC en muestra' },
+        { ok: presentationPath, text: 'Presentación clínica compatible' },
+        { ok: !otherCause, text: 'Ausencia de otra lesión diagnóstica' }
+      ];
+      stats = category === 'probable-path' ? 'Diagnóstico con respaldo histopatológico.' : '';
+
+    } else {
+      // Vía exclusivamente por RM (cSAH no cuenta como presentación clínica)
+      const baseOk = age50 && presentationMRI && !deepHem && !otherCause;
+
+      if (!baseOk) {
+        const missing = [];
+        if (!age50) missing.push('edad ≥ 50 años');
+        if (!presentationMRI) missing.push('presentación clínica compatible');
+        if (deepHem) missing.push('ausencia de lesiones profundas');
+        if (otherCause) missing.push('ausencia de otra causa');
+        detail = missing.length
+          ? 'Faltan requisitos básicos: ' + missing.join(', ') + '.'
+          : 'Complete los datos para obtener el resultado.';
+        if (!presentationMRI && presCSAH) {
+          detail += '<br><br><em>Nota: la HSA de la convexidad solo es válida como presentación clínica para las categorías con confirmación patológica.</em>';
+        }
+      } else if (lobarLesions >= 2) {
+        category = 'probable';
+        categoryLabel = 'AAC probable';
+        detail = '<strong>≥ 2 lesiones hemorrágicas lobares</strong> en RM T2*, con presentación clínica compatible, edad ≥ 50 años y sin criterios de exclusión.';
+      } else if (lobarLesions === 1 && wmFeatures >= 1) {
+        category = 'probable';
+        categoryLabel = 'AAC probable';
+        detail = '<strong>1 lesión hemorrágica lobar</strong> + <strong>1 característica de sustancia blanca</strong>, con criterios clínicos y exclusiones cumplidos.';
+      } else if (lobarLesions === 1) {
+        category = 'possible';
+        categoryLabel = 'AAC posible';
+        detail = '<strong>1 lesión hemorrágica lobar</strong> aislada (sin característica de SB asociada).';
+      } else if (lobarLesions === 0 && wmFeatures >= 1) {
+        category = 'possible';
+        categoryLabel = 'AAC posible';
+        detail = '<strong>1 característica de sustancia blanca</strong> sin lesiones hemorrágicas lobares.';
+      } else {
+        detail = 'No hay lesiones hemorrágicas lobares ni características de sustancia blanca.';
+      }
+
+      criteria = [
+        { ok: age50, text: 'Edad ≥ 50 años' },
+        { ok: presentationMRI, text: 'Presentación clínica compatible' },
+        { ok: lobarLesions > 0 || wmFeatures > 0, text: 'Hallazgos en RM: ' + lobarLesions + ' lobar(es), ' + wmFeatures + ' SB' },
+        { ok: !deepHem, text: 'Sin lesiones hemorrágicas profundas' },
+        { ok: !otherCause, text: 'Sin otra causa de hemorragia' }
+      ];
+
+      if (category === 'probable') {
+        stats = 'Sensibilidad 74,5 % · Especificidad 95 % frente a autopsia (Charidimou et al., 2022).';
+      } else if (category === 'possible') {
+        stats = 'Categoría de menor certeza. Valorar secuencias adicionales (SWI, FLAIR de alta resolución).';
+      }
+    }
+
+    const catEl = document.getElementById('resultCategory');
+    catEl.textContent = categoryLabel;
+    catEl.className = 'result-category ' + category;
+
+    document.getElementById('resultDetail').innerHTML = detail;
+
+    document.getElementById('resultCriteria').innerHTML = criteria.map(function(c) {
+      return '<li><span class="' + (c.ok ? 'check-icon' : 'cross-icon') + '">' + (c.ok ? '✓' : '✗') + '</span><span>' + c.text + '</span></li>';
+    }).join('');
+
+    document.getElementById('resultStats').textContent = stats;
+  }
+
+  calc();
+</script>
+
+</body>
+</html>
