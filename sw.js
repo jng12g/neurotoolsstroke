@@ -1,4 +1,4 @@
-const CACHE_NAME = 'neurotools-cache-v5'; // Actualizado a v5
+const CACHE_NAME = 'neurotools-cache-v6'; // Actualizado a v6
 
 const urlsToCache = [
   '/',
