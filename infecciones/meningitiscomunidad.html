@@ -209,6 +209,14 @@
     font-family:"IBM Plex Sans",sans-serif;font-size:11.5px;font-style:italic;
     opacity:.75;margin-top:2px;
   }
+  .drug .calc .flag{
+    display:inline-block;background:#a35a00;color:#fff;
+    font-family:"IBM Plex Sans",sans-serif;font-size:10px;font-weight:700;
+    letter-spacing:.1em;text-transform:uppercase;
+    padding:2px 7px;border-radius:10px;margin-right:6px;vertical-align:1px;
+  }
+  .drug .calc .flag.adjust{background:#2d5d6b}
+  .drug .calc .flag.cap{background:#8a1d2b}
   @media(max-width:600px){
     .drug{grid-template-columns:40px 1fr;gap:4px 12px}
     .drug::before{width:30px;height:30px;font-size:16px}
@@ -313,10 +321,26 @@
           <input type="number" id="edad" min="0" max="120" value="55" />
         </div>
         <div class="field">
-          <label for="peso">Peso (kg)</label>
-          <input type="number" id="peso" min="20" max="200" value="70" />
+          <label for="peso">Peso real (kg)</label>
+          <input type="number" id="peso" min="20" max="250" value="70" />
         </div>
       </div>
+
+      <div class="row">
+        <div class="field">
+          <label for="altura">Altura (cm)</label>
+          <input type="number" id="altura" min="120" max="220" value="170" />
+        </div>
+        <div class="field">
+          <label for="sexo">Sexo</label>
+          <select id="sexo" style="width:100%;padding:9px 11px;border:1px solid var(--line-strong);background:#fff;border-radius:3px;font:inherit;color:var(--ink)">
+            <option value="H">Hombre</option>
+            <option value="M">Mujer</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="pesoInfo" style="font-size:11.5px;color:var(--muted);margin:-6px 0 14px;padding:6px 9px;background:rgba(0,0,0,.025);border-radius:3px;font-family:'IBM Plex Mono',monospace"></div>
 
       <div class="field">
         <label>Sospecha clínica inicial</label>
@@ -428,25 +452,49 @@
   const plus = `<div class="plus">+</div>`;
 
   // ---- Generadores de regímenes específicos ----
-  function vancomicina(peso){
-    const cargaMin = 25*peso, cargaMax = 30*peso;
-    const mantMin = 15*peso, mantMax = 20*peso;
-    const calc = peso ? calcBlock('Cálculo para ' + peso + ' kg', [
+  function vancomicina(pesos){
+    const peso = pesos?.tbw || 0;
+    const CAP_CARGA = 3000;   // mg, IDSA/ASHP 2020
+    const CAP_MANT  = 2000;   // mg por dosis, práctica habitual sin AUC monitorizada
+    let cargaMin = 25*peso, cargaMax = 30*peso;
+    let mantMin  = 15*peso, mantMax  = 20*peso;
+    const cargaCapped = cargaMax > CAP_CARGA;
+    const mantCapped  = mantMax  > CAP_MANT;
+    const cargaFinalMin = Math.min(cargaMin, CAP_CARGA);
+    const cargaFinalMax = Math.min(cargaMax, CAP_CARGA);
+    const mantFinalMin  = Math.min(mantMin,  CAP_MANT);
+    const mantFinalMax  = Math.min(mantMax,  CAP_MANT);
+
+    const steps = peso ? [
       {
-        label: 'Dosis de carga (única)',
+        label: 'Dosis de carga (única) — peso real',
         formula: `25–30 mg/kg × ${peso} kg`,
-        result: `${fmt(cargaMin)}–${fmt(cargaMax)} mg IV`,
-        post: 'Infusión lenta en 60–90 min; redondear a múltiplos de 250 mg.'
+        result: cargaCapped
+          ? `<span class="flag cap">Truncado</span>${fmt(cargaFinalMin)}–${fmt(cargaFinalMax)} mg IV`
+          : `${fmt(cargaMin)}–${fmt(cargaMax)} mg IV`,
+        post: cargaCapped
+          ? `Cálculo teórico ${fmt(cargaMin)}–${fmt(cargaMax)} mg; se aplica tope IDSA/ASHP de <b>${CAP_CARGA} mg/dosis</b>. Infusión en 60–90 min.`
+          : 'Infusión lenta en 60–90 min; redondear a múltiplos de 250 mg.'
       },
       {
-        label: 'Mantenimiento',
+        label: 'Mantenimiento — peso real',
         formula: `15–20 mg/kg × ${peso} kg`,
-        result: `${fmt(mantMin)}–${fmt(mantMax)} mg / 12 h IV`,
-        post: 'Objetivo de valle 15–20 µg/ml; primera determinación antes de la 4ª dosis.'
+        result: mantCapped
+          ? `<span class="flag cap">Truncado</span>${fmt(mantFinalMin)}–${fmt(mantFinalMax)} mg / 8–12 h`
+          : `${fmt(mantMin)}–${fmt(mantMax)} mg / 12 h IV`,
+        post: mantCapped
+          ? `Cálculo teórico ${fmt(mantMin)}–${fmt(mantMax)} mg/dosis; se aplica tope práctico de <b>${CAP_MANT} mg/dosis</b>. En obesidad, valorar intervalo 8 h y <strong>monitorización AUC₂₄ obligatoria</strong> (objetivo 400–600 mg·h/L).`
+          : 'Objetivo de valle 15–20 µg/ml; primera determinación antes de la 4ª dosis.'
       }
-    ]) : null;
+    ] : [];
+    const calc = peso ? calcBlock('Cálculo para ' + peso + ' kg', steps) : null;
+
     return drug('Vancomicina',
-      peso ? `${fmt(mantMin)}–${fmt(mantMax)} mg / 12 h` : '15–20 mg/kg / 12 h IV',
+      peso
+        ? (mantCapped
+            ? `${fmt(mantFinalMin)}–${fmt(mantFinalMax)} mg / 8–12 h`
+            : `${fmt(mantMin)}–${fmt(mantMax)} mg / 12 h`)
+        : '15–20 mg/kg / 12 h IV',
       { role: 'grampos',
         calc,
         note: 'Cubre neumococo con sensibilidad disminuida a cefalosporinas. Vigilar función renal y niveles plasmáticos.' });
@@ -480,14 +528,21 @@
         note: 'Sustituye a ceftriaxona/cefotaxima en neutropenia o alteración grave de barreras mucosas.' });
   }
 
-  function ampicilina(peso){
+  function ampicilina(pesos){
+    const peso = pesos?.tbw || 0;
     const minDia = 200*peso, maxDia = 300*peso;
+    const PAUTA_FIJA = 12000; // mg/día (2 g/4 h)
+    const TECHO_SNC = 16000;  // mg/día (algunos protocolos en Listeria SNC)
+    const pautaFijaInfra = peso > 60 && PAUTA_FIJA < minDia;
+
     const calc = peso ? calcBlock('Equivalencias para ' + peso + ' kg', [
       {
         label: 'Pauta de elección (fija, adultos)',
         formula: `2 g × 6 dosis (cada 4 h)`,
         result: `12 g/día IV`,
-        post: 'Pauta estándar en adultos según la guía; adecuada para la mayoría de pacientes.'
+        post: pautaFijaInfra
+          ? `<span class="flag">Peso elevado</span>La pauta fija aporta ${PAUTA_FIJA/1000} g/día, por debajo del rango calculado. En <i>Listeria</i> del SNC puede valorarse subir a <b>3 g/4 h (18 g/día)</b> o, más conservador, 2 g/3 h (16 g/día). Consultar con Infecciosas.`
+          : 'Pauta estándar en adultos según la guía; adecuada para la mayoría de pacientes.'
       },
       {
         label: 'Dosis recomendada por peso (referencia)',
@@ -514,19 +569,29 @@
         note: '<strong>Desabastecimiento en España desde abril 2024.</strong> Solo disponible vía AEMPS (medicamentos en situaciones especiales). Consultar Enf. Infecciosas / PROA antes de indicarlo.' });
   }
 
-  function cotrimoxazol(peso, raas){
-    const tmpDia = 15*peso;
-    const porToma3 = tmpDia/3;
-    const porToma4 = tmpDia/4;
+  function cotrimoxazol(pesos, raas){
+    const peso = pesos?.tbw || 0;
+    const CAP_TMP = 1920; // mg TMP/día (2 viales/8 h = 160 mg × 3 = 480 mg... el techo real práctico se sitúa en 1.6-2 g/día)
+    const tmpDia = 15 * peso;
+    const capped = tmpDia > CAP_TMP;
+    const tmpFinal = Math.min(tmpDia, CAP_TMP);
+    const porToma3 = tmpFinal/3;
+    const porToma4 = tmpFinal/4;
+
     const calc = peso ? calcBlock('Cálculo para ' + peso + ' kg', [
       {
         label: 'Dosis diaria total de TMP',
         formula: `15 mg TMP/kg/día × ${peso} kg`,
-        result: `${fmt(tmpDia)} mg TMP/día`
+        result: capped
+          ? `<span class="flag cap">Truncado</span>${fmt(tmpFinal)} mg TMP/día`
+          : `${fmt(tmpDia)} mg TMP/día`,
+        post: capped
+          ? `Cálculo teórico ${fmt(tmpDia)} mg; tope práctico de <b>${CAP_TMP} mg TMP/día</b>. Por encima de este umbral, monitorizar hemograma, función renal y potasio diariamente.`
+          : null
       },
       {
         label: 'Reparto en 3–4 tomas',
-        formula: `${fmt(tmpDia)} mg ÷ 3 = ${fmt(porToma3)} mg / 8 h · ÷ 4 = ${fmt(porToma4)} mg / 6 h`,
+        formula: `${fmt(tmpFinal)} mg ÷ 3 = ${fmt(porToma3)} mg / 8 h · ÷ 4 = ${fmt(porToma4)} mg / 6 h`,
         result: `≈ ${fmt(porToma3)}–${fmt(porToma4)} mg TMP por toma`,
         post: 'Ajustar a viales completos (1 vial = 80 mg TMP / 400 mg SMX); máximo habitual 2 viales / 8 h = 160 mg TMP × 3 = 480 mg/día.'
       }
@@ -543,40 +608,88 @@
       }) + warnRAAS;
   }
 
-  function gentamicina(peso){
-    const min = 5*peso, max = 7*peso;
-    const calc = peso ? calcBlock('Cálculo para ' + peso + ' kg', [
-      {
-        label: 'Dosis diaria (monodosis)',
-        formula: `5–7 mg/kg/día × ${peso} kg`,
+  function gentamicina(pesos){
+    const peso = pesos?.tbw || 0;
+    const obeso = pesos?.obeso || false;
+    const adjBW = pesos?.adjBW || 0;
+    const ibw = pesos?.ibw || 0;
+
+    const pesoUsado = obeso ? adjBW : peso;
+    const etiquetaPeso = obeso ? 'AdjBW' : 'TBW';
+    const min = 5 * pesoUsado, max = 7 * pesoUsado;
+
+    const steps = [];
+    if (obeso && peso) {
+      steps.push({
+        label: 'Selección del peso (obesidad)',
+        formula: `AdjBW = IBW + 0,4 × (TBW − IBW) = ${fmt(ibw,1)} + 0,4 × (${peso} − ${fmt(ibw,1)})`,
+        result: `${fmt(adjBW,1)} kg (AdjBW)`,
+        post: 'Los aminoglucósidos se distribuyen poco en tejido adiposo; en obesidad se calculan por peso corporal ajustado.'
+      });
+    }
+    if (peso) {
+      steps.push({
+        label: `Dosis diaria (monodosis) — ${etiquetaPeso}`,
+        formula: `5–7 mg/kg/día × ${fmt(pesoUsado,1)} kg`,
         result: `${fmt(min)}–${fmt(max)} mg / 24 h IV`,
         post: 'Administrar en monodosis diaria (extended-interval). Monitorizar función renal y valles (objetivo <1 µg/ml).'
-      }
-    ]) : null;
-    return drug('Gentamicina', peso ? `${fmt(min)}–${fmt(max)} mg / 24 h IV` : '5–7 mg/kg/día',
+      });
+    }
+    const calc = peso ? calcBlock('Cálculo para ' + peso + ' kg' + (obeso ? ' (obesidad)' : ''), steps) : null;
+
+    return drug('Gentamicina',
+      peso ? `${fmt(min)}–${fmt(max)} mg / 24 h IV` : '5–7 mg/kg/día',
       { role: 'aminogluc',
         label: 'Sinergia · si Listeria confirmada',
         calc,
         note: 'Durante 5–7 días, asociada a ampicilina. Sustituir por cotrimoxazol si insuficiencia renal.' });
   }
 
-  function aciclovir(peso){
-    const dosis = 10*peso;
-    const calc = peso ? calcBlock('Cálculo para ' + peso + ' kg', [
-      {
-        label: 'Dosis por toma',
-        formula: `10 mg/kg × ${peso} kg`,
-        result: `${fmt(dosis)} mg / 8 h IV`,
-        post: 'Tres dosis al día (cada 8 h) durante 10–14 días.'
-      },
-      {
+  function aciclovir(pesos){
+    const peso = pesos?.tbw || 0;
+    const obeso = pesos?.obeso || false;
+    const adjBW = pesos?.adjBW || 0;
+    const ibw = pesos?.ibw || 0;
+    const CAP = 1200; // mg por dosis
+
+    // Usar peso ajustado si obesidad; en su defecto, peso real
+    const pesoUsado = obeso ? adjBW : peso;
+    const etiquetaPeso = obeso ? 'AdjBW' : 'TBW';
+    let dosis = 10 * pesoUsado;
+    const capped = dosis > CAP;
+    const dosisFinal = Math.min(dosis, CAP);
+
+    const steps = [];
+    if (obeso && peso) {
+      steps.push({
+        label: 'Selección del peso (obesidad)',
+        formula: `AdjBW = IBW + 0,4 × (TBW − IBW) = ${fmt(ibw,1)} + 0,4 × (${peso} − ${fmt(ibw,1)})`,
+        result: `${fmt(adjBW,1)} kg (AdjBW)`,
+        post: 'En obesidad (TBW > 1,2 × IBW), aciclovir se ajusta por peso corporal ajustado para evitar nefrotoxicidad cristalina y neurotoxicidad.'
+      });
+    }
+    if (peso) {
+      steps.push({
+        label: `Dosis por toma — ${etiquetaPeso}`,
+        formula: `10 mg/kg × ${fmt(pesoUsado,1)} kg`,
+        result: capped
+          ? `<span class="flag cap">Truncado</span>${fmt(dosisFinal)} mg / 8 h IV`
+          : `${fmt(dosis)} mg / 8 h IV`,
+        post: capped
+          ? `Cálculo teórico ${fmt(dosis)} mg; se aplica tope práctico de <b>${CAP} mg/dosis</b>. Tres dosis al día durante 10–14 días.`
+          : 'Tres dosis al día (cada 8 h) durante 10–14 días.'
+      });
+      steps.push({
         label: 'Dosis diaria total',
-        formula: `${fmt(dosis)} mg × 3 dosis`,
-        result: `${fmt(dosis*3)} mg/día`,
+        formula: `${fmt(dosisFinal)} mg × 3 dosis`,
+        result: `${fmt(dosisFinal*3)} mg/día`,
         post: 'Hidratación abundante (≥1 ml/kg/h) y administración en infusión ≥1 h para minimizar nefrotoxicidad cristalina.'
-      }
-    ]) : null;
-    return drug('Aciclovir', peso ? `${fmt(dosis)} mg / 8 h IV` : '10 mg/kg / 8 h IV',
+      });
+    }
+    const calc = peso ? calcBlock('Cálculo para ' + peso + ' kg' + (obeso ? ' (obesidad)' : ''), steps) : null;
+
+    return drug('Aciclovir',
+      peso ? `${fmt(dosisFinal)} mg / 8 h IV` : '10 mg/kg / 8 h IV',
       { role: 'antiviral',
         calc,
         note: 'Iniciar empíricamente ante sospecha de encefalitis herpética (HSV-1/2) sin esperar PCR.' });
@@ -594,6 +707,8 @@
   function render(){
     const edad = parseInt($('edad').value, 10) || 0;
     const peso = parseInt($('peso').value, 10) || 0;
+    const altura = parseInt($('altura').value, 10) || 0;
+    const sexo = $('sexo').value;
     const tipo = document.querySelector('input[name=tipo]:checked').value;
 
     const hsv = $('hsv').checked;
@@ -605,6 +720,27 @@
     const alergia = $('alergia').checked;
     const irc = $('irc').checked;
     const raas = $('raas').checked;
+
+    // Cálculo de pesos farmacocinéticos
+    // IBW (Devine): H = 50 + 0.9055 × (altura_cm − 152.4); M = 45.5 + 0.9055 × (altura_cm − 152.4)
+    let ibw = 0, adjBW = 0, obeso = false;
+    if (altura > 0) {
+      const base = sexo === 'H' ? 50 : 45.5;
+      ibw = Math.max(30, base + 0.9055 * (altura - 152.4));
+      adjBW = ibw + 0.4 * Math.max(0, peso - ibw);
+      obeso = peso > 1.2 * ibw;  // criterio habitual de obesidad para ajuste farmacocinético
+    }
+    const pesos = { tbw: peso, ibw, adjBW, obeso };
+
+    // Línea informativa sobre los pesos calculados
+    if (altura > 0 && peso > 0) {
+      $('pesoInfo').innerHTML = `
+        TBW <b>${peso} kg</b> · IBW <b>${fmt(ibw,1)} kg</b> · AdjBW <b>${fmt(adjBW,1)} kg</b>
+        ${obeso ? '<span style="color:#a35a00;font-weight:600"> · OBESIDAD (TBW &gt; 1,2 × IBW)</span>' : ''}
+      `;
+    } else {
+      $('pesoInfo').innerHTML = '';
+    }
 
     // Mostrar/ocultar subsecciones del panel
     $('viralBox').classList.toggle('hidden', tipo !== 'viral');
@@ -628,7 +764,7 @@
           ${hsv ? `
             <div class="option-block">
               <div class="opt-title">Si sospecha de encefalitis herpética</div>
-              <div class="regimen">${aciclovir(peso)}</div>
+              <div class="regimen">${aciclovir(pesos)}</div>
               <div class="alert warn"><strong>No retrasar el aciclovir</strong> a la espera de la PCR. La demora se asocia a peor pronóstico funcional.</div>
             </div>
           ` : `
@@ -658,11 +794,11 @@
       elecHTML += cubrirPseudomonas ? pseudomonasCef() : ceftriaxona();
       elecHTML += plus;
       // Vanco / rifam
-      elecHTML += irc ? rifampicina() : vancomicina(peso);
+      elecHTML += irc ? rifampicina() : vancomicina(pesos);
       // Listeria
       if (cubrirListeria) {
         elecHTML += plus;
-        elecHTML += ampicilina(peso);
+        elecHTML += ampicilina(pesos);
       }
     } else {
       elecHTML += `<div class="alert danger"><strong>Alergia grave a betalactámicos.</strong> Régimen alternativo desplazado al bloque inferior.</div>`;
@@ -670,12 +806,12 @@
 
     // --- Tratamiento alternativo (alergia / contingencia) ---
     let altHTML = '';
-    altHTML += irc ? linezolid() : vancomicina(peso);
+    altHTML += irc ? linezolid() : vancomicina(pesos);
     altHTML += plus;
     altHTML += `<div class="either-wrap">${ciprofloxacino()}<div class="either-or">o</div>${aztreonam()}</div>`;
     if (cubrirListeria) {
       altHTML += plus;
-      altHTML += cotrimoxazol(peso, raas);
+      altHTML += cotrimoxazol(pesos, raas);
     }
 
     // Card de tratamiento de elección
@@ -716,7 +852,7 @@
           <span class="tag">Considerar · cobertura antiviral empírica</span>
           <h3>Aciclovir si sospecha de encefalitis herpética</h3>
           <p class="lede">El perfil indeterminado o mixto justifica un umbral bajo para añadir cobertura HSV: la mortalidad de la encefalitis herpética no tratada supera el 70 % y la demora del aciclovir empeora el pronóstico funcional.</p>
-          <div class="regimen">${aciclovir(peso)}</div>
+          <div class="regimen">${aciclovir(pesos)}</div>
           <div class="alert info" style="margin-top:14px">
             <strong>Rasgos clínicos que orientan a encefalitis herpética:</strong> alteración del nivel de conciencia o de la conducta desproporcionada al cuadro meníngeo, focalidad temporal, crisis epilépticas, EEG con paroxismos temporales, RM con hiperintensidad temporomesial o insular, LCR con linfocitosis y glucorraquia conservada.
           </div>
