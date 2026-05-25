@@ -27,9 +27,9 @@ jobs:
           GA_CODE='<script async src="https://www.googletagmanager.com/gtag/js?id=G-B14TF44M7Z"></script><script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag("js",new Date());gtag("config","G-B14TF44M7Z");</script>'
           find . -name "*.html" -type f -exec sed -i "s@</head>@$GA_CODE</head>@gI" {} +
 
-          # 2. Reemplazar Footer en todos los archivos
-          FOOTER_CODE='<footer style="text-align: center; font-size: 10px; opacity: 0.7; margin-top: 40px;"><p style="font-size: 10px; margin-bottom: 10px; max-width: 800px; margin-left: auto; margin-right: auto; line-height: 1.2;"><strong>Aviso legal:</strong> Neurotools es una herramienta de apoyo diseñada exclusivamente para profesionales sanitarios. Proyecto desarrollado por especialistas en Neurología. Los resultados obtenidos mediante estas calculadoras y algoritmos no sustituyen el juicio clínico, el diagnóstico individualizado ni las guías de práctica clínica oficiales.</p>NEUROTOOLS · v. 2026.05 · neurotoolsrecursos\@gmail.com (MIT License)<br><a href="/code-of-conduct.html" style="color: inherit; text-decoration: underline;">Code of Conduct</a></footer>'
-          find . -name "*.html" -type f -exec perl -0777 -pi -e "s|<footer>.*?</footer>|$FOOTER_CODE|gs" {} +
+          # 2. Limpiar footer antiguo (si existe) e inyectar el nuevo antes de la etiqueta de cierre body
+          FOOTER_CODE='<footer style="text-align: center; font-size: 10px !important; opacity: 0.7; margin-top: 40px;"><p style="font-size: 10px !important; margin-bottom: 10px; max-width: 800px; margin-left: auto; margin-right: auto; line-height: 1.2;"><strong>Aviso legal:</strong> Neurotools es una herramienta de apoyo diseñada exclusivamente para profesionales sanitarios. Proyecto desarrollado por especialistas en Neurología. Los resultados obtenidos mediante estas calculadoras y algoritmos no sustituyen el juicio clínico, el diagnóstico individualizado ni las guías de práctica clínica oficiales.</p>NEUROTOOLS · v. 2026.05 · neurotoolsrecursos\@gmail.com (MIT License)<br><a href="/code-of-conduct.html" style="color: inherit; text-decoration: underline;">Code of Conduct</a></footer>'
+          find . -name "*.html" -type f -exec perl -0777 -pi -e "s|<footer>.*?</footer>||gs; s|</body>|$FOOTER_CODE</body>|gI" {} +
 
       - name: Generar archivo Sitemap.xml
         uses: cicirello/generate-sitemap@v1
