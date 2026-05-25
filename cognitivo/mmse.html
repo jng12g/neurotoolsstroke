@@ -40,6 +40,30 @@
   .header .desc { font-size: 13px; opacity: .8; }
   .header .ref { font-size: 11px; opacity: .5; margin-top: 4px; }
 
+  /* Back navigation */
+  .back-nav {
+    margin-bottom: 14px;
+  }
+  .back-nav a {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    background: #fff;
+    border: 2px solid #e8e1ce;
+    border-radius: 10px;
+    color: #1e3a5f;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 600;
+    transition: all .15s ease;
+  }
+  .back-nav a:hover {
+    border-color: #2d6a9f;
+    background: #f0f7ff;
+    transform: translateX(-2px);
+  }
+
   /* Score bar */
   #score-bar {
     border: 2px solid #e8e1ce;
@@ -128,6 +152,21 @@
     background: #f4efe4; border-radius: 10px; padding: 8px 12px;
     margin-bottom: 10px; font-size: 13px; color: #4a3f38;
   }
+
+  /* Pentagons reference (model shown to patient) */
+  .pent-ref {
+    background: #fff;
+    border: 1.5px solid #e8e1ce;
+    border-radius: 10px;
+    padding: 14px;
+    margin: 4px 0 12px;
+    text-align: center;
+  }
+  .pent-ref .pent-cap {
+    font-size: 11px; letter-spacing: 1.5px; font-family: monospace;
+    color: #8a7d72; margin-bottom: 8px;
+  }
+  .pent-ref svg { display: block; margin: 0 auto; max-width: 100%; height: auto; }
 
   /* Subhead label */
   .sublabel {
@@ -240,6 +279,10 @@
 </head>
 <body>
 <div class="wrap">
+
+  <div class="back-nav">
+    <a href="index.html">← Volver a Cognitivo</a>
+  </div>
 
   <div class="header">
     <div class="sub">EVALUACIÓN NEUROPSICOLÓGICA</div>
@@ -401,6 +444,10 @@
       <div id="body-ESCRITURA"></div>
       <div id="fb-escritura"></div>
       <span class="sublabel">COPIA</span>
+      <div class="pent-ref">
+        <div class="pent-cap">MODELO · MOSTRAR AL PACIENTE</div>
+        <img src="pentagonos.png" alt="Pentágonos intersectados, modelo MMSE" width="280" height="184" style="display:block;margin:0 auto">
+      </div>
       <div id="body-COPIA"></div>
       <div id="fb-copia"></div>
     </div>
@@ -720,15 +767,9 @@ function renderLANG() {
   if (state.copia !== null) {
     const ok = state.copia === 1;
     fbCop.className = 'eval-fb '+(ok?'ok':'ko');
-    const c = ok ? '#22c55e' : '#ef4444';
-    fbCop.innerHTML = (ok
+    fbCop.innerHTML = ok
       ? '✓ Los 10 ángulos y la intersección presentes.'
-      : '✗ Faltan ángulos o intersección no apreciable.')
-    + `<div style="margin-top:8px;display:flex;justify-content:center;opacity:${ok?1:0.3}">
-        <svg width="100" height="60" viewBox="0 0 100 60">
-          <polygon points="25,5 45,15 38,38 12,38 5,15" fill="none" stroke="${c}" stroke-width="2"/>
-          <polygon points="55,5 75,15 68,38 42,38 35,15" fill="none" stroke="${c}" stroke-width="2"/>
-        </svg></div>`;
+      : '✗ Faltan ángulos o intersección no apreciable.';
   } else { fbCop.className=''; fbCop.innerHTML=''; }
 }
 
@@ -808,24 +849,38 @@ function renderSummary() {
 }
 
 // ── CONCLUSION ─────────────────────────────────────────────────
+function escapeHtml(s) {
+  return String(s)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+}
+
 function buildConclusion() {
   const t = total();
-  const nombre = document.getElementById('p-nombre').value || 'Sin nombre';
-  const fecha  = document.getElementById('p-fecha').value  || '—';
-  const nacim  = document.getElementById('p-nacimiento').value || '—';
+  const nombre = document.getElementById('p-nombre').value.trim();
+  const fecha  = document.getElementById('p-fecha').value.trim() || '—';
+  const nacim  = document.getElementById('p-nacimiento').value.trim() || '—';
   const edad   = document.getElementById('p-edad').value;
-  const prof   = document.getElementById('p-profesion').value;
+  const prof   = document.getElementById('p-profesion').value.trim();
   const edu    = state.eduIdx !== null ? EDU_LABELS[state.eduIdx] : 'no registrado';
   const sexo   = state.sexo === 'V' ? 'Varón' : 'Mujer';
   const ageGroup = getAgeGroup(edad);
   const adj    = getAdj(t, ageGroup, state.eduIdx);
   const ws     = words();
 
+  // Escape user-typed strings (clinician input) for HTML safety
+  const eN = escapeHtml(nombre);
+  const eF = escapeHtml(fecha);
+  const eP = escapeHtml(prof);
+  const eE = escapeHtml(edad);
+
   const lines = [];
-  lines.push(`MMSE — ${nombre} | ${fecha}`);
-  lines.push(`Edad: ${edad ? edad+' años' : 'no registrada'} | Estudios: ${edu} | Sexo: ${sexo}${prof ? ' | Profesión: ' + prof : ''}`);
+  // Si no se ha rellenado el nombre, omitirlo de la cabecera
+  lines.push(eN ? `MMSE — ${eN} | ${eF}` : `MMSE | ${eF}`);
+  lines.push(`Edad: ${edad ? eE+' años' : 'no registrada'} | Estudios: ${edu} | Sexo: ${sexo}${eP ? ' | Profesión: ' + eP : ''}`);
   lines.push(`Puntuación total: ${t}/30`);
-  if (adj) lines.push(`Clasificación ajustada (p.c. grupo ${ageGroup}, ${edu}: ${adj.cutoff}): ${adj.label.toUpperCase()}`);
+  if (adj) lines.push(`<strong>Clasificación ajustada (p.c. grupo ${ageGroup}, ${edu}: ${adj.cutoff}): ${adj.label.toUpperCase()}</strong>`);
   lines.push('');
 
   // OT
@@ -861,7 +916,7 @@ function buildConclusion() {
     lines.push(`RD (${sRD()}/3 libre${recPista.length ? `, ${recPista.length}/3 con pista` : ''}): ${parts.join(' | ')}`);
   }
   const recObs = document.getElementById('rec-obs').value.trim();
-  if (recObs) lines.push(`  → ${recObs}`);
+  if (recObs) lines.push(`  → ${escapeHtml(recObs)}`);
 
   // Lenguaje
   const langFails = [];
@@ -880,7 +935,7 @@ function buildConclusion() {
 }
 
 function updateConclusion() {
-  document.getElementById('concl-pre').textContent = buildConclusion();
+  document.getElementById('concl-pre').innerHTML = buildConclusion();
 }
 
 // ── COPY ──────────────────────────────────────────────────────
