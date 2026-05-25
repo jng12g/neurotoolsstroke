@@ -1,5 +1,5 @@
 {
-  "name": "NEUROTOOLS Stroke",
+  "name": "NEUROTOOLS",
   "short_name": "NeuroTools",
   "start_url": "/index.html",
   "display": "standalone",
@@ -9,6 +9,16 @@
     {
       "src": "/icono-app.png",
       "sizes": "180x180",
+      "type": "image/png"
+    },
+    {
+      "src": "/icono-app.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icono-app.png",
+      "sizes": "512x512",
       "type": "image/png"
     }
   ]
