@@ -1,4 +1,4 @@
-const CACHE_NAME = 'neurotools-cache-v1'; // Incrementa a v2, v3, etc., cuando cambies la estructura general
+const CACHE_NAME = 'neurotools-cache-v2'; // Actualizado a v2
 
 const urlsToCache = [
   '/',
@@ -42,8 +42,8 @@ const urlsToCache = [
   '/vascular/leve.png',
   '/vascular/moderado.png',
   '/vascular/severo1.png',
-  '/vascular/severo2.png',
-  '/vascular/manifest.json'
+  '/vascular/severo2.png'
+  // Eliminado '/vascular/manifest.json' de aquí
 ];
 
 // 1. Instalación: Fuerza al nuevo Service Worker a activarse inmediatamente
