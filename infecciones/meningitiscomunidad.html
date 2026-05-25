@@ -1,0 +1,796 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Antibioterapia empírica · Meningitis aguda comunitaria</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f6f2ec;
+    --paper:#fffdf9;
+    --ink:#1a1614;
+    --muted:#6b625b;
+    --line:#d9d1c5;
+    --line-strong:#b7ad9d;
+    --accent:#8a1d2b;
+    --accent-soft:#f3dadd;
+    --warn:#a35a00;
+    --warn-soft:#fbeacf;
+    --info:#2d5d6b;
+    --info-soft:#dcecee;
+    --ok:#3e6b3a;
+    --ok-soft:#dfead7;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-family:"IBM Plex Sans",system-ui,sans-serif;font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none;border-bottom:1px solid currentColor}
+  .wrap{max-width:1180px;margin:0 auto;padding:36px 28px 80px}
+
+  /* HEADER */
+  header.top{
+    display:flex;align-items:flex-end;justify-content:space-between;
+    gap:24px;padding-bottom:22px;border-bottom:1px solid var(--line-strong);
+    margin-bottom:28px;flex-wrap:wrap;
+  }
+  .brand{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+  .brand .mark{
+    font-family:"Fraunces",serif;font-weight:600;font-size:13px;
+    letter-spacing:.22em;text-transform:uppercase;color:var(--accent);
+    border:1px solid var(--accent);padding:4px 10px;border-radius:2px;
+  }
+  h1{
+    font-family:"Fraunces",serif;font-weight:500;font-size:34px;line-height:1.05;
+    letter-spacing:-.01em;margin:0;font-variation-settings:"opsz" 96;
+  }
+  h1 em{font-style:italic;color:var(--accent);font-weight:500}
+  .subtitle{color:var(--muted);font-size:13px;text-align:right;max-width:280px}
+  .subtitle b{color:var(--ink);font-weight:600}
+
+  /* LAYOUT */
+  .grid{display:grid;grid-template-columns:380px 1fr;gap:28px;align-items:start}
+  @media(max-width:920px){.grid{grid-template-columns:1fr}}
+
+  /* PANEL INPUTS */
+  .panel{
+    background:var(--paper);border:1px solid var(--line);border-radius:6px;
+    padding:22px 22px 18px;position:sticky;top:18px;
+  }
+  @media(max-width:920px){.panel{position:static}}
+  .panel h2{
+    font-family:"Fraunces",serif;font-weight:600;font-size:13px;letter-spacing:.18em;
+    text-transform:uppercase;color:var(--muted);margin:0 0 14px;
+    border-bottom:1px solid var(--line);padding-bottom:8px;
+  }
+  .field{margin-bottom:14px}
+  .field label{display:block;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px;font-weight:500}
+  .field input[type=number]{
+    width:100%;padding:9px 11px;border:1px solid var(--line-strong);background:#fff;
+    border-radius:3px;font:inherit;color:var(--ink);font-variant-numeric:tabular-nums;
+  }
+  .field input[type=number]:focus{outline:2px solid var(--accent);outline-offset:-1px;border-color:var(--accent)}
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+
+  .radios{display:flex;flex-direction:column;gap:6px}
+  .radios label, .checks label{
+    display:flex;align-items:flex-start;gap:9px;cursor:pointer;font-size:14px;
+    color:var(--ink);text-transform:none;letter-spacing:0;font-weight:400;
+    padding:6px 8px;border-radius:3px;margin:0;
+  }
+  .radios label:hover, .checks label:hover{background:rgba(0,0,0,.03)}
+  .radios input, .checks input{margin-top:3px;accent-color:var(--accent);flex-shrink:0}
+  .checks{display:flex;flex-direction:column;gap:2px}
+  .hint{font-size:12px;color:var(--muted);font-style:italic;margin-top:4px}
+
+  details.sub{margin:6px 0 4px;border-left:2px solid var(--accent-soft);padding-left:12px}
+  details.sub summary{cursor:pointer;font-size:12px;color:var(--accent);text-transform:uppercase;letter-spacing:.08em;font-weight:600;padding:4px 0}
+  details.sub[open] summary{margin-bottom:6px}
+
+  /* RESULTS */
+  .results{display:flex;flex-direction:column;gap:18px}
+  .card{
+    background:var(--paper);border:1px solid var(--line);border-radius:6px;
+    padding:22px 24px;position:relative;
+  }
+  .card.primary{border:1px solid var(--accent);box-shadow:0 1px 0 var(--accent-soft) inset, 0 1px 0 var(--accent-soft)}
+  .card.consider{
+    border:1px dashed #8a1d2b;
+    background:linear-gradient(180deg, #fff8f5 0%, var(--paper) 40%);
+  }
+  .card.consider .tag{color:#8a1d2b;font-style:italic}
+  .card .tag{
+    position:absolute;top:-10px;left:18px;background:var(--paper);padding:0 10px;
+    font-family:"Fraunces",serif;font-size:11px;letter-spacing:.22em;text-transform:uppercase;
+    color:var(--muted);font-weight:600;
+  }
+  .card.primary .tag{color:var(--accent)}
+  .card h3{
+    font-family:"Fraunces",serif;font-weight:500;font-size:22px;line-height:1.2;
+    margin:0 0 4px;letter-spacing:-.005em;
+  }
+  .card .lede{color:var(--muted);font-size:13px;margin:0 0 16px;font-style:italic}
+
+  /* Paleta por rol farmacológico */
+  .drug[data-role="betalactam"]   { --d-color:#1e5a8a; --d-bg:#e3eef7; --d-label:"β-LACTÁMICO · GRAM⁻ AMPLIO"; }
+  .drug[data-role="grampos"]      { --d-color:#6b2b8a; --d-bg:#ece0f3; --d-label:"COBERTURA NEUMOCOCO RESISTENTE"; }
+  .drug[data-role="listeria"]     { --d-color:#3e6b3a; --d-bg:#dfead7; --d-label:"COBERTURA LISTERIA"; }
+  .drug[data-role="gramneg-alt"]  { --d-color:#a35a00; --d-bg:#fbeacf; --d-label:"GRAM⁻ · ALERGIA β-LACTÁMICOS"; }
+  .drug[data-role="antiviral"]    { --d-color:#8a1d2b; --d-bg:#f3dadd; --d-label:"ANTIVIRAL · HSV"; }
+  .drug[data-role="aminogluc"]    { --d-color:#2d5d6b; --d-bg:#dcecee; --d-label:"AMINOGLUCÓSIDO · SINERGIA"; }
+  .drug[data-role="soporte"]      { --d-color:#6b625b; --d-bg:#eee8de; --d-label:"SOPORTE"; }
+
+  .regimen{display:flex;flex-direction:column;gap:10px;margin-top:6px}
+  .drug{
+    --d-color:#6b625b; --d-bg:#eee8de;
+    display:grid;grid-template-columns:48px 1fr auto;gap:4px 16px;align-items:start;
+    padding:14px 16px 14px 14px;
+    background:#fff;
+    border:1px solid var(--line);
+    border-left:5px solid var(--d-color);
+    border-radius:4px;
+    position:relative;
+  }
+  .drug::before{
+    content:counter(drugnum);counter-increment:drugnum;
+    grid-row:1/3;
+    width:36px;height:36px;border-radius:50%;
+    background:var(--d-bg);color:var(--d-color);
+    display:flex;align-items:center;justify-content:center;
+    font-family:"Fraunces",serif;font-weight:600;font-size:18px;
+    font-variant-numeric:tabular-nums;
+  }
+  .regimen{counter-reset:drugnum}
+  .drug .head{display:flex;flex-direction:column;gap:2px;min-width:0}
+  .drug .name{font-weight:600;font-size:17px;line-height:1.2;letter-spacing:-.005em}
+  .drug .name em{color:var(--d-color);font-style:normal}
+  .drug .role{
+    font-size:10.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
+    color:var(--d-color);
+    display:inline-block;
+    background:var(--d-bg);
+    padding:2px 8px;border-radius:10px;
+    width:fit-content;
+    margin-top:3px;
+  }
+  .drug .role::before{content:var(--d-label,"FÁRMACO")}
+  .drug .role.custom::before{content:""}
+  .drug .dose{
+    font-family:"IBM Plex Mono",monospace;font-size:14px;color:var(--ink);
+    text-align:right;font-weight:600;
+    background:var(--d-bg);
+    padding:6px 10px;border-radius:3px;
+    white-space:nowrap;
+    align-self:start;
+  }
+  .drug .note{
+    grid-column:2/-1;color:var(--muted);font-size:13px;margin-top:6px;
+    padding-top:8px;border-top:1px dashed var(--line);
+  }
+  .drug .calc{
+    grid-column:2/-1;background:var(--d-bg);color:var(--d-color);
+    font-size:12.5px;padding:0;border-radius:4px;margin-top:8px;
+    overflow:hidden;
+    border:1px solid color-mix(in srgb, var(--d-color) 20%, transparent);
+  }
+  .drug .calc .calc-title{
+    font-family:"IBM Plex Sans",sans-serif;font-size:10.5px;font-weight:700;
+    letter-spacing:.12em;text-transform:uppercase;
+    padding:6px 11px 4px;
+    background:color-mix(in srgb, var(--d-color) 12%, transparent);
+    border-bottom:1px solid color-mix(in srgb, var(--d-color) 18%, transparent);
+  }
+  .drug .calc .calc-body{padding:8px 11px 9px}
+  .drug .calc .calc-step{
+    font-family:"IBM Plex Mono",monospace;font-size:12.5px;
+    display:flex;flex-direction:column;gap:2px;
+  }
+  .drug .calc .calc-step + .calc-step{
+    margin-top:8px;padding-top:8px;
+    border-top:1px dashed color-mix(in srgb, var(--d-color) 25%, transparent);
+  }
+  .drug .calc .calc-step .lbl{
+    font-family:"IBM Plex Sans",sans-serif;font-size:11px;font-weight:600;
+    letter-spacing:.06em;text-transform:uppercase;
+    opacity:.75;
+  }
+  .drug .calc .calc-step .formula{
+    font-family:"IBM Plex Mono",monospace;font-size:12.5px;opacity:.85;
+  }
+  .drug .calc .calc-step .result{
+    font-family:"IBM Plex Mono",monospace;font-size:14px;font-weight:700;
+    margin-top:2px;
+  }
+  .drug .calc .calc-step .result::before{
+    content:"= ";opacity:.6;font-weight:400;
+  }
+  .drug .calc .calc-step .post{
+    font-family:"IBM Plex Sans",sans-serif;font-size:11.5px;font-style:italic;
+    opacity:.75;margin-top:2px;
+  }
+  @media(max-width:600px){
+    .drug{grid-template-columns:40px 1fr;gap:4px 12px}
+    .drug::before{width:30px;height:30px;font-size:16px}
+    .drug .dose{grid-column:2/-1;text-align:left;margin-top:4px}
+    .drug .note, .drug .calc{grid-column:2/-1}
+  }
+  .either-wrap{
+    border:1px dashed var(--line-strong);
+    border-radius:5px;
+    padding:10px;
+    background:rgba(0,0,0,.018);
+    display:flex;flex-direction:column;gap:8px;
+    position:relative;
+  }
+  .either-wrap::after{
+    content:"Elegir UNA opción";
+    position:absolute;top:-9px;left:14px;background:var(--paper);padding:0 8px;
+    font-family:"Fraunces",serif;font-style:italic;color:var(--muted);
+    font-size:11px;letter-spacing:.14em;text-transform:uppercase;font-weight:600;
+  }
+  .either-or{
+    text-align:center;font-family:"Fraunces",serif;font-style:italic;
+    color:var(--muted);font-size:13px;letter-spacing:.2em;text-transform:uppercase;
+    padding:0;font-weight:600;
+  }
+  .plus{
+    text-align:center;font-family:"Fraunces",serif;color:var(--accent);
+    font-size:20px;font-weight:600;padding:0;margin:-4px 0;
+    position:relative;
+  }
+  .plus::before, .plus::after{
+    content:"";position:absolute;top:50%;width:calc(50% - 22px);height:1px;
+    background:linear-gradient(90deg,transparent,var(--line-strong));
+  }
+  .plus::before{left:0;background:linear-gradient(90deg,transparent,var(--line-strong))}
+  .plus::after{right:0;background:linear-gradient(90deg,var(--line-strong),transparent)}
+
+  .option-block{margin-top:14px;padding-top:14px;border-top:1px solid var(--line)}
+  .option-block:first-child{margin-top:0;padding-top:0;border-top:none}
+  .option-block .opt-title{font-family:"Fraunces",serif;font-size:14px;color:var(--accent);text-transform:uppercase;letter-spacing:.12em;font-weight:600;margin-bottom:8px}
+
+  .alert{
+    border-left:3px solid;padding:12px 14px;border-radius:0 3px 3px 0;
+    font-size:13.5px;margin:10px 0;
+  }
+  .alert.warn{background:var(--warn-soft);border-color:var(--warn);color:#5a3000}
+  .alert.info{background:var(--info-soft);border-color:var(--info);color:#1a3d47}
+  .alert.danger{background:var(--accent-soft);border-color:var(--accent);color:#4a0e16}
+  .alert.ok{background:var(--ok-soft);border-color:var(--ok);color:#26431f}
+  .alert strong{font-weight:600}
+
+  .meta-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:12px}
+  @media(max-width:600px){.meta-grid{grid-template-columns:1fr}}
+  .meta{
+    background:#fff;border:1px solid var(--line);border-radius:3px;padding:10px 12px;
+  }
+  .meta .lbl{font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:4px;font-weight:600}
+  .meta .val{font-size:14px;line-height:1.4}
+
+  .placeholder{
+    background:var(--paper);border:1px dashed var(--line-strong);border-radius:6px;
+    padding:50px 30px;text-align:center;color:var(--muted);
+  }
+  .placeholder h3{font-family:"Fraunces",serif;font-weight:500;font-size:20px;margin:0 0 6px;color:var(--ink);font-style:italic}
+
+  footer.foot{
+    margin-top:36px;padding-top:18px;border-top:1px solid var(--line);
+    font-size:12px;color:var(--muted);line-height:1.55;
+  }
+  footer.foot strong{color:var(--ink)}
+
+  /* small print of references inside results */
+  .refs{margin-top:8px;font-size:12px;color:var(--muted)}
+  .refs ol{margin:4px 0 0 18px;padding:0}
+  .refs li{margin-bottom:2px}
+
+  .hidden{display:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <div class="brand">
+      <span class="mark">NeuroInfecto · v1</span>
+      <h1>Antibioterapia empírica<br><em>en meningitis aguda comunitaria</em></h1>
+    </div>
+    <div class="subtitle">
+      Basado en la <b>Guía Hospitalaria de Terapéutica Antimicrobiana en Adultos</b>, Servicio Murciano de Salud, 5ª ed., abril 2026.
+    </div>
+  </header>
+
+  <div class="grid">
+
+    <!-- PANEL DE ENTRADA -->
+    <aside class="panel">
+      <h2>Datos del paciente</h2>
+
+      <div class="row">
+        <div class="field">
+          <label for="edad">Edad (años)</label>
+          <input type="number" id="edad" min="0" max="120" value="55" />
+        </div>
+        <div class="field">
+          <label for="peso">Peso (kg)</label>
+          <input type="number" id="peso" min="20" max="200" value="70" />
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Sospecha clínica inicial</label>
+        <div class="radios">
+          <label><input type="radio" name="tipo" value="bacteriana" checked> Bacteriana</label>
+          <label><input type="radio" name="tipo" value="viral"> Viral</label>
+          <label><input type="radio" name="tipo" value="indet"> Indeterminada / mixta</label>
+        </div>
+      </div>
+
+      <div id="viralBox" class="field hidden">
+        <label>Si sospecha viral</label>
+        <div class="checks">
+          <label><input type="checkbox" id="hsv"> Sospecha de encefalitis herpética <span class="hint">(fiebre + alteración conducta/conciencia, focalidad temporal, crisis)</span></label>
+        </div>
+      </div>
+
+      <div id="bactBox">
+        <div class="field">
+          <label>Factores de riesgo para <i>Listeria</i> / atípicos</label>
+          <div class="checks">
+            <label><input type="checkbox" id="inmuno"> Inmunodepresión</label>
+            <label><input type="checkbox" id="cancer"> Cáncer activo / quimioterapia reciente</label>
+            <label><input type="checkbox" id="dm"> Diabetes mellitus</label>
+            <label><input type="checkbox" id="alcohol"> Alcoholismo</label>
+            <label><input type="checkbox" id="neutro"> Neutropenia o alteración grave de barreras mucosas <span class="hint">(post-QT, quemaduras)</span></label>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Condicionantes del tratamiento</label>
+          <div class="checks">
+            <label><input type="checkbox" id="alergia"> Alergia grave a betalactámicos</label>
+            <label><input type="checkbox" id="irc"> Insuficiencia renal / nefrotóxicos concomitantes</label>
+            <label><input type="checkbox" id="raas"> Tratamiento con IECA / ARA-II / espironolactona</label>
+          </div>
+        </div>
+      </div>
+
+    </aside>
+
+    <!-- RESULTADOS -->
+    <main class="results" id="results"></main>
+  </div>
+
+  <footer class="foot">
+    <strong>Aviso.</strong> Esta herramienta es una ayuda a la decisión clínica que sintetiza las recomendaciones de la guía referida. No sustituye al juicio clínico ni al ajuste según resultados microbiológicos (Gram, cultivo, antibiograma, PCR multiplex). Iniciar antibioterapia <strong>inmediatamente</strong> tras PL — o tras hemocultivos si la PL se demora o está contraindicada. Las dosis se ofrecen orientativas para adulto con función renal y hepática normales; ajustar a ficha técnica en cada caso. Datos locales de resistencia: <i>S. pneumoniae</i> con CMI a cefotaxima &gt;0,5 µg/ml en la Región de Murcia 2022: 2,2 %. Se mantiene vancomicina empírica.
+  </footer>
+</div>
+
+<script>
+(function(){
+  'use strict';
+
+  const $ = (id) => document.getElementById(id);
+  const radios = document.querySelectorAll('input[name="tipo"]');
+  const inputs = document.querySelectorAll('input');
+
+  function fmt(n, d=0){
+    if (!isFinite(n)) return '—';
+    return Number(n.toFixed(d)).toLocaleString('es-ES');
+  }
+
+  // Helper para construir bloques de cálculo paso a paso
+  // steps: [{ label, formula, result, post? }, ...]
+  function calcBlock(title, steps){
+    if (!steps || !steps.length) return '';
+    const html = steps.map(s => `
+      <div class="calc-step">
+        ${s.label ? `<div class="lbl">${s.label}</div>` : ''}
+        ${s.formula ? `<div class="formula">${s.formula}</div>` : ''}
+        ${s.result ? `<div class="result">${s.result}</div>` : ''}
+        ${s.post ? `<div class="post">${s.post}</div>` : ''}
+      </div>
+    `).join('');
+    return `
+      <div class="calc">
+        ${title ? `<div class="calc-title">${title}</div>` : ''}
+        <div class="calc-body">${html}</div>
+      </div>
+    `;
+  }
+
+  // Plantillas de fármacos con cálculo de dosis
+  // role: 'betalactam' | 'grampos' | 'listeria' | 'gramneg-alt' | 'antiviral' | 'aminogluc' | 'soporte'
+  // opts.calc puede ser: string (legacy, se envuelve), o HTML ya construido con calcBlock()
+  function drug(name, dose, opts={}){
+    const roleAttr = opts.role ? `data-role="${opts.role}"` : '';
+    const customLabel = opts.label ? `<span class="role custom">${opts.label}</span>` : `<span class="role"></span>`;
+    const note = opts.note ? `<div class="note">${opts.note}</div>` : '';
+    let calc = '';
+    if (opts.calc) {
+      // Si ya viene con la estructura calcBlock, se inserta tal cual
+      calc = String(opts.calc).trim().startsWith('<div class="calc"')
+        ? opts.calc
+        : `<div class="calc"><div class="calc-body"><div class="calc-step"><div class="formula">${opts.calc}</div></div></div></div>`;
+    }
+    return `
+      <div class="drug" ${roleAttr}>
+        <div class="head">
+          <div class="name">${name}</div>
+          ${customLabel}
+        </div>
+        <div class="dose">${dose}</div>
+        ${note}${calc}
+      </div>
+    `;
+  }
+  const plus = `<div class="plus">+</div>`;
+
+  // ---- Generadores de regímenes específicos ----
+  function vancomicina(peso){
+    const cargaMin = 25*peso, cargaMax = 30*peso;
+    const mantMin = 15*peso, mantMax = 20*peso;
+    const calc = peso ? calcBlock('Cálculo para ' + peso + ' kg', [
+      {
+        label: 'Dosis de carga (única)',
+        formula: `25–30 mg/kg × ${peso} kg`,
+        result: `${fmt(cargaMin)}–${fmt(cargaMax)} mg IV`,
+        post: 'Infusión lenta en 60–90 min; redondear a múltiplos de 250 mg.'
+      },
+      {
+        label: 'Mantenimiento',
+        formula: `15–20 mg/kg × ${peso} kg`,
+        result: `${fmt(mantMin)}–${fmt(mantMax)} mg / 12 h IV`,
+        post: 'Objetivo de valle 15–20 µg/ml; primera determinación antes de la 4ª dosis.'
+      }
+    ]) : null;
+    return drug('Vancomicina',
+      peso ? `${fmt(mantMin)}–${fmt(mantMax)} mg / 12 h` : '15–20 mg/kg / 12 h IV',
+      { role: 'grampos',
+        calc,
+        note: 'Cubre neumococo con sensibilidad disminuida a cefalosporinas. Vigilar función renal y niveles plasmáticos.' });
+  }
+
+  function rifampicina(){
+    return drug('Rifampicina', '600 mg / 24 h IV',
+      { role: 'grampos',
+        label: 'Alternativa a vancomicina · IRC',
+        note: 'Alternativa a vancomicina si insuficiencia renal o nefrotóxicos concomitantes.' });
+  }
+
+  function linezolid(){
+    return drug('Linezolid', '600 mg / 12 h IV',
+      { role: 'grampos',
+        label: 'Alternativa a vancomicina · IRC',
+        note: 'Preferible a vancomicina si insuficiencia renal o nefrotoxicidad asociada.' });
+  }
+
+  function ceftriaxona(){
+    return drug('Ceftriaxona', '2 g / 12 h IV',
+      { role: 'betalactam',
+        note: 'Alternativa equivalente: cefotaxima 2 g / 4–6 h IV (200–300 mg/kg/día en 4–6 dosis).' });
+  }
+
+  function pseudomonasCef(){
+    return drug('Cefepime <em>o</em> Meropenem',
+      'Cefepime 2 g / 8 h IV · Meropenem 2 g / 8 h IV',
+      { role: 'betalactam',
+        label: 'β-lactámico anti-Pseudomonas',
+        note: 'Sustituye a ceftriaxona/cefotaxima en neutropenia o alteración grave de barreras mucosas.' });
+  }
+
+  function ampicilina(peso){
+    const minDia = 200*peso, maxDia = 300*peso;
+    const calc = peso ? calcBlock('Equivalencias para ' + peso + ' kg', [
+      {
+        label: 'Pauta de elección (fija, adultos)',
+        formula: `2 g × 6 dosis (cada 4 h)`,
+        result: `12 g/día IV`,
+        post: 'Pauta estándar en adultos según la guía; adecuada para la mayoría de pacientes.'
+      },
+      {
+        label: 'Dosis recomendada por peso (referencia)',
+        formula: `200–300 mg/kg/día × ${peso} kg`,
+        result: `${fmt(minDia/1000,1)}–${fmt(maxDia/1000,1)} g/día`,
+        post: 'Cálculo orientativo. Útil en pesos extremos: en obesidad mórbida puede valorarse subir la dosis; en pesos muy bajos, la pauta fija ya cubre el rango.'
+      }
+    ]) : null;
+    return drug('Ampicilina', '2 g / 4 h IV',
+      { role: 'listeria',
+        calc });
+  }
+
+  function ciprofloxacino(){
+    return drug('Ciprofloxacino', '400 mg / 8 h IV',
+      { role: 'gramneg-alt',
+        label: 'Fluoroquinolona · sustituye β-lactámico' });
+  }
+
+  function aztreonam(){
+    return drug('Aztreonam', '2 g / 8 h IV',
+      { role: 'gramneg-alt',
+        label: 'Monobactámico · sustituye β-lactámico',
+        note: '<strong>Desabastecimiento en España desde abril 2024.</strong> Solo disponible vía AEMPS (medicamentos en situaciones especiales). Consultar Enf. Infecciosas / PROA antes de indicarlo.' });
+  }
+
+  function cotrimoxazol(peso, raas){
+    const tmpDia = 15*peso;
+    const porToma3 = tmpDia/3;
+    const porToma4 = tmpDia/4;
+    const calc = peso ? calcBlock('Cálculo para ' + peso + ' kg', [
+      {
+        label: 'Dosis diaria total de TMP',
+        formula: `15 mg TMP/kg/día × ${peso} kg`,
+        result: `${fmt(tmpDia)} mg TMP/día`
+      },
+      {
+        label: 'Reparto en 3–4 tomas',
+        formula: `${fmt(tmpDia)} mg ÷ 3 = ${fmt(porToma3)} mg / 8 h · ÷ 4 = ${fmt(porToma4)} mg / 6 h`,
+        result: `≈ ${fmt(porToma3)}–${fmt(porToma4)} mg TMP por toma`,
+        post: 'Ajustar a viales completos (1 vial = 80 mg TMP / 400 mg SMX); máximo habitual 2 viales / 8 h = 160 mg TMP × 3 = 480 mg/día.'
+      }
+    ]) : null;
+    const warnRAAS = raas
+      ? `<div class="note" style="color:var(--accent);border-color:var(--accent-soft)"><strong>⚠ Evitar coadministración con IECA/ARA-II/espironolactona.</strong> Riesgo de hiperpotasemia y muerte súbita en los primeros 7 días. Si imprescindible, control diario de potasio.</div>`
+      : '';
+    return drug('Trimetoprim–sulfametoxazol',
+      '15 mg TMP/kg/día IV en 3–4 dosis',
+      { role: 'listeria',
+        label: 'Listeria · si IRC o alergia',
+        calc,
+        note: 'Vigilar potasio durante todo el tratamiento.'
+      }) + warnRAAS;
+  }
+
+  function gentamicina(peso){
+    const min = 5*peso, max = 7*peso;
+    const calc = peso ? calcBlock('Cálculo para ' + peso + ' kg', [
+      {
+        label: 'Dosis diaria (monodosis)',
+        formula: `5–7 mg/kg/día × ${peso} kg`,
+        result: `${fmt(min)}–${fmt(max)} mg / 24 h IV`,
+        post: 'Administrar en monodosis diaria (extended-interval). Monitorizar función renal y valles (objetivo <1 µg/ml).'
+      }
+    ]) : null;
+    return drug('Gentamicina', peso ? `${fmt(min)}–${fmt(max)} mg / 24 h IV` : '5–7 mg/kg/día',
+      { role: 'aminogluc',
+        label: 'Sinergia · si Listeria confirmada',
+        calc,
+        note: 'Durante 5–7 días, asociada a ampicilina. Sustituir por cotrimoxazol si insuficiencia renal.' });
+  }
+
+  function aciclovir(peso){
+    const dosis = 10*peso;
+    const calc = peso ? calcBlock('Cálculo para ' + peso + ' kg', [
+      {
+        label: 'Dosis por toma',
+        formula: `10 mg/kg × ${peso} kg`,
+        result: `${fmt(dosis)} mg / 8 h IV`,
+        post: 'Tres dosis al día (cada 8 h) durante 10–14 días.'
+      },
+      {
+        label: 'Dosis diaria total',
+        formula: `${fmt(dosis)} mg × 3 dosis`,
+        result: `${fmt(dosis*3)} mg/día`,
+        post: 'Hidratación abundante (≥1 ml/kg/h) y administración en infusión ≥1 h para minimizar nefrotoxicidad cristalina.'
+      }
+    ]) : null;
+    return drug('Aciclovir', peso ? `${fmt(dosis)} mg / 8 h IV` : '10 mg/kg / 8 h IV',
+      { role: 'antiviral',
+        calc,
+        note: 'Iniciar empíricamente ante sospecha de encefalitis herpética (HSV-1/2) sin esperar PCR.' });
+  }
+
+  function dexametasona(){
+    return `
+      <div class="alert info">
+        <strong>Dexametasona 10 mg / 6 h IV</strong> — administrar <strong>antes o conjuntamente</strong> con la primera dosis de antibiótico.
+        Mantener 4 días si se confirma meningitis neumocócica; <strong>retirar</strong> si el diagnóstico etiológico no se confirma o se identifica otro patógeno.
+      </div>`;
+  }
+
+  // ---- Lógica principal ----
+  function render(){
+    const edad = parseInt($('edad').value, 10) || 0;
+    const peso = parseInt($('peso').value, 10) || 0;
+    const tipo = document.querySelector('input[name=tipo]:checked').value;
+
+    const hsv = $('hsv').checked;
+    const inmuno = $('inmuno').checked;
+    const cancer = $('cancer').checked;
+    const dm = $('dm').checked;
+    const alcohol = $('alcohol').checked;
+    const neutro = $('neutro').checked;
+    const alergia = $('alergia').checked;
+    const irc = $('irc').checked;
+    const raas = $('raas').checked;
+
+    // Mostrar/ocultar subsecciones del panel
+    $('viralBox').classList.toggle('hidden', tipo !== 'viral');
+    $('bactBox').classList.toggle('hidden', tipo === 'viral');
+
+    const cubrirListeria = tipo !== 'viral' && (edad > 50 || (edad >= 18 && (inmuno || cancer || dm || alcohol)));
+    const cubrirPseudomonas = tipo !== 'viral' && neutro;
+
+    let html = '';
+
+    // ============ VIRAL ============
+    if (tipo === 'viral') {
+      html += `
+        <section class="card primary">
+          <span class="tag">Meningitis aguda viral</span>
+          <h3>Tratamiento sintomático</h3>
+          <p class="lede">VHS-1/2, otros herpesvirus, enterovirus, Coxsackie, VIH agudo, arbovirus.</p>
+          <div class="regimen">
+            ${drug('Soporte y observación', '—', { role: 'soporte', label: 'Sintomático', note: 'Analgesia, antieméticos, hidratación; control de focalidad y nivel de conciencia. Repetir PL si evolución atípica.' })}
+          </div>
+          ${hsv ? `
+            <div class="option-block">
+              <div class="opt-title">Si sospecha de encefalitis herpética</div>
+              <div class="regimen">${aciclovir(peso)}</div>
+              <div class="alert warn"><strong>No retrasar el aciclovir</strong> a la espera de la PCR. La demora se asocia a peor pronóstico funcional.</div>
+            </div>
+          ` : `
+            <div class="alert info">Si aparecen alteración de conducta, conciencia, crisis o focalidad temporal → considerar encefalitis herpética e iniciar aciclovir empírico.</div>
+          `}
+        </section>
+      `;
+      $('results').innerHTML = html;
+      return;
+    }
+
+    // ============ BACTERIANA / INDETERMINADA ============
+
+    // Cobertura empírica resumen
+    const dianas = [
+      'S. pneumoniae',
+      'N. meningitidis',
+      'H. influenzae'
+    ];
+    if (cubrirListeria) dianas.push('L. monocytogenes');
+    if (cubrirPseudomonas) dianas.push('Pseudomonas spp.');
+
+    // --- Tratamiento de elección ---
+    let elecHTML = '';
+    if (!alergia) {
+      // Beta-lactámico base
+      elecHTML += cubrirPseudomonas ? pseudomonasCef() : ceftriaxona();
+      elecHTML += plus;
+      // Vanco / rifam
+      elecHTML += irc ? rifampicina() : vancomicina(peso);
+      // Listeria
+      if (cubrirListeria) {
+        elecHTML += plus;
+        elecHTML += ampicilina(peso);
+      }
+    } else {
+      elecHTML += `<div class="alert danger"><strong>Alergia grave a betalactámicos.</strong> Régimen alternativo desplazado al bloque inferior.</div>`;
+    }
+
+    // --- Tratamiento alternativo (alergia / contingencia) ---
+    let altHTML = '';
+    altHTML += irc ? linezolid() : vancomicina(peso);
+    altHTML += plus;
+    altHTML += `<div class="either-wrap">${ciprofloxacino()}<div class="either-or">o</div>${aztreonam()}</div>`;
+    if (cubrirListeria) {
+      altHTML += plus;
+      altHTML += cotrimoxazol(peso, raas);
+    }
+
+    // Card de tratamiento de elección
+    const tituloElec = cubrirListeria
+      ? 'Cobertura ampliada (incluye <i>Listeria</i>)'
+      : 'Cobertura estándar';
+    const ledeElec = cubrirPseudomonas
+      ? 'Adaptado por neutropenia / alteración grave de barreras mucosas — cobertura anti-Pseudomonas.'
+      : (cubrirListeria
+          ? `Indicación de cobertura para Listeria por ${edad>50?'edad &gt;50 años':''}${(edad>50 && (inmuno||cancer||dm||alcohol))?' y ':''}${inmuno?'inmunodepresión, ':''}${cancer?'cáncer, ':''}${dm?'diabetes, ':''}${alcohol?'alcoholismo':''}.`.replace(/, $/,'').replace(/, \./,'.')
+          : 'Paciente sin comorbilidad ni factores de riesgo para Listeria.');
+
+    if (!alergia) {
+      html += `
+        <section class="card primary">
+          <span class="tag">Tratamiento de elección</span>
+          <h3>${tituloElec}</h3>
+          <p class="lede">${ledeElec}</p>
+          <div class="regimen">${elecHTML}</div>
+        </section>
+      `;
+    }
+
+    // Card de alternativa
+    html += `
+      <section class="card ${alergia?'primary':''}">
+        <span class="tag">${alergia?'Régimen de elección (alergia)':'Alternativa si alergia grave a betalactámicos'}</span>
+        <h3>${alergia?'Alternativa por alergia':'Régimen alternativo'}</h3>
+        <p class="lede">Combinación sin betalactámicos. Consultar con Alergología si la alergia es dudosa: la pérdida de eficacia clínica es significativa.</p>
+        <div class="regimen">${altHTML}</div>
+      </section>
+    `;
+
+    // Si el cuadro es indeterminado/mixto, considerar aciclovir empírico
+    if (tipo === 'indet') {
+      html += `
+        <section class="card consider">
+          <span class="tag">Considerar · cobertura antiviral empírica</span>
+          <h3>Aciclovir si sospecha de encefalitis herpética</h3>
+          <p class="lede">El perfil indeterminado o mixto justifica un umbral bajo para añadir cobertura HSV: la mortalidad de la encefalitis herpética no tratada supera el 70 % y la demora del aciclovir empeora el pronóstico funcional.</p>
+          <div class="regimen">${aciclovir(peso)}</div>
+          <div class="alert info" style="margin-top:14px">
+            <strong>Rasgos clínicos que orientan a encefalitis herpética:</strong> alteración del nivel de conciencia o de la conducta desproporcionada al cuadro meníngeo, focalidad temporal, crisis epilépticas, EEG con paroxismos temporales, RM con hiperintensidad temporomesial o insular, LCR con linfocitosis y glucorraquia conservada.
+          </div>
+        </section>
+      `;
+    }
+
+    // Adyuvantes y observaciones
+    html += `
+      <section class="card">
+        <span class="tag">Adyuvantes</span>
+        <h3>Corticoterapia y medidas inmediatas</h3>
+        ${dexametasona()}
+        <div class="alert info">
+          <strong>Secuencia de inicio.</strong> Si la PL se va a realizar de inmediato → extraer LCR y hemocultivos, iniciar antibiótico en los siguientes minutos. Si la PL se demora (TC craneal previo indicado, coagulopatía) o está contraindicada → hemocultivos y <strong>primera dosis antibiótica sin esperar</strong>.
+        </div>
+        ${cubrirListeria ? `
+          <div class="alert ok"><strong>Si se confirma <i>Listeria monocytogenes</i>:</strong> añadir <b>gentamicina 5–7 mg/kg/día</b> 5–7 días (o cotrimoxazol si IRC). Mantener ampicilina 21 días.</div>
+        ` : ''}
+      </section>
+    `;
+
+    // Duración y patógenos cubiertos
+    html += `
+      <section class="card">
+        <span class="tag">Cobertura empírica y duración</span>
+        <h3>Dianas microbiológicas previstas</h3>
+        <p class="lede">Estos son los patógenos que cubre el régimen seleccionado. Ajustar al aislar microorganismo y conocer CMI.</p>
+        <div class="meta-grid">
+          <div class="meta"><div class="lbl">Patógenos cubiertos</div><div class="val">${dianas.map(d=>`<i>${d}</i>`).join(' · ')}</div></div>
+          <div class="meta"><div class="lbl">Edad / peso</div><div class="val">${edad} años · ${peso} kg</div></div>
+        </div>
+        <div class="meta-grid" style="margin-top:10px">
+          <div class="meta"><div class="lbl">Duración orientativa</div><div class="val">
+            Meningocócica: <b>5–7 d</b><br>
+            H. influenzae: <b>7–10 d</b><br>
+            S. pneumoniae: <b>10–14 d</b><br>
+            S. agalactiae: <b>14–21 d</b><br>
+            ${cubrirListeria?'L. monocytogenes: <b>21 d</b>':''}
+          </div></div>
+          <div class="meta"><div class="lbl">Ajuste según CMI (S. pneumoniae)</div><div class="val">
+            CMI penicilina ≤0,06 µg/ml <em>o</em> CMI cefotaxima ≤0,5 µg/ml → <b>retirar vancomicina/rifampicina</b>.<br>
+            CMI cefotaxima &gt;2 → valorar <b>cefalosporina 3G + vancomicina + rifampicina</b>.
+          </div></div>
+        </div>
+      </section>
+    `;
+
+    // Salud pública y otras medidas
+    html += `
+      <section class="card">
+        <span class="tag">Otras medidas</span>
+        <h3>Aislamiento, EDO y profilaxis</h3>
+        <div class="alert info">
+          <strong>Sospecha meningocócica.</strong> Aislamiento por <b>gotas</b> durante las primeras <b>24 h</b> de antibioterapia. Declaración obligatoria (<b>EDO</b>) a Salud Pública.
+        </div>
+        <div class="alert warn">
+          <strong>Quimioprofilaxis</strong> a contactos estrechos y sanitarios expuestos a secreciones respiratorias del caso confirmado (intubación, aspiración, aerosolterapia), según Medicina Preventiva:
+          <br>· <b>Ciprofloxacino 500 mg VO</b> en dosis única, <em>o</em>
+          <br>· <b>Rifampicina 600 mg / 12 h VO</b> durante 2 días.
+        </div>
+        <div class="alert ok">
+          <strong>Vacunación tras el episodio.</strong> Vacuna antineumocócica tras meningitis neumocócica. En pacientes con <b>fístula de LCR</b>: tras reconstrucción de la barrera dural, considerar también vacuna frente a <i>H. influenzae</i> tipo b y <i>N. meningitidis</i>.
+        </div>
+      </section>
+    `;
+
+    $('results').innerHTML = html;
+  }
+
+  inputs.forEach(i => i.addEventListener('input', render));
+  document.addEventListener('DOMContentLoaded', render);
+  render();
+})();
+</script>
+</body>
+</html>
