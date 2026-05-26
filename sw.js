@@ -1,4 +1,4 @@
-const CACHE_NAME = 'neurotools-cache-v8'; // Actualizado a v8
+const CACHE_NAME = 'neurotools-cache-v9'; // Actualizado a v9
 
 const urlsToCache = [
   '/',
@@ -20,6 +20,7 @@ const urlsToCache = [
   '/cognitivo/testreloj.html',
   '/cognitivo/icono.png',
   '/epilepsia/calculadorawithdrawal.html',
+  '/epilepsia/encefalitis.html',
   '/epilepsia/index.html',
   '/infecciones/index.html',
   '/infecciones/meningitiscomunidad.html',
