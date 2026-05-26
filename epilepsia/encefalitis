@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Criterios de Encefalitis Autoinmune (Graus) · NEUROTOOLS</title>
+  <meta name="description" content="Calculadora interactiva basada en los criterios consenso de Graus et al. (2016) para el diagnóstico clínico de encefalitis autoinmune.">
+
+  <link rel="canonical" href="https://neurotools.es/neuroinmunologia/graus2016.html">
+
+  <meta property="og:title" content="Criterios de Encefalitis Autoinmune | Neurotools">
+  <meta property="og:description" content="Herramienta de apoyo clínico para la evaluación de sospecha de encefalitis autoinmune según Graus 2016.">
+  <meta property="og:url" content="https://neurotools.es/neuroinmunologia/graus2016.html">
+  <meta property="og:type" content="website">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --paper:        #f4efe4;
+      --paper-card:   #faf6ec;
+      --paper-deep:   #ede5d2;
+      --ink:          #1a1614;
+      --ink-soft:     #4a3f38;
+      --ink-muted:    #8a7d72;
+      --accent:       #7a1f2b;
+      --accent-soft:  #a64a3a;
+      --gold:         #a78551;
+      --hairline:     #cfc4ad;
+      --hairline-soft:#e3d9c2;
+      --success:      #2d6a4f;
+      --ease:         cubic-bezier(.2,.7,.3,1);
+    }
+
+    *,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--paper);
+      color: var(--ink);
+      font-family: 'Instrument Sans', system-ui, sans-serif;
+      font-size: 16px;
+      line-height: 1.55;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+      background-image:
+        radial-gradient(at 15% 8%,  rgba(122, 31, 43, 0.05) 0%, transparent 45%),
+        radial-gradient(at 85% 95%, rgba(166, 74, 58, 0.06) 0%, transparent 40%),
+        radial-gradient(at 50% 50%, rgba(167,133, 81, 0.03) 0%, transparent 60%);
+    }
+
+    body::before {
+      content: ""; position: fixed; inset: 0; pointer-events: none;
+      z-index: 1; opacity: .35; mix-blend-mode: multiply;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.1 0 0 0 0 0.08 0 0 0 0 0.07 0 0 0 0.45 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+    }
+
+    .container { max-width: 1100px; margin: 0 auto; padding: 36px 32px 80px; position: relative; z-index: 2; }
+
+    /* ════════ TOPBAR ════════ */
+    .topbar {
+      display: flex; justify-content: space-between; align-items: center;
+      padding-bottom: 20px; border-bottom: 1px solid var(--hairline); margin-bottom: 64px;
+      font-family: 'JetBrains Mono', monospace; font-size: .72rem; letter-spacing: .14em; text-transform: uppercase;
+      color: var(--ink-muted);
+    }
+    .topbar a { color: var(--ink-muted); text-decoration: none; transition: color .25s; }
+    .topbar a:hover { color: var(--accent); }
+    .topbar .crumb::before { content: "← "; }
+    .topbar .scope b { color: var(--ink-soft); font-weight: 500; }
+
+    /* ════════ HEADER ════════ */
+    header { text-align: center; margin-bottom: 56px; padding: 0 16px; }
+    .eyebrow {
+      display: inline-flex; align-items: center; gap: 14px;
+      font-family: 'JetBrains Mono', monospace; font-size: .68rem; letter-spacing: .24em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 28px;
+    }
+    .eyebrow::before, .eyebrow::after { content: ""; display: block; width: 28px; height: 1px; background: var(--accent); opacity: .45; }
+    h1 {
+      font-family: 'Fraunces', Georgia, serif; font-size: clamp(2.4rem, 5.2vw, 3.7rem);
+      font-weight: 400; line-height: 1.05; letter-spacing: -.025em; margin-bottom: 24px; color: var(--ink);
+      font-variation-settings: "opsz" 96;
+    }
+    h1 em { font-style: italic; color: var(--accent); font-weight: 300; font-variation-settings: "opsz" 96; }
+    .subtitle {
+      font-family: 'Fraunces', Georgia, serif; font-style: italic; font-weight: 300;
+      font-size: clamp(1.05rem, 1.8vw, 1.2rem); color: var(--ink-soft);
+      max-width: 740px; margin: 0 auto; line-height: 1.5; font-variation-settings: "opsz" 14;
+    }
+
+    /* ════════ TABS ════════ */
+    .tabs-wrapper { margin-bottom: 24px; border-bottom: 1px solid var(--hairline); overflow-x: auto; }
+    .tabs { display: flex; gap: 4px; min-width: max-content; }
+    .tab {
+      background: transparent; border: none; border-bottom: 2px solid transparent;
+      padding: 14px 20px; font-family: 'JetBrains Mono', monospace; font-size: .7rem;
+      letter-spacing: .08em; text-transform: uppercase; color: var(--ink-muted);
+      cursor: pointer; transition: color .2s, border-color .2s; margin-bottom: -1px;
+    }
+    .tab:hover { color: var(--ink); }
+    .tab.active { color: var(--accent); border-bottom-color: var(--accent); font-weight: 600; }
+    .tab.satellite { font-style: italic; color: var(--gold); }
+    .tab.satellite.active { color: #8c6a3a; border-bottom-color: var(--gold); }
+
+    /* ════════ CARD & PANELS ════════ */
+    .card {
+      background: var(--paper-card); border: 1px solid var(--hairline); border-radius: 4px;
+      padding: 48px 56px; margin-bottom: 32px; position: relative;
+      box-shadow: 0 1px 0 rgba(0,0,0,.02), 0 16px 48px -24px rgba(74, 63, 56, .18);
+    }
+    .card::before {
+      content: ""; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+      background: linear-gradient(90deg, var(--accent) 0%, var(--accent-soft) 55%, var(--gold) 100%);
+    }
+    
+    .panel { display: none; animation: fade .3s ease; }
+    .panel.active { display: block; }
+    @keyframes fade { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+
+    .panel-intro { margin-bottom: 40px; font-size: 1.05rem; color: var(--ink-soft); line-height: 1.6; border-left: 2px solid var(--hairline); padding-left: 20px; }
+
+    /* ════════ SECTIONS & CHECKBOXES ════════ */
+    .section { margin-bottom: 48px; }
+    .section:last-child { margin-bottom: 0; }
+    .section-header { display: flex; align-items: baseline; gap: 16px; padding-bottom: 14px; margin-bottom: 24px; border-bottom: 1px solid var(--hairline-soft); }
+    .section-num { font-family: 'JetBrains Mono', monospace; font-size: .7rem; letter-spacing: .18em; color: var(--accent); font-weight: 600; }
+    .section-title { font-family: 'Fraunces', serif; font-style: italic; font-weight: 400; font-size: 1.45rem; color: var(--ink); letter-spacing: -.01em; font-variation-settings: "opsz" 36; }
+
+    .check-list { display: flex; flex-direction: column; gap: 10px; }
+    .check-list label {
+      display: flex; align-items: flex-start; gap: 14px;
+      padding: 16px 20px; border: 1px solid var(--hairline); border-radius: 3px;
+      cursor: pointer; transition: all .2s; background: transparent;
+    }
+    .check-list input[type="checkbox"] {
+      appearance: none; width: 20px; height: 20px; border: 1.5px solid var(--ink-muted); border-radius: 3px;
+      position: relative; cursor: pointer; transition: all .2s; margin-top: 2px; flex-shrink: 0; background: var(--paper-card);
+    }
+    .check-list input[type="checkbox"]:checked { background: var(--accent); border-color: var(--accent); }
+    .check-list input[type="checkbox"]:checked::after {
+      content: ''; position: absolute; left: 6px; top: 2px; width: 5px; height: 10px;
+      border: solid #fff; border-width: 0 2px 2px 0; transform: rotate(45deg);
+    }
+    .check-list label:hover { border-color: var(--accent-soft); background: rgba(122, 31, 43, .02); }
+    .check-list input[type="checkbox"]:checked + .check-text-wrapper { opacity: 1; }
+    
+    .check-text-wrapper { display: flex; flex-direction: column; gap: 4px; }
+    .check-label-text { font-family: 'Instrument Sans', sans-serif; font-size: 1rem; color: var(--ink); font-weight: 500; line-height: 1.4; }
+    .check-hint { font-size: .88rem; color: var(--ink-muted); font-style: normal; line-height: 1.45; }
+
+    /* ════════ ALERTS ════════ */
+    .clinical-alert {
+      background: rgba(122, 31, 43, 0.04); border-left: 2px solid var(--accent);
+      padding: 18px 24px; margin: 24px 0; border-radius: 0 3px 3px 0;
+    }
+    .clinical-alert h4 { font-family: 'JetBrains Mono', monospace; font-size: .68rem; color: var(--accent); text-transform: uppercase; letter-spacing: .1em; margin-bottom: 8px; }
+    .clinical-alert p { font-size: .9rem; color: var(--ink-soft); line-height: 1.5; margin: 0; }
+
+    /* ════════ RESET BUTTON ════════ */
+    .reset-zone { margin-top: 24px; text-align: right; }
+    .btn-text {
+      background: transparent; border: none; font-family: 'JetBrains Mono', monospace;
+      font-size: .7rem; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-muted);
+      cursor: pointer; transition: color .2s; padding: 8px 0;
+    }
+    .btn-text:hover { color: var(--accent); }
+
+    /* ════════ RESULTS ════════ */
+    #resultBlock { border-color: var(--accent); padding: 48px 56px 40px; transition: opacity .3s ease; }
+    .result-head { text-align: center; padding-bottom: 24px; margin-bottom: 24px; border-bottom: 1px solid var(--hairline-soft); }
+    .result-eyebrow { display: inline-block; font-family: 'JetBrains Mono', monospace; font-size: .68rem; letter-spacing: .22em; text-transform: uppercase; color: var(--accent); margin-bottom: 14px; }
+    .result-eyebrow.success { color: var(--success); }
+    .result-title { font-family: 'Fraunces', serif; font-style: italic; font-weight: 400; font-size: 1.8rem; color: var(--ink); letter-spacing: -.015em; font-variation-settings: "opsz" 48; }
+    .result-detail { font-family: 'Instrument Sans', sans-serif; font-size: 1.05rem; color: var(--ink-soft); line-height: 1.6; text-align: center; max-width: 720px; margin: 0 auto; }
+    
+    /* ════════ INFO BLOCK & FOOTER ════════ */
+    .info-block { border-top: 1px solid var(--hairline); padding: 36px 8px 0; margin-top: 56px; font-size: .87rem; color: var(--ink-soft); line-height: 1.65; }
+    .info-block h4 { font-family: 'Fraunces', serif; font-style: italic; font-weight: 400; color: var(--ink); margin-bottom: 18px; font-size: 1.2rem; font-variation-settings: "opsz" 36; }
+    .info-block a { color: var(--accent); text-decoration: none; border-bottom: 1px dotted var(--accent); transition: opacity .25s; }
+    .info-block a:hover { opacity: .7; }
+    .info-block p { margin-bottom: 14px; }
+    .info-block strong { color: var(--ink); font-weight: 600; }
+
+    footer {
+      margin-top: 72px; padding-top: 36px; border-top: 1px solid var(--hairline);
+      display: flex; flex-direction: column; align-items: center; gap: 14px; text-align: center;
+      font-family: 'JetBrains Mono', monospace; font-size: .66rem; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-muted); line-height: 1.8;
+    }
+    footer .credit { font-family: 'Fraunces', serif; font-style: italic; font-weight: 300; font-size: .98rem; letter-spacing: 0; text-transform: none; color: var(--ink-soft); font-variation-settings: "opsz" 14; }
+    footer a { color: var(--ink-muted); text-decoration: none; border-bottom: 1px dotted var(--ink-muted); transition: color .25s, border-color .25s; }
+    footer a:hover { color: var(--accent); border-bottom-color: var(--accent); }
+    footer .stamp { margin-top: 16px; padding: 7px 16px; border: 1px solid var(--hairline); border-radius: 2px; color: var(--ink-muted); }
+
+    /* ════════ MOBILE ════════ */
+    @media (max-width: 780px) {
+      .container { padding: 24px 16px 64px; }
+      .topbar { font-size: .62rem; flex-wrap: wrap; gap: 8px; margin-bottom: 40px; }
+      header { margin-bottom: 40px; }
+      .card { padding: 32px 22px; }
+      .section { margin-bottom: 40px; }
+      .check-list label { padding: 14px 16px; }
+      #resultBlock { padding: 32px 22px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+
+  <div class="topbar">
+    <a href="../neuroinmunologia/index.html" class="crumb">Neuroinmunología</a>
+    <span class="scope">NEUROTOOLS · <b>Diagnóstico</b></span>
+  </div>
+
+  <header>
+    <span class="eyebrow">Criterios Clínicos</span>
+    <h1>Sospecha de <em>encefalitis autoinmune</em></h1>
+    <p class="subtitle">Calculadora basada en el consenso de Graus (2016). Permite evaluar las categorías diagnósticas principales sin necesidad de esperar resultados serológicos.</p>
+  </header>
+
+  <div class="tabs-wrapper">
+    <div class="tabs">
+      <button class="tab active" data-panel="posible">EA Posible</button>
+      <button class="tab" data-panel="limbica">Límbica Definida</button>
+      <button class="tab" data-panel="nmdar">Anti-NMDAR Probable</button>
+      <button class="tab" data-panel="seroneg">Seronegativa Probable</button>
+      <button class="tab satellite" data-panel="otras">Otras Entidades (ADEM/Bickerstaff...)</button>
+    </div>
+  </div>
+
+  <div class="card">
+    
+    <div class="panel active" id="posible">
+      <p class="panel-intro">Cribado inicial de cualquier encefalopatía sospechosa de etiología autoinmune. Requiere cumplir los <strong>3 criterios</strong>. Es la puerta de entrada para justificar el estudio inmunológico y plantear inmunoterapia empírica.</p>
+      
+      <div class="section">
+        <div class="section-header"><span class="section-num">Criterio 1</span><h2 class="section-title">Presentación clínica</h2></div>
+        <div class="check-list">
+          <label><input type="checkbox" data-group="P1">
+            <div class="check-text-wrapper">
+              <span class="check-label-text">Inicio subagudo (progresión rápida < 3 meses) de déficit de memoria de trabajo, alteración del estado mental, o síntomas psiquiátricos.</span>
+              <span class="check-hint">«Alteración del estado mental» se define como disminución/alteración del nivel de consciencia, letargia o cambio de personalidad.</span>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-header"><span class="section-num">Criterio 2</span><h2 class="section-title">Hallazgos paraclínicos (al menos 1)</h2></div>
+        <div class="check-list">
+          <label><input type="checkbox" data-group="P2"><div class="check-text-wrapper"><span class="check-label-text">Nueva focalidad neurológica del SNC.</span></div></label>
+          <label><input type="checkbox" data-group="P2"><div class="check-text-wrapper"><span class="check-label-text">Crisis epilépticas no explicadas por un trastorno previamente conocido.</span></div></label>
+          <label><input type="checkbox" data-group="P2"><div class="check-text-wrapper"><span class="check-label-text">Pleocitosis en LCR (> 5 leucocitos/mm³).</span></div></label>
+          <label><input type="checkbox" data-group="P2">
+            <div class="check-text-wrapper">
+              <span class="check-label-text">RM con hallazgos sugestivos de encefalitis.</span>
+              <span class="check-hint">Hiperintensidad T2/FLAIR altamente restringida a uno/ambos lóbulos temporales mediales, o en áreas multifocales (sustancia gris/blanca) compatibles con desmielinización o inflamación.</span>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-header"><span class="section-num">Criterio 3</span><h2 class="section-title">Exclusión</h2></div>
+        <div class="check-list">
+          <label><input type="checkbox" data-group="P3" checked>
+            <div class="check-text-wrapper">
+              <span class="check-label-text">Exclusión razonable de causas alternativas.</span>
+              <span class="check-hint">Infecciosas (obligatorio excluir VHS), tóxico-metabólicas, vasculares, neoplásicas no paraneoplásicas, epilépticas primarias, psiquiátricas primarias.</span>
+            </div>
+          </label>
+        </div>
+      </div>
+      
+      <div class="reset-zone"><button class="btn-text" data-reset="posible">Reiniciar panel</button></div>
+    </div>
+
+    <div class="panel" id="limbica">
+      <p class="panel-intro">Síndrome clínico-radiológico específico. Requiere cumplir los <strong>4 criterios</strong> para el diagnóstico definido en ausencia de confirmación serológica.</p>
+      
+      <div class="section">
+        <div class="section-header"><span class="section-num">Criterio 1</span><h2 class="section-title">Presentación clínica límbica</h2></div>
+        <div class="check-list">
+          <label><input type="checkbox" data-group="L1"><div class="check-text-wrapper"><span class="check-label-text">Inicio subagudo (< 3 meses) de déficit de memoria de trabajo, crisis epilépticas, o síntomas psiquiátricos sugestivos de afectación del sistema límbico.</span></div></label>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-header"><span class="section-num">Criterio 2</span><h2 class="section-title">Neuroimagen</h2></div>
+        <div class="check-list">
+          <label><input type="checkbox" data-group="L2">
+            <div class="check-text-wrapper">
+              <span class="check-label-text">Anomalías bilaterales en RM cerebral (T2/FLAIR) altamente restringidas a lóbulos temporales mediales.</span>
+              <span class="check-hint">La afectación unilateral no cumple criterio. El PET-FDG con captación incrementada mesiotemporal bilateral suple este criterio.</span>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-header"><span class="section-num">Criterio 3</span><h2 class="section-title">Apoyo diagnóstico (al menos 1)</h2></div>
+        <div class="check-list">
+          <label><input type="checkbox" data-group="L3"><div class="check-text-wrapper"><span class="check-label-text">Pleocitosis en LCR (> 5 leucocitos/mm³).</span></div></label>
+          <label><input type="checkbox" data-group="L3"><div class="check-text-wrapper"><span class="check-label-text">EEG con actividad epileptiforme o lentificación de onda lenta que afecta a lóbulos temporales.</span></div></label>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-header"><span class="section-num">Criterio 4</span><h2 class="section-title">Exclusión</h2></div>
+        <div class="check-list">
+          <label><input type="checkbox" data-group="L4" checked><div class="check-text-wrapper"><span class="check-label-text">Exclusión razonable de causas alternativas.</span></div></label>
+        </div>
+      </div>
+
+      <div class="clinical-alert">
+        <h4>Vía alternativa</h4>
+        <p>Si no se cumple uno de los tres primeros criterios, el diagnóstico de encefalitis límbica definida se puede establecer <strong>solamente</strong> detectando anticuerpos contra proteínas de superficie celular, sinápticas u onconeuronales.</p>
+        <div class="check-list" style="margin-top:12px;">
+          <label><input type="checkbox" data-group="L5"><div class="check-text-wrapper"><span class="check-label-text">Detección de anticuerpos confirmada (ej. LGI1, CASPR2, GABA<sub>B</sub>R, AMPAR, Hu, Ma2).</span></div></label>
+        </div>
+      </div>
+
+      <div class="reset-zone"><button class="btn-text" data-reset="limbica">Reiniciar panel</button></div>
+    </div>
+
+    <div class="panel" id="nmdar">
+      <p class="panel-intro">Requiere <strong>3 criterios</strong> para diagnóstico probable. La confirmación serológica en LCR establece el diagnóstico definido.</p>
+      
+      <div class="section">
+        <div class="section-header"><span class="section-num">Criterio 1</span><h2 class="section-title">Clínica (≥ 4 de 6 grupos)</h2></div>
+        <p style="font-family:'JetBrains Mono',monospace;font-size:.68rem;color:var(--ink-muted);margin-bottom:12px;letter-spacing:.05em;">INICIO RÁPIDO (< 3 MESES)</p>
+        <div class="check-list">
+          <label><input type="checkbox" data-group="N1"><div class="check-text-wrapper"><span class="check-label-text">Comportamiento anormal (psiquiátrico) o disfunción cognitiva.</span></div></label>
+          <label><input type="checkbox" data-group="N1"><div class="check-text-wrapper"><span class="check-label-text">Disfunción del lenguaje (habla acelerada, reducción verbal, mutismo).</span></div></label>
+          <label><input type="checkbox" data-group="N1"><div class="check-text-wrapper"><span class="check-label-text">Crisis epilépticas.</span></div></label>
+          <label><input type="checkbox" data-group="N1"><div class="check-text-wrapper"><span class="check-label-text">Trastorno del movimiento, discinesias, o rigidez/posturas anormales.</span></div></label>
+          <label><input type="checkbox" data-group="N1"><div class="check-text-wrapper"><span class="check-label-text">Disminución del nivel de conciencia.</span></div></label>
+          <label><input type="checkbox" data-group="N1"><div class="check-text-wrapper"><span class="check-label-text">Disfunción autonómica o hipoventilación central.</span></div></label>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-header"><span class="section-num">Criterio 2</span><h2 class="section-title">Paraclínica (al menos 1)</h2></div>
+        <div class="check-list">
+          <label><input type="checkbox" data-group="N2"><div class="check-text-wrapper"><span class="check-label-text">EEG anormal (actividad lenta/desorganizada focal o difusa, actividad epiléptica, o <em>extreme delta brush</em>).</span></div></label>
+          <label><input type="checkbox" data-group="N2"><div class="check-text-wrapper"><span class="check-label-text">LCR con pleocitosis o bandas oligoclonales.</span></div></label>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-header"><span class="section-num">Criterio 3</span><h2 class="section-title">Exclusión</h2></div>
+        <div class="check-list">
+          <label><input type="checkbox" data-group="N3" checked><div class="check-text-wrapper"><span class="check-label-text">Exclusión razonable de causas alternativas.</span></div></label>
+        </div>
+      </div>
+
+      <div class="clinical-alert">
+        <h4>Vía con Teratoma / Diagnóstico Definido</h4>
+        <div class="check-list" style="margin-top:12px;">
+          <label><input type="checkbox" data-group="N4"><div class="check-text-wrapper"><span class="check-label-text">Teratoma sistémico identificado.</span><span class="check-hint">Permite el diagnóstico probable con solo 3 de los 6 grupos sintomáticos.</span></div></label>
+          <label><input type="checkbox" data-group="N5"><div class="check-text-wrapper"><span class="check-label-text">IgG anti-GluN1 detectada.</span><span class="check-hint">Establece el diagnóstico definido. (El LCR es la muestra de referencia).</span></div></label>
+        </div>
+      </div>
+
+      <div class="clinical-alert" style="border-left-color:#8b5a2b; background:rgba(139, 90, 43, 0.04);">
+        <h4 style="color:#8b5a2b;">Avisos Clínicos</h4>
+        <p style="margin-bottom:8px;"><strong>Solapamiento Desmielinizante:</strong> Aproximadamente el 4% de los pacientes desarrollan síndromes superpuestos (MOG o AQP4). Si hay síntomas atípicos (neuritis óptica, desmielinización extensa en RM), se debe solicitar MOG/AQP4 en suero.</p>
+        <p><strong>Post-VHS:</strong> Ante coreoatetosis (niños) o clínica psiquiátrica (adultos) tras encefalitis herpética reciente, descartar NMDAR en LCR (obligatorio).</p>
+      </div>
+
+      <div class="reset-zone"><button class="btn-text" data-reset="nmdar">Reiniciar panel</button></div>
+    </div>
+
+    <div class="panel" id="seroneg">
+      <p class="panel-intro">Identifica pacientes con sospecha firme sin anticuerpos detectables, tras excluir síndromes definidos. Requiere <strong>4 criterios</strong>.</p>
+      
+      <div class="section">
+        <div class="section-header"><span class="section-num">Criterio 1</span><h2 class="section-title">Presentación</h2></div>
+        <div class="check-list">
+          <label><input type="checkbox" data-group="S1"><div class="check-text-wrapper"><span class="check-label-text">Progresión rápida (< 3 meses) de déficit de memoria de trabajo, alteración de conciencia o síntomas psiquiátricos.</span></div></label>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-header"><span class="section-num">Criterio 2</span><h2 class="section-title">Exclusión Sindrómica</h2></div>
+        <div class="check-list">
+          <label><input type="checkbox" data-group="S2"><div class="check-text-wrapper"><span class="check-label-text">Exclusión de síndromes autoinmunes bien caracterizados (límbica, Bickerstaff, ADEM, Hashimoto, etc.).</span></div></label>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-header"><span class="section-num">Criterio 3</span><h2 class="section-title">Serología Negativa + Apoyo (≥ 2)</h2></div>
+        <div class="check-list">
+          <label><input type="checkbox" data-group="S3a">
+            <div class="check-text-wrapper">
+              <span class="check-label-text"><strong>Ausencia</strong> de anticuerpos bien caracterizados en suero y LCR.</span>
+              <span class="check-hint">Nota importante: la detección de isotipos IgA o IgM no excluye la seronegatividad ni valida el diagnóstico; el panel IgG debe ser negativo.</span>
+            </div>
+          </label>
+        </div>
+        <p style="font-family:'JetBrains Mono',monospace;font-size:.68rem;color:var(--ink-muted);margin:16px 0 12px;letter-spacing:.05em;">Y AL MENOS DOS DE LOS SIGUIENTES:</p>
+        <div class="check-list">
+          <label><input type="checkbox" data-group="S3b"><div class="check-text-wrapper"><span class="check-label-text">RM con anomalías sugestivas de encefalitis.</span></div></label>
+          <label><input type="checkbox" data-group="S3b"><div class="check-text-wrapper"><span class="check-label-text">Pleocitosis en LCR, BOC o índice IgG elevado.</span></div></label>
+          <label><input type="checkbox" data-group="S3b"><div class="check-text-wrapper"><span class="check-label-text">Biopsia cerebral con infiltrado inflamatorio excluyendo otras causas.</span></div></label>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-header"><span class="section-num">Criterio 4</span><h2 class="section-title">Exclusión</h2></div>
+        <div class="check-list">
+          <label><input type="checkbox" data-group="S4" checked><div class="check-text-wrapper"><span class="check-label-text">Exclusión razonable de causas alternativas.</span></div></label>
+        </div>
+      </div>
+
+      <div class="reset-zone"><button class="btn-text" data-reset="seroneg">Reiniciar panel</button></div>
+    </div>
+
+    <div class="panel" id="otras">
+      <p class="panel-intro">Entidades del algoritmo evaluadas de forma paralela al cribado principal.</p>
+      
+      <div class="section">
+        <div class="section-header"><span class="section-num">ADEM</span><h2 class="section-title">Encefalomielitis Aguda Diseminada</h2></div>
+        <div class="check-list">
+          <label><input type="checkbox" data-group="A1"><div class="check-text-wrapper"><span class="check-label-text">1. Primer evento clínico multifocal del SNC.</span></div></label>
+          <label><input type="checkbox" data-group="A2"><div class="check-text-wrapper"><span class="check-label-text">2. Encefalopatía no explicable por fiebre.</span></div></label>
+          <label><input type="checkbox" data-group="A3"><div class="check-text-wrapper"><span class="check-label-text">3. RM con lesiones difusas grandes (> 1-2 cm) predominantes en sustancia blanca.</span></div></label>
+          <label><input type="checkbox" data-group="A4"><div class="check-text-wrapper"><span class="check-label-text">4. Ausencia de nuevos hallazgos clínicos o de RM a los 3 meses (no exigible en debut).</span></div></label>
+          <label><input type="checkbox" data-group="A5" checked><div class="check-text-wrapper"><span class="check-label-text">5. Exclusión de alternativas.</span></div></label>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-header"><span class="section-num">Tronco</span><h2 class="section-title">Encefalitis de Bickerstaff</h2></div>
+        <div class="check-list">
+          <label><input type="checkbox" data-group="B1"><div class="check-text-wrapper"><span class="check-label-text">1A. Disminución del nivel de consciencia (< 4 sem).</span></div></label>
+          <label><input type="checkbox" data-group="B1"><div class="check-text-wrapper"><span class="check-label-text">1B. Oftalmoplejía externa bilateral.</span></div></label>
+          <label><input type="checkbox" data-group="B1"><div class="check-text-wrapper"><span class="check-label-text">1C. Ataxia.</span></div></label>
+          <label><input type="checkbox" data-group="B2" checked><div class="check-text-wrapper"><span class="check-label-text">2. Exclusión de alternativas (Listeria, linfoma...).</span></div></label>
+          <div class="clinical-alert" style="margin: 12px 0;">
+            <p>Diagnóstico definido si <strong>IgG anti-GQ1b es positivo</strong> (incluso sin tríada completa).</p>
+            <label style="margin-top:12px; background:var(--paper-card);"><input type="checkbox" data-group="B3"><div class="check-text-wrapper"><span class="check-label-text">IgG anti-GQ1b Positivo</span></div></label>
+          </div>
+        </div>
+      </div>
+
+      <div class="section" style="margin-bottom:0;">
+        <div class="section-header"><span class="section-num">SREAT</span><h2 class="section-title">Encefalopatía de Hashimoto</h2></div>
+        <div class="check-list">
+          <label><input type="checkbox" data-group="H1"><div class="check-text-wrapper"><span class="check-label-text">1. Encefalopatía con crisis, mioclonías, alucinaciones, o stroke-like.</span></div></label>
+          <label><input type="checkbox" data-group="H2"><div class="check-text-wrapper"><span class="check-label-text">2. Enfermedad tiroidea subclínica o leve.</span></div></label>
+          <label><input type="checkbox" data-group="H3"><div class="check-text-wrapper"><span class="check-label-text">3. RM cerebral normal o inespecífica.</span></div></label>
+          <label><input type="checkbox" data-group="H4"><div class="check-text-wrapper"><span class="check-label-text">4. Anticuerpos antitiroideos en suero (anti-TPO/TG).</span></div></label>
+          <label><input type="checkbox" data-group="H5"><div class="check-text-wrapper"><span class="check-label-text">5. Ausencia de anticuerpos neuronales bien caracterizados.</span></div></label>
+          <label><input type="checkbox" data-group="H6" checked><div class="check-text-wrapper"><span class="check-label-text">6. Exclusión de alternativas.</span></div></label>
+        </div>
+      </div>
+
+      <div class="reset-zone"><button class="btn-text" data-reset="otras">Reiniciar panel</button></div>
+    </div>
+
+  </div> <div id="resultBlock" class="card" style="display:none;">
+    <div class="result-head">
+      <span class="result-eyebrow" id="resultLabel">Resultado</span>
+      <h3 class="result-title" id="resultTitle">...</h3>
+    </div>
+    <p class="result-detail" id="resultDetail">...</p>
+  </div>
+
+  <div class="info-block">
+    <h4>Sobre esta herramienta</h4>
+    <p>Algoritmo clínico adaptado de los criterios propuestos para el abordaje diagnóstico precoz de la encefalitis autoinmune. Diseñado para evitar retrasos terapéuticos a la espera de resultados serológicos, mediante la estratificación en niveles de certeza (Posible, Probable, Definida).</p>
+    <p><strong>Aviso pediátrico:</strong> El repertorio sindrómico en niños menores de 5 años difiere significativamente del adulto; la presentación clínica es menos reconocible y el peso diagnóstico recae más en los anticuerpos que en este algoritmo.</p>
+    <p><strong>Referencia:</strong> Graus F, Titulaer MJ, Balu R, et al. A clinical approach to diagnosis of autoimmune encephalitis. <em>Lancet Neurol</em> 2016; 15(4):391–404. DOI: <a href="https://doi.org/10.1016/S1474-4422(15)00401-9" target="_blank" rel="noopener">10.1016/S1474-4422(15)00401-9</a>.</p>
+  </div>
+
+  <footer>
+    <p class="credit">Traducción y sistematización lógica · Dr. Juan Carlos Navarro García</p>
+    <div class="meta">
+      <span class="dot">·</span>
+    </div>
+    <p class="disclaimer">Herramienta destinada exclusivamente a profesionales sanitarios. La decisión final recae en el juicio clínico.</p>
+    <div class="stamp">NEUROTOOLS · v. 2026.05 · © Dr. Juan Carlos Navarro García</div>
+  </footer>
+
+</div>
+
+<script>
+(function() {
+  'use strict';
+
+  const PANELS = {
+    posible: {
+      groups: ['P1', 'P2', 'P3'],
+      name: 'Encefalitis autoinmune posible',
+      evaluate(counts) {
+        const met = counts.P1 >= 1 && counts.P2 >= 1 && counts.P3 >= 1;
+        return {
+          level: met ? 'met' : 'partial',
+          title: met ? 'Criterios de EA Posible cumplidos' : `Criterios incompletos para EA Posible`,
+          detail: met ? 'Procede solicitar panel completo de anticuerpos en suero y LCR, ampliar estudio (citoquímica, índice IgG, PCR VHS), RM y cribado de neoplasia. Considerar inmunoterapia empírica si alta sospecha.' : 'Faltan criterios para justificar el diagnóstico sindrómico inicial de encefalitis autoinmune.'
+        };
+      }
+    },
+    limbica: {
+      groups: ['L1', 'L2', 'L3', 'L4', 'L5'],
+      name: 'Encefalitis límbica',
+      evaluate(counts) {
+        const c1 = counts.L1 >= 1, c2 = counts.L2 >= 1, c3 = counts.L3 >= 1, c4 = counts.L4 >= 1, abs = counts.L5 >= 1;
+        const firstThree = [c1, c2, c3].filter(Boolean).length;
+        
+        if (c1 && c2 && c3 && c4) {
+          return { level: 'met', title: 'EA Límbica Definida (Vía clínica)', detail: 'Diagnóstico establecido independientemente de la serología. Iniciar cribado tumoral e inmunoterapia precoz.' };
+        }
+        if (firstThree === 2 && c4 && abs) {
+          return { level: 'met', title: 'EA Límbica Definida (Vía serológica)', detail: 'Un criterio paraclínico falta, pero la detección de anticuerpos rescata el diagnóstico definido.' };
+        }
+        return { level: 'partial', title: 'Criterios incompletos para Límbica Definida', detail: 'Revise los criterios clínicos y de neuroimagen obligatorios.' };
+      }
+    },
+    nmdar: {
+      groups: ['N1', 'N2', 'N3', 'N4', 'N5'],
+      name: 'Encefalitis Anti-NMDAR',
+      evaluate(counts) {
+        const sx = counts.N1, lab = counts.N2 >= 1, excl = counts.N3 >= 1, teratoma = counts.N4 >= 1, ab = counts.N5 >= 1;
+        
+        if (sx >= 1 && ab && excl) return { level: 'met', title: 'Anti-NMDAR Definida', detail: 'Diagnóstico confirmado serológicamente. Inmunoterapia y cribado pélvico (teratoma ovárico).' };
+        if (sx >= 4 && lab && excl) return { level: 'met', title: 'Anti-NMDAR Probable', detail: 'Vía estándar cumplida. Iniciar tratamiento empírico mientras se confirma IgG anti-GluN1 en LCR.' };
+        if (sx >= 3 && teratoma && excl) return { level: 'met', title: 'Anti-NMDAR Probable (con Teratoma)', detail: 'La presencia de teratoma flexibiliza los criterios clínicos a 3 grupos sintomáticos.' };
+        return { level: 'partial', title: 'Criterios incompletos para Anti-NMDAR', detail: 'Faltan grupos sintomáticos o pruebas de apoyo para establecer diagnóstico probable.' };
+      }
+    },
+    seroneg: {
+      groups: ['S1', 'S2', 'S3a', 'S3b', 'S4'],
+      name: 'Encefalitis Seronegativa',
+      evaluate(counts) {
+        if (counts.S1 >= 1 && counts.S2 >= 1 && counts.S3a >= 1 && counts.S3b >= 2 && counts.S4 >= 1) {
+          return { level: 'met', title: 'EA Seronegativa Probable', detail: 'Considere derivar muestra a centro de referencia. Descartar mimetizadores metabólicos/genéticos en jóvenes. Tratamiento empírico evaluando respuesta clínica.' };
+        }
+        return { level: 'partial', title: 'Criterios incompletos para Seronegativa', detail: 'Requiere exclusión rigurosa de paneles y al menos 2 pruebas paraclínicas alteradas.' };
+      }
+    },
+    otras: {
+      groups: ['A1', 'A2', 'A3', 'A4', 'A5', 'B1', 'B2', 'B3', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6'],
+      name: 'Otras entidades',
+      evaluate(counts) {
+        let results = [];
+        // ADEM
+        if (counts.A1 && counts.A2 && counts.A3 && counts.A5) {
+          results.push(counts.A4 ? 'ADEM Definida' : 'ADEM Probable (criterio temporal pendiente)');
+        }
+        // Bickerstaff (Modificado: abs && excl permite definido)
+        if (counts.B3 && counts.B2) {
+          results.push('Bickerstaff Definida (por anti-GQ1b)');
+        } else if (counts.B1 >= 3 && counts.B2) {
+          results.push('Bickerstaff Probable (esperando serología)');
+        }
+        // Hashimoto
+        if (counts.H1 && counts.H2 && counts.H3 && counts.H4 && counts.H5 && counts.H6) {
+          results.push('Encefalopatía de Hashimoto / SREAT cumplida');
+        }
+
+        if (results.length > 0) {
+          return { level: 'met', title: results.join(' | '), detail: 'Criterios compatibles con las entidades satélite del algoritmo de Graus.' };
+        }
+        return { level: 'partial', title: 'Entidades paralelas', detail: 'Marque criterios en ADEM, Bickerstaff o SREAT para evaluar.' };
+      }
+    }
+  };
+
+  function countChecked(group) {
+    return document.querySelectorAll(`input[data-group="${group}"]:checked`).length;
+  }
+
+  function evaluateActive() {
+    const activeTabBtn = document.querySelector('.tab.active');
+    if (!activeTabBtn) return;
+    const panelKey = activeTabBtn.dataset.panel;
+    const cfg = PANELS[panelKey];
+    if (!cfg) return;
+
+    const counts = {};
+    cfg.groups.forEach(g => { counts[g] = countChecked(g); });
+    
+    const hasAnyChecked = cfg.groups.some(g => counts[g] > 0);
+    const r = cfg.evaluate(counts);
+    
+    const block = document.getElementById('resultBlock');
+    const label = document.getElementById('resultLabel');
+    const title = document.getElementById('resultTitle');
+    const detail = document.getElementById('resultDetail');
+
+    if (!hasAnyChecked) {
+      block.style.display = 'none';
+      return;
+    }
+
+    block.style.display = 'block';
+    title.innerHTML = r.title;
+    detail.innerHTML = r.detail;
+    
+    if (r.level === 'met') {
+      label.textContent = '— Criterios Cumplidos —';
+      label.classList.add('success');
+      block.style.backgroundColor = 'var(--paper-card)';
+      block.style.borderColor = 'var(--success)';
+    } else {
+      label.textContent = '— Cumplimiento Parcial —';
+      label.classList.remove('success');
+      block.style.backgroundColor = 'transparent';
+      block.style.borderColor = 'var(--accent)';
+    }
+  }
+
+  // Tabs
+  document.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+      tab.classList.add('active');
+      document.getElementById(tab.dataset.panel).classList.add('active');
+      evaluateActive();
+    });
+  });
+
+  // Checkboxes
+  document.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+    cb.addEventListener('change', evaluateActive);
+  });
+
+  // Reset
+  document.querySelectorAll('[data-reset]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const panelKey = btn.dataset.reset;
+      PANELS[panelKey].groups.forEach(g => {
+        document.querySelectorAll(`input[data-group="${g}"]`).forEach(cb => {
+          if (!cb.hasAttribute('checked')) cb.checked = false; // Solo resetea los que no son 'checked' por defecto (como los de exclusión)
+          else cb.checked = true;
+        });
+      });
+      evaluateActive();
+    });
+  });
+
+})();
+</script>
+</body>
+</html>
