@@ -3,12 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>NEUROTOOLS · Neuroinmunología</title>
+  <title>NEUROTOOLS · Epilepsia</title>
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 
+  <!-- Configuración para App en iPhone (rutas ajustadas con ../) -->
   <link rel="apple-touch-icon" href="../icono-app.png">
   <link rel="manifest" href="../manifest.json">
 
@@ -94,7 +95,7 @@
       h1 { font-size: 2.5rem; }
       
       .grid { 
-        grid-template-columns: 1fr; 
+        grid-template-columns: 1fr; /* Cambiado a 1 columna para que la tarjeta no quede demasiado estrecha si hay pocas */
         gap: 16px; 
       }
       
@@ -122,32 +123,51 @@
 <body>
 
 <div class="container">
+  <!-- Navegación superior -->
   <a href="../index.html" class="back-link">
     <svg viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
     Volver al inicio
   </a>
 
   <header>
-    <h1>NEUROINMUNOLOGÍA</h1>
-    <p class="subtitle">Herramientas de evaluación y criterios diagnósticos en patologías inmunomediadas del SNC.</p>
+    <h1>EPILEPSIA</h1>
+    <p class="subtitle">Herramientas de riesgo de recurrencia y manejo de crisis.</p>
   </header>
 
   <div class="grid">
-    <a href="encefalitis.html" class="card">
+    <!-- Herramienta: Retirada de fármacos antiepilépticos -->
+    <a href="calculadorawithdrawal.html" class="card">
       <div class="icon">
         <svg viewBox="0 0 24 24">
-          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-          <path d="M9 12h6" />
-          <path d="M12 9v6" />
+          <!-- Icono de cápsula/fármaco -->
+          <path d="M10.5 20.5l-6-6a4.5 4.5 0 0 1 6.36-6.36l6 6a4.5 4.5 0 0 1-6.36 6.36z" />
+          <line x1="10.5" y1="7.5" x2="16.5" y2="13.5" />
         </svg>
       </div>
       <div>
-        <h3>Sospecha de encefalitis autoinmune</h3>
-        <p>Criterios de Graus (2016) para estimar el nivel de certeza diagnóstica clínicamente.</p>
+        <h3>Retirada de fármacos antiepilépticos</h3>
+        <p>Calculadora de riesgo de recurrencia de crisis tras la retirada de medicación.</p>
       </div>
     </a>
-    
-    </div>
+
+    <!-- Herramienta: Criterios de encefalitis autoinmune -->
+    <a href="encefalitis.html" class="card">
+      <div class="icon">
+        <svg viewBox="0 0 24 24">
+          <!-- Icono de cerebro con foco inflamatorio -->
+          <path d="M9 4.5a2.5 2.5 0 0 0-2.5 2.5 2.5 2.5 0 0 0-2 4 2.5 2.5 0 0 0 0 4 2.5 2.5 0 0 0 2 4 2.5 2.5 0 0 0 2.5 2.5 2.5 2.5 0 0 0 2.5-2.5V7A2.5 2.5 0 0 0 9 4.5z"/>
+          <path d="M15 4.5A2.5 2.5 0 0 1 17.5 7a2.5 2.5 0 0 1 2 4 2.5 2.5 0 0 1 0 4 2.5 2.5 0 0 1-2 4 2.5 2.5 0 0 1-2.5 2.5A2.5 2.5 0 0 1 12.5 19V7A2.5 2.5 0 0 1 15 4.5z"/>
+          <circle cx="15.5" cy="11" r="1.2" fill="currentColor" stroke="none"/>
+        </svg>
+      </div>
+      <div>
+        <h3>Encefalitis autoinmune</h3>
+        <p>Criterios diagnósticos de encefalitis autoinmune (Graus et al., 2016).</p>
+      </div>
+    </a>
+
+    <!-- Espacio para futuras herramientas (puedes añadir más tarjetas aquí siguiendo la misma estructura) -->
+  </div>
 
   <footer>
     NEUROTOOLS · v. 2026.05 · © Dr. Juan Carlos Navarro García · navarroneurologia@gmail.com (MIT License)<br>
