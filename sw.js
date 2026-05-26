@@ -20,7 +20,6 @@ const urlsToCache = [
   '/cognitivo/testreloj.html',
   '/cognitivo/icono.png',
   '/epilepsia/calculadorawithdrawal.html',
-  '/epilepsia/encefalitis.html',
   '/epilepsia/index.html',
   '/infecciones/index.html',
   '/infecciones/meningitiscomunidad.html',
