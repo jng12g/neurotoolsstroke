@@ -686,7 +686,6 @@
     <p class="lede">Comparativa entre la regla clínica de <strong>EHRA 2021</strong> (basada en NIHSS) y la evidencia del ensayo <strong>ELAN</strong> (basada en imagen).</p>
   </header>
 
-  <!-- ── Paso 1 — NIHSS ── -->
   <section class="step">
     <div class="step-num">01 / Clínica</div>
     <div class="step-q">Gravedad por NIHSS</div>
@@ -707,14 +706,12 @@
     </div>
   </section>
 
-  <!-- ── Paso 2 — Tamaño infarto ── -->
   <section class="step">
     <div class="step-num">02 / Neuroimagen</div>
     <div class="step-q">Tamaño del infarto</div>
     <div class="step-hint">Clasificación radiológica por TC o RM según ELAN.</div>
     <div class="cards" data-field="size">
       
-      <!-- Menor -->
       <button class="card" data-val="minor">
         <div class="card-title">Menor</div>
         <div class="card-desc">≤ 1,5 cm en cualquier territorio.</div>
@@ -723,7 +720,6 @@
         </div>
       </button>
 
-      <!-- Moderado -->
       <button class="card" data-val="moderate">
         <div class="card-title">Moderado</div>
         <div class="card-desc">Rama cortical superficial de ACM, ACA o ACP.</div>
@@ -732,7 +728,6 @@
         </div>
       </button>
 
-      <!-- Mayor -->
       <button class="card" data-val="major">
         <div class="card-title">Mayor</div>
         <div class="card-desc">Extenso en ACM/ACA/ACP, o tronco/cerebelo &gt; 1,5 cm.</div>
@@ -745,7 +740,6 @@
     </div>
   </section>
 
-  <!-- ── Paso 3 — Tiempo ── -->
   <section class="step">
     <div class="step-num">03 / Cronología</div>
     <div class="step-q">Tiempo desde el inicio</div>
@@ -759,7 +753,6 @@
     </div>
   </section>
 
-  <!-- ── Veredicto ── -->
   <section class="verdict-area" id="verdict">
     <div class="verdict-incomplete">Introduce el tiempo y al menos un criterio (clínica o imagen) para ver las recomendaciones.</div>
   </section>
@@ -770,7 +763,6 @@
 
 </main>
 
-<!-- ── Bottom sheet ── -->
 <div class="backdrop" id="backdrop"></div>
 <aside class="sheet" id="sheet" aria-hidden="true">
   <div class="sheet-handle"></div>
@@ -892,7 +884,7 @@ function render() {
     <div class="verdict-head">Recomendación</div>
     <div class="dual">
       ${cardHTML('ehra', r.ehra, r.ehra.status === 'missing' ? r.ehra.msg : ehraSubtitle(r.ehra))}
-      ${cardHTML('elan', r.elan, r.elan.status === 'missing' ? r.elan.msg : elanSubtitle(r.elan))}
+      ${cardHTML('elan', r.elan, r.elan.status === 'missing' ? r.elan.msg : elanSubtitle(r.elan, r.hours))}
     </div>
     ${divergent ? divergenceHTML(r) : ''}
     <button class="why-btn" id="openSheet">Ver justificación y citas <span class="arrow">→</span></button>
@@ -935,14 +927,18 @@ function ehraSubtitle(v) {
   return text;
 }
 
-function elanSubtitle(v) {
+function elanSubtitle(v, hours) {
   if (v.status === 'wait') {
     return `<strong>No indicado.</strong> Se podría iniciar anticoagulación a partir del día ${v.target}.<br><br><em>ELAN no estudió el inicio antes del día 6 en ictus mayor.</em>`;
   }
   // status === 'go'
   switch (v.arm) {
     case 'early':
-      return `Encaja con la <strong>rama precoz</strong> del ensayo.`;
+      let earlyText = `Encaja con la <strong>rama precoz</strong> del ensayo.`;
+      if (hours < 24) {
+        earlyText += `<br><br><em>*Precaución: Aunque el ensayo contempla el inicio en &le; 48h, la mayoría de pacientes de la rama precoz iniciaron la anticoagulación entre las 24 y 48 horas desde el inicio del evento.</em>`;
+      }
+      return earlyText;
     case 'late':
       return `Encaja con la <strong>rama tardía</strong> del ensayo. Ambas ramas demostraron seguridad.`;
     case 'between':
@@ -957,7 +953,7 @@ function nihssWord(n) {
 }
 
 function sizeWord(s) {
-  return s === 'minor' ? 'menor' : s === 'moderate' ? 'moderado' : 'mayor';
+  return s === 'minor' ? 'menor' : s === 'moderate' ? 'mayor' : 'mayor';
 }
 
 function divergenceHTML(r) {
@@ -1093,6 +1089,9 @@ function elanSection(r) {
     switch (v.arm) {
       case 'early':
         armText = `Tu caso encaja con la <strong>rama precoz</strong> (${earlyRange}) del ensayo. Esta rama demostró menos ictus recurrentes sin aumentar la HIC sintomática.`;
+        if (r.hours < 24) {
+          armText += ` <br><br><strong>Nota clínica:</strong> Aunque la ventana precoz contemplaba el inicio en las primeras 48 horas, la gran mayoría de los pacientes incluidos en este brazo iniciaron la anticoagulación entre las 24 y las 48 horas posteriores al evento.`;
+        }
         break;
       case 'late':
         armText = `Tu caso encaja con la <strong>rama tardía</strong> (${lateRange}) del ensayo. ELAN demostró que ambas ramas son seguras; ninguna mostró exceso de HIC.`;
