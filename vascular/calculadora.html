@@ -410,7 +410,6 @@
   </div>
 
   <div class="input-section">
-    <!-- FÁRMACO -->
     <div class="item">
       <div class="item-title">1. Selección de fármaco</div>
       <div class="options">
@@ -427,7 +426,6 @@
       </div>
     </div>
 
-    <!-- PESO NUMPAD -->
     <div class="item">
       <div class="item-title">2. Peso del paciente</div>
       <div class="calc-wrapper">
@@ -452,7 +450,6 @@
     </div>
   </div>
 
-  <!-- DASHBOARD DE RESULTADOS -->
   <div class="results-dashboard">
     <div class="results-grid">
       <div class="result-block">
@@ -575,37 +572,49 @@ function calculate() {
   }
 
   const w = parseFloat(weightStr);
-  let totalDose = 0;
-  let bolus = 0;
-  let infusion = 0;
   let ruleText = '';
 
   if (drug === 'tnk') {
-    // TNK: 0.25 mg/kg, max 25 mg
-    let calculated = w * 0.25;
-    totalDose = Math.min(calculated, 25);
-    bolus = totalDose;
+    // Cálculo exacto interno
+    let exactDose = w * 0.25;
+    let totalDoseExact = Math.min(exactDose, 25);
+    const isCapped = exactDose > 25;
+    const calcDetail = isCapped ? `(topado a dosis máxima de 25 mg)` : `(${w} kg × 0.25 mg/kg)`;
     
-    const isCapped = calculated > 25;
-    const calcDetail = isCapped ? `Supera dosis máxima. Topado a 25 mg.` : `(${w} kg × 0.25 mg/kg)`;
+    // Lógica de intervalos AHA/ASA 2026
+    let intervalDose = 0;
+    let intervalVol = 0;
     
-    updateResultDOM(resTotal, totalDose);
-    updateResultDOM(resBolus, bolus);
-    updateResultDOM(resInfusion, null); // N/A
+    if (w < 60) { intervalDose = 15; intervalVol = 3; }
+    else if (w >= 60 && w < 70) { intervalDose = 17.5; intervalVol = 3.5; }
+    else if (w >= 70 && w < 80) { intervalDose = 20; intervalVol = 4; }
+    else if (w >= 80 && w < 90) { intervalDose = 22.5; intervalVol = 4.5; }
+    else if (w >= 90) { intervalDose = 25; intervalVol = 5; }
+
+    // Mostrar el valor del intervalo en los paneles grandes, por ser el más clínicamente seguro
+    updateResultDOM(resTotal, intervalDose);
+    updateResultDOM(resBolus, intervalDose);
+    updateResultDOM(resInfusion, null);
     
     ruleText = `
-      Cálculo realizado: <strong>${calcDetail}</strong>.<br><br>
-      Dosis total recomendada: <strong>${totalDose.toFixed(1)} mg</strong>.<br>
+      Cálculo exacto del paciente: <strong>${totalDoseExact.toFixed(1)} mg</strong> <span style="font-size:0.9em; color:var(--ink-muted);">${calcDetail}</span>.<br><br>
+      Según la <strong>Guía AHA/ASA 2026</strong>, la dosificación de Tenecteplasa se agrupa de forma pragmática por intervalos de peso. Para un paciente de ${w} kg, le corresponde la siguiente dosis estandarizada:<br><br>
+      Dosis a administrar: <strong style="color: var(--accent); font-size: 1.15em;">${intervalDose} mg (${intervalVol} mL)</strong>.<br>
       Administrar mediante <strong>empuje (bolo) intravenoso único</strong> durante 5-10 segundos.<br>
+      
+      <div style="margin-top: 16px; padding: 12px; background: rgba(166, 74, 58, 0.08); border-left: 3px solid var(--accent-warm); border-radius: 2px;">
+        <strong style="color: var(--accent-warm);">¡Importante!</strong> No retrase la trombolisis para intentar obtener el peso exacto del paciente; <strong>el tratamiento oportuno es crítico</strong>. Si utiliza un peso estimado visualmente, dosificar por el rango de intervalo de 10 kg es la práctica recomendada.
+      </div>
+
       <span class="tnk-warning">Aviso AHA/ASA 2026: Se desaconseja rotundamente el uso de la dosis de 0.4 mg/kg, ya que se asocia con un mayor riesgo de hemorragia sintomática intracraneal sin mejoras demostradas en el resultado funcional.</span>
     `;
     
   } else if (drug === 'tpa') {
     // Alteplase: 0.9 mg/kg, max 90 mg. 10% bolus, 90% infusion
     let calculated = w * 0.9;
-    totalDose = Math.min(calculated, 90);
-    bolus = totalDose * 0.1;
-    infusion = totalDose * 0.9;
+    let totalDose = Math.min(calculated, 90);
+    let bolus = totalDose * 0.1;
+    let infusion = totalDose * 0.9;
     
     const isCapped = calculated > 90;
     const calcDetail = isCapped ? `Supera dosis máxima. Topado a 90 mg.` : `(${w} kg × 0.9 mg/kg)`;
@@ -631,8 +640,6 @@ function updateResultDOM(el, value) {
     el.innerHTML = 'N/A';
     el.classList.add('empty');
   } else {
-    // Format to 1 decimal, dropping .0 if strictly integer, but for medical doses explicit .0 or .x is standard. 
-    // We will keep 1 decimal for precision.
     el.innerHTML = `${value.toFixed(1)} <span class="unit">mg</span>`;
     el.classList.remove('empty');
   }
