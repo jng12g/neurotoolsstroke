@@ -33,8 +33,10 @@
 
     --go:          #2d5a3e;
     --go-bg:       #e6ede5;
-    --wait:        #8a5a1f;
-    --wait-bg:     #f1e6d3;
+    --cautious:    #a8651f;
+    --cautious-bg: #f4e6d0;
+    --wait:        #9a3535;
+    --wait-bg:     #efd9d9;
 
     --ehra-color:  #2a4d6e;
     --ehra-bg:     #e3eaf0;
@@ -215,12 +217,69 @@
   .card-img-container.dual-img img {
     width: calc(50% - 4px);
   }
+
+  /* Caveats que aparecen al seleccionar */
+  .card-caveat {
+    display: none;
+    margin-top: 11px;
+    padding: 9px 12px;
+    background: rgba(245, 241, 234, 0.08);
+    border-left: 2px solid rgba(245, 241, 234, 0.35);
+    border-radius: 4px;
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 13px;
+    line-height: 1.45;
+    color: rgba(245, 241, 234, 0.82);
+    animation: fadeInImg 0.3s ease both;
+  }
+  .card[aria-pressed="true"] .card-caveat {
+    display: block;
+  }
+  .card-caveat .caveat-label {
+    font-family: var(--mono);
+    font-style: normal;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(245, 241, 234, 0.5);
+    display: block;
+    margin-bottom: 3px;
+  }
+
   @keyframes fadeInImg {
     from { opacity: 0; transform: translateY(-4px); }
     to   { opacity: 1; transform: translateY(0); }
   }
 
-  /* Tiempo */
+  /* ── Tiempo ─────────────────────────────────────────── */
+  .time-mode {
+    display: flex;
+    gap: 4px;
+    background: var(--bg-card);
+    border: 1px solid var(--rule);
+    border-radius: 12px;
+    padding: 3px;
+    margin-bottom: 8px;
+  }
+  .time-mode button {
+    flex: 1;
+    appearance: none; border: none; background: transparent;
+    padding: 10px 12px;
+    font-family: var(--sans);
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink-soft);
+    border-radius: 9px;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition: all 0.15s;
+  }
+  .time-mode button[aria-pressed="true"] {
+    background: var(--ink);
+    color: var(--bg);
+  }
+
   .time-row {
     display: flex;
     align-items: stretch;
@@ -238,17 +297,45 @@
     min-width: 0;
   }
   .time-row input::placeholder { color: var(--ink-faint); font-weight: 400; }
-  .time-units {
-    display: flex; background: var(--bg); border-radius: 11px;
-    padding: 3px; align-self: center; margin-right: 4px;
+
+  .time-row input[type="datetime-local"] {
+    font-size: 17px;
+    width: 100%;
   }
-  .time-units button {
-    appearance: none; border: none; background: transparent;
-    padding: 8px 12px; font-family: var(--sans); font-size: 13px;
-    font-weight: 500; color: var(--ink-soft); border-radius: 8px;
-    cursor: pointer; -webkit-tap-highlight-color: transparent;
+  .time-row input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+    opacity: 0.55;
   }
-  .time-units button[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
+
+  .time-suffix {
+    align-self: center;
+    margin-right: 16px;
+    font-family: var(--sans);
+    font-size: 14px;
+    color: var(--ink-soft);
+    font-weight: 500;
+  }
+
+  .time-computed {
+    margin-top: 10px;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--ink-faint);
+    padding: 0 4px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .time-computed.invalid {
+    color: var(--wait);
+    text-transform: none;
+    letter-spacing: 0;
+    font-style: italic;
+    font-family: var(--serif);
+    font-size: 13.5px;
+  }
+
+  .time-row[hidden],
+  .time-computed[hidden] { display: none; }
 
   /* ── Veredicto dual ──────────────────────────────────── */
   .verdict-area {
@@ -337,6 +424,7 @@
   }
   .v-title em { font-style: italic; }
   .v-card.go .v-title  { color: var(--go); }
+  .v-card.cautious .v-title { color: var(--cautious); }
   .v-card.wait .v-title { color: var(--wait); }
   .v-sub {
     font-size: 12.5px;
@@ -346,8 +434,9 @@
   }
   .v-sub strong { font-weight: 500; color: var(--ink); }
 
-  .v-card.go   { background: linear-gradient(180deg, var(--go-bg) 0%, var(--bg-elevated) 60%); }
-  .v-card.wait { background: linear-gradient(180deg, var(--wait-bg) 0%, var(--bg-elevated) 60%); }
+  .v-card.go       { background: linear-gradient(180deg, var(--go-bg) 0%, var(--bg-elevated) 60%); }
+  .v-card.cautious { background: linear-gradient(180deg, var(--cautious-bg) 0%, var(--bg-elevated) 60%); }
+  .v-card.wait     { background: linear-gradient(180deg, var(--wait-bg) 0%, var(--bg-elevated) 60%); }
 
   /* Enlaces a fuentes */
   .source-link {
@@ -677,7 +766,7 @@
 <main class="app">
 
   <nav class="nav">
-    <a href="index.html"><span class="arr">←</span> NEUROTOOLS</a>
+    <a href="vascular/index.html"><span class="arr">←</span> NEUROTOOLS</a>
   </nav>
 
   <header class="head">
@@ -686,6 +775,7 @@
     <p class="lede">Comparativa entre la regla clínica de <strong>EHRA 2021</strong> (basada en NIHSS) y la evidencia del ensayo <strong>ELAN</strong> (basada en imagen).</p>
   </header>
 
+  <!-- ── Paso 1 — NIHSS ── -->
   <section class="step">
     <div class="step-num">01 / Clínica</div>
     <div class="step-q">Gravedad por NIHSS</div>
@@ -706,53 +796,80 @@
     </div>
   </section>
 
+  <!-- ── Paso 2 — Tamaño infarto ── -->
   <section class="step">
     <div class="step-num">02 / Neuroimagen</div>
     <div class="step-q">Tamaño del infarto</div>
     <div class="step-hint">Clasificación radiológica por TC o RM según ELAN.</div>
     <div class="cards" data-field="size">
       
+      <!-- Menor -->
       <button class="card" data-val="minor">
         <div class="card-title">Menor</div>
-        <div class="card-desc">≤ 1,5 cm en cualquier territorio.</div>
+        <div class="card-desc">≤ 1,5 cm en circulación anterior o posterior.</div>
         <div class="card-img-container">
           <img src="leve.png" alt="Esquema de infarto menor">
         </div>
-      </button>
-
-      <button class="card" data-val="moderate">
-        <div class="card-title">Moderado</div>
-        <div class="card-desc">Rama cortical superficial de ACM, ACA o ACP.</div>
-        <div class="card-img-container">
-          <img src="moderado.png" alt="Esquema de infarto moderado">
+        <div class="card-caveat">
+          <span class="caveat-label">También menor</span>
+          Múltiples lesiones puntiformes pequeñas (ducha embólica).
         </div>
       </button>
 
+      <!-- Moderado -->
+      <button class="card" data-val="moderate">
+        <div class="card-title">Moderado</div>
+        <div class="card-desc">&gt; 1,5 cm en territorio anterior, sin afectar todo el territorio de ACM o ACA.</div>
+        <div class="card-img-container">
+          <img src="moderado.png" alt="Esquema de infarto moderado">
+        </div>
+        <div class="card-caveat">
+          <span class="caveat-label">También moderado</span>
+          Dos lesiones menores separadas (la suma cuenta como moderado).
+        </div>
+      </button>
+
+      <!-- Mayor -->
       <button class="card" data-val="major">
         <div class="card-title">Mayor</div>
-        <div class="card-desc">Extenso en ACM/ACA/ACP, o tronco/cerebelo &gt; 1,5 cm.</div>
+        <div class="card-desc">Territorio completo de ACM o ACA, o ≥ 1,5 cm en tronco/cerebelo.</div>
         <div class="card-img-container dual-img">
           <img src="severo1.png" alt="Esquema de infarto mayor 1">
           <img src="severo2.png" alt="Esquema de infarto mayor 2">
         </div>
+        <div class="card-caveat">
+          <span class="caveat-label">También mayor</span>
+          Dos lesiones moderadas separadas (la suma cuenta como mayor).
+        </div>
       </button>
 
     </div>
   </section>
 
+  <!-- ── Paso 3 — Tiempo ── -->
   <section class="step">
     <div class="step-num">03 / Cronología</div>
     <div class="step-q">Tiempo desde el inicio</div>
     <div class="step-hint">Tiempo transcurrido desde el inicio de síntomas (o «último visto bien»).</div>
-    <div class="time-row">
-      <input type="number" id="timeInput" placeholder="0" min="0" step="0.5" inputmode="decimal">
-      <div class="time-units" data-field="unit">
-        <button data-val="h" aria-pressed="true">horas</button>
-        <button data-val="d">días</button>
-      </div>
+
+    <div class="time-mode" data-field="mode">
+      <button data-val="days" aria-pressed="true">Días</button>
+      <button data-val="datetime">Fecha y hora</button>
     </div>
+
+    <div class="time-row" id="rowDays">
+      <input type="number" id="timeInput" placeholder="0" min="0" step="0.5" inputmode="decimal">
+      <div class="time-suffix">días</div>
+    </div>
+
+    <div class="time-row" id="rowDatetime" hidden>
+      <input type="datetime-local" id="datetimeInput">
+    </div>
+
+    <div class="time-computed" id="timeComputed" hidden></div>
   </section>
 
+  <!-- ── Veredicto ── -->
   <section class="verdict-area" id="verdict">
     <div class="verdict-incomplete">Introduce el tiempo y al menos un criterio (clínica o imagen) para ver las recomendaciones.</div>
   </section>
@@ -763,6 +880,7 @@
 
 </main>
 
+<!-- ── Bottom sheet ── -->
 <div class="backdrop" id="backdrop"></div>
 <aside class="sheet" id="sheet" aria-hidden="true">
   <div class="sheet-handle"></div>
@@ -780,11 +898,37 @@
    ESTADO
    ───────────────────────────────────────────────────────── */
 const state = {
-  nihss: null,   // 'mild' | 'moderate' | 'severe'
-  size:  null,   // 'minor' | 'moderate' | 'major'
-  time:  null,
-  unit:  'h'
+  nihss:    null,   // 'mild' | 'moderate' | 'severe'
+  size:     null,   // 'minor' | 'moderate' | 'major'
+  time:     null,   // número de días (modo 'days')
+  datetime: null,   // string ISO local (modo 'datetime')
+  mode:     'days'  // 'days' | 'datetime'
 };
+
+/* ─────────────────────────────────────────────────────────
+   CÁLCULO DEL TIEMPO TRANSCURRIDO
+   ───────────────────────────────────────────────────────── */
+function getElapsedDays() {
+  if (state.mode === 'days') {
+    return state.time;
+  }
+  // modo 'datetime'
+  if (!state.datetime) return null;
+  const start = new Date(state.datetime);
+  if (isNaN(start.getTime())) return null;
+  const diffMs = Date.now() - start.getTime();
+  if (diffMs < 0) return -1; // fecha futura
+  return diffMs / 86400000;
+}
+
+function formatElapsed(days) {
+  const totalHours = days * 24;
+  const d = Math.floor(totalHours / 24);
+  const h = Math.floor(totalHours - d * 24);
+  if (d === 0) return `${h} h`;
+  if (h === 0) return `${d} día${d !== 1 ? 's' : ''}`;
+  return `${d} día${d !== 1 ? 's' : ''} y ${h} h`;
+}
 
 /* ─────────────────────────────────────────────────────────
    LÓGICA
@@ -819,6 +963,14 @@ function elanVerdict(hours, days) {
     return { status: 'wait', title: 'Día 6', target: 6, remaining };
   }
 
+  // Caso especial: en menor/moderado, antes de 24h el inicio sería ultra-precoz.
+  // ELAN permitió ≤48h pero los inicios reales se concentraron entre 24-48h
+  // (más cerca del límite de 48h). Anticoagular en las primeras horas no
+  // es lo que se hizo realmente en el ensayo.
+  if ((state.size === 'minor' || state.size === 'moderate') && hours < 24) {
+    return { status: 'cautious', title: 'Cautela', arm: 'ultraearly' };
+  }
+
   let arm;
   if (hours >= win.early[0] && hours < win.early[1])       arm = 'early';
   else if (hours >= win.early[1] && hours < win.late[0])   arm = 'between';
@@ -829,15 +981,19 @@ function elanVerdict(hours, days) {
 }
 
 function computeVerdict() {
-  if (state.time === null || state.time === '' || isNaN(state.time)) {
+  const days = getElapsedDays();
+
+  if (days === null) {
     return { kind: 'incomplete', msg: 'Introduce el tiempo de evolución para comenzar.' };
+  }
+  if (days < 0) {
+    return { kind: 'incomplete', msg: 'La fecha y hora indicada está en el futuro.' };
   }
   if (!state.nihss && !state.size) {
     return { kind: 'incomplete', msg: 'Selecciona la gravedad clínica (NIHSS) o el tamaño en imagen (ELAN).' };
   }
 
-  const hours = state.unit === 'd' ? Number(state.time) * 24 : Number(state.time);
-  const days = hours / 24;
+  const hours = days * 24;
 
   const result = {
     kind: 'ok',
@@ -867,7 +1023,30 @@ function computeVerdict() {
    ───────────────────────────────────────────────────────── */
 const verdictEl = document.getElementById('verdict');
 
+function updateTimeComputed() {
+  const el = document.getElementById('timeComputed');
+  if (state.mode !== 'datetime' || !state.datetime) {
+    el.hidden = true;
+    el.classList.remove('invalid');
+    return;
+  }
+  const days = getElapsedDays();
+  if (days === null) {
+    el.hidden = true;
+    return;
+  }
+  el.hidden = false;
+  if (days < 0) {
+    el.classList.add('invalid');
+    el.textContent = 'La fecha y hora indicada está en el futuro';
+  } else {
+    el.classList.remove('invalid');
+    el.textContent = `Han pasado ${formatElapsed(days)}`;
+  }
+}
+
 function render() {
+  updateTimeComputed();
   const r = computeVerdict();
 
   if (r.kind === 'incomplete') {
@@ -876,15 +1055,17 @@ function render() {
     return;
   }
 
-  // La divergencia solo tiene sentido si ambos están calculados
-  const bothCalculated = r.ehra.status !== 'missing' && r.elan.status !== 'missing';
-  const divergent = bothCalculated && r.ehra.status !== r.elan.status;
+  // Solo consideramos divergencia real entre 'go' y 'wait'.
+  // Si uno está en 'cautious' es un matiz, no un desacuerdo clínico relevante.
+  const divergent = r.ehra.status !== 'missing' && r.elan.status !== 'missing' &&
+                    ((r.ehra.status === 'go'   && r.elan.status === 'wait') ||
+                     (r.ehra.status === 'wait' && r.elan.status === 'go'));
 
   verdictEl.innerHTML = `
     <div class="verdict-head">Recomendación</div>
     <div class="dual">
       ${cardHTML('ehra', r.ehra, r.ehra.status === 'missing' ? r.ehra.msg : ehraSubtitle(r.ehra))}
-      ${cardHTML('elan', r.elan, r.elan.status === 'missing' ? r.elan.msg : elanSubtitle(r.elan, r.hours))}
+      ${cardHTML('elan', r.elan, r.elan.status === 'missing' ? r.elan.msg : elanSubtitle(r.elan))}
     </div>
     ${divergent ? divergenceHTML(r) : ''}
     <button class="why-btn" id="openSheet">Ver justificación y citas <span class="arrow">→</span></button>
@@ -927,24 +1108,33 @@ function ehraSubtitle(v) {
   return text;
 }
 
-function elanSubtitle(v, hours) {
+function elanSubtitle(v) {
   if (v.status === 'wait') {
     return `<strong>No indicado.</strong> Se podría iniciar anticoagulación a partir del día ${v.target}.<br><br><em>ELAN no estudió el inicio antes del día 6 en ictus mayor.</em>`;
   }
+  if (v.status === 'cautious') {
+    return `Dentro de la ventana del brazo precoz de ELAN (≤ 48 h), pero los inicios reales del ensayo se concentraron entre las <strong>24–48 h</strong> y cerca del límite de las 48 h, no en las primeras horas.<br><br>Razonable <strong>esperar al menos a las 24 h</strong> si no hay urgencia clínica.`;
+  }
   // status === 'go'
+  const sizeName = sizeWord(state.size);
   switch (v.arm) {
-    case 'early':
-      let earlyText = `Encaja con la <strong>rama precoz</strong> del ensayo.`;
-      if (hours < 24) {
-        earlyText += `<br><br><em>*Precaución: Aunque el ensayo contempla el inicio en &le; 48h, la mayoría de pacientes de la rama precoz iniciaron la anticoagulación entre las 24 y 48 horas desde el inicio del evento.</em>`;
-      }
-      return earlyText;
-    case 'late':
-      return `Encaja con la <strong>rama tardía</strong> del ensayo. Ambas ramas demostraron seguridad.`;
+    case 'early': {
+      // El brazo precoz comparado en ELAN
+      const ranges = state.size === 'minor'    ? { early: '≤ 48 h',    late: 'día 3–4'   }
+                   : state.size === 'moderate' ? { early: '≤ 48 h',    late: 'día 6–7'   }
+                   :                              { early: 'día 6–7',  late: 'día 12–14' };
+      return `Tu caso corresponde al <strong>brazo precoz</strong> estudiado en ictus ${sizeName} (precoz ${ranges.early} vs tardío ${ranges.late}). Ambos brazos demostraron seguridad.`;
+    }
+    case 'late': {
+      const ranges = state.size === 'minor'    ? { early: '≤ 48 h',    late: 'día 3–4'   }
+                   : state.size === 'moderate' ? { early: '≤ 48 h',    late: 'día 6–7'   }
+                   :                              { early: 'día 6–7',  late: 'día 12–14' };
+      return `Tu caso corresponde al <strong>brazo tardío</strong> estudiado en ictus ${sizeName} (precoz ${ranges.early} vs tardío ${ranges.late}). Ambos brazos demostraron seguridad.`;
+    }
     case 'between':
-      return `Entre las dos ramas estudiadas. Ambas fueron seguras, iniciar es razonable.`;
+      return `Entre los dos brazos estudiados en ictus ${sizeName}. Si el brazo precoz fue seguro y el tardío también, no hay razón para suponer mayor riesgo en este intervalo intermedio.`;
     case 'beyond':
-      return `Más allá de la ventana del ensayo; iniciar es claramente seguro.`;
+      return `Más allá del brazo tardío estudiado en ictus ${sizeName}; iniciar es claramente seguro.`;
   }
 }
 
@@ -953,7 +1143,7 @@ function nihssWord(n) {
 }
 
 function sizeWord(s) {
-  return s === 'minor' ? 'menor' : s === 'moderate' ? 'mayor' : 'mayor';
+  return s === 'minor' ? 'menor' : s === 'moderate' ? 'moderado' : 'mayor';
 }
 
 function divergenceHTML(r) {
@@ -1022,7 +1212,9 @@ function panelContent(r) {
 
     ${state.nihss ? ehraSection(r) : ''}
     ${state.size ? elanSection(r) : ''}
-    ${(state.nihss && state.size && r.ehra.status !== r.elan.status) ? divergenceSection(r) : ''}
+    ${(state.nihss && state.size &&
+       ((r.ehra.status === 'go'   && r.elan.status === 'wait') ||
+        (r.ehra.status === 'wait' && r.elan.status === 'go'))) ? divergenceSection(r) : ''}
     ${limitationsSection()}
   `;
 }
@@ -1077,34 +1269,33 @@ function ehraSection(r) {
 
 function elanSection(r) {
   const v = r.elan;
+  const sizeName = sizeWord(state.size);
+
+  // Rangos del ensayo según tamaño (precoz vs tardío)
+  const ranges = state.size === 'minor'    ? { early: '≤ 48 h',    late: 'día 3–4'   }
+               : state.size === 'moderate' ? { early: '≤ 48 h',    late: 'día 6–7'   }
+               :                              { early: 'día 6–7',  late: 'día 12–14' };
 
   let armText = '';
   if (v.status === 'go') {
-    const w = ELAN_WINDOWS[state.size];
-    const lateRange = state.size === 'minor' ? 'día 3–4'
-                    : state.size === 'moderate' ? 'día 6–7'
-                    : 'día 12–14';
-    const earlyRange = state.size === 'major' ? 'día 6–7' : '≤48 h';
-
     switch (v.arm) {
       case 'early':
-        armText = `Tu caso encaja con la <strong>rama precoz</strong> (${earlyRange}) del ensayo. Esta rama demostró menos ictus recurrentes sin aumentar la HIC sintomática.`;
-        if (r.hours < 24) {
-          armText += ` <br><br><strong>Nota clínica:</strong> Aunque la ventana precoz contemplaba el inicio en las primeras 48 horas, la gran mayoría de los pacientes incluidos en este brazo iniciaron la anticoagulación entre las 24 y las 48 horas posteriores al evento.`;
-        }
+        armText = `Tu caso corresponde al <strong>brazo precoz</strong> en ictus ${sizeName} (precoz ${ranges.early} vs tardío ${ranges.late}). Este brazo demostró menos ictus recurrentes sin aumentar la HIC sintomática.`;
         break;
       case 'late':
-        armText = `Tu caso encaja con la <strong>rama tardía</strong> (${lateRange}) del ensayo. ELAN demostró que ambas ramas son seguras; ninguna mostró exceso de HIC.`;
+        armText = `Tu caso corresponde al <strong>brazo tardío</strong> en ictus ${sizeName} (precoz ${ranges.early} vs tardío ${ranges.late}). ELAN demostró que ambos brazos son seguros; ninguno mostró exceso de HIC.`;
         break;
       case 'between':
-        armText = `Tu caso queda <strong>entre las dos ramas estudiadas</strong> (entre la rama precoz y la tardía). Si la rama precoz fue segura y la tardía también, no hay razón para suponer mayor riesgo en este intervalo intermedio.`;
+        armText = `Tu caso queda <strong>entre los dos brazos estudiados</strong> en ictus ${sizeName} (precoz ${ranges.early} vs tardío ${ranges.late}). Si el brazo precoz fue seguro y el tardío también, no hay razón para suponer mayor riesgo en este intervalo intermedio.`;
         break;
       case 'beyond':
-        armText = `Tu caso está <strong>más allá de la rama tardía</strong> del ensayo. Iniciar es claramente seguro: ambos brazos estudiados ya habrían iniciado el ACOD en este momento.`;
+        armText = `Tu caso está <strong>más allá del brazo tardío</strong> en ictus ${sizeName} (último brazo estudiado: ${ranges.late}). Iniciar es claramente seguro: ambos brazos estudiados ya habrían iniciado el ACOD en este momento.`;
         break;
     }
+  } else if (v.status === 'cautious') {
+    armText = `Las primeras 24 h <strong>caen dentro del diseño</strong> del brazo precoz (≤ 48 h), pero los autores reconocen que en la práctica del ensayo los inicios reales se concentraron entre las 24-48 h y cerca del límite de las 48 h, no en las primeras horas. Además, en ictus menor el beneficio del precoz frente al tardío se observó <strong>a 90 días, no a 30 días</strong>. No hay urgencia para anticoagular en las primeras horas.`;
   } else {
-    armText = `En ictus <strong>mayor</strong> por imagen, ELAN no estudió el inicio antes del día 6. Ambas ramas del ensayo (precoz y tardía) iniciaron el ACOD a partir de ese punto, por lo que iniciar antes sería extrapolar más allá de la evidencia disponible.`;
+    armText = `En ictus <strong>mayor</strong> por imagen, ELAN no estudió el inicio antes del día 6. Ambos brazos del ensayo (precoz día 6-7 y tardío día 12-14) iniciaron el ACOD a partir de ese punto, por lo que iniciar antes sería extrapolar más allá de la evidencia disponible.`;
   }
 
   return `
@@ -1166,11 +1357,50 @@ function elanSection(r) {
       </details>
       ` : ''}
 
+      ${v.status === 'cautious' ? `
+      <details class="cite">
+        <summary>Cita · inicios reales del ensayo</summary>
+        <div class="cite-body">
+          «The time for treatment initiation in participants with minor stroke in the early and late groups could differ by only a small number of hours if they were randomized late in the enrollment window. This minimized the chances of seeing a difference between groups.»
+          <span class="cite-source">Goeldlin et al. Post hoc analysis of ELAN. JAMA Neurol 2024; 81:693-702. Limitaciones, p. 700</span>
+        </div>
+      </details>
+      ` : ''}
+
       <details class="cite">
         <summary>Cita · respaldo final de los autores</summary>
         <div class="cite-body">
           «Early treatment initiation can therefore be supported if indicated or if desired.»
           <span class="cite-source">ELAN, Discusión, p. 2419</span>
+        </div>
+      </details>
+
+      <h3 style="margin-top: 24px;">Clasificación radiológica usada en ELAN</h3>
+
+      <p><strong>Menor:</strong> lesión ≤ 1,5 cm en circulación anterior o posterior. Si no hay infarto visible en la imagen, se clasifica también como menor.</p>
+
+      <p><strong>Moderado:</strong> lesión &gt; 1,5 cm en territorio anterior, <em>sin</em> afectar todo el territorio de ACM o ACA. Incluye rama cortical superficial de ACM, ACA o ACP; rama profunda de ACM (territorio lenticuloestriado); zonas frontera internas.</p>
+
+      <p><strong>Mayor:</strong> lesión que afecta el territorio completo de ACM, ACA o ACP; ≥ 2 ramas corticales de ACM; rama cortical superficial + rama profunda de ACM; &gt; 1 territorio arterial; o ≥ 1,5 cm en tronco/cerebelo.</p>
+
+      <details class="cite">
+        <summary>Cita · clasificación radiológica</summary>
+        <div class="cite-body">
+          «Minor: lesion is ≤ 1.5 cm in anterior or posterior circulation. Moderate: lesion is in a cortical superficial branch of MCA, in the MCA deep branch, in the internal border zone territories, in a cortical superficial branch of PCA, or in a cortical superficial branch of ACA. Major (anterior): lesion involves the whole territory of MCA, PCA, or ACA, in two cortical superficial branches of MCA, in a cortical superficial branch of MCA associated with the MCA deep branch, or in &gt; 1 artery territory. Major (posterior): lesion is ≥ 1.5 cm in the brainstem or cerebellum.»
+          <span class="cite-source">ELAN Supplementary Appendix, Tabla S13</span>
+        </div>
+      </details>
+
+      <p style="margin-top: 14px;"><strong>Caveats prácticos</strong> cuando hay varias lesiones:</p>
+      <p>· Múltiples lesiones puntiformes (ducha embólica) → <strong>menor</strong>.<br>
+      · Dos lesiones menores separadas → contar como <strong>moderado</strong> (suma).<br>
+      · Dos lesiones moderadas separadas → contar como <strong>mayor</strong>.</p>
+
+      <details class="cite">
+        <summary>Cita · caveats de clasificación</summary>
+        <div class="cite-body">
+          «Caveat: multiple minor tiny spots (embolic shower) = minor stroke. Two minor lesions = moderate lesion (the sum of the lesions). Two moderate lesions = large lesion.»
+          <span class="cite-source">ELAN Supplementary Appendix, Tabla S13</span>
         </div>
       </details>
     </div>
@@ -1247,10 +1477,15 @@ document.querySelectorAll('.cards').forEach(group => {
   });
 });
 
-document.querySelectorAll('.time-units button').forEach(btn => {
+// Toggle Días / Fecha y hora
+document.querySelectorAll('.time-mode button').forEach(btn => {
   btn.addEventListener('click', () => {
-    state.unit = btn.dataset.val;
-    document.querySelectorAll('.time-units button').forEach(b => b.setAttribute('aria-pressed', b === btn ? 'true' : 'false'));
+    state.mode = btn.dataset.val;
+    document.querySelectorAll('.time-mode button').forEach(b =>
+      b.setAttribute('aria-pressed', b === btn ? 'true' : 'false')
+    );
+    document.getElementById('rowDays').hidden     = state.mode !== 'days';
+    document.getElementById('rowDatetime').hidden = state.mode !== 'datetime';
     render();
   });
 });
@@ -1258,6 +1493,11 @@ document.querySelectorAll('.time-units button').forEach(btn => {
 document.getElementById('timeInput').addEventListener('input', e => {
   const v = e.target.value;
   state.time = v === '' ? null : Number(v);
+  render();
+});
+
+document.getElementById('datetimeInput').addEventListener('input', e => {
+  state.datetime = e.target.value || null;
   render();
 });
 
