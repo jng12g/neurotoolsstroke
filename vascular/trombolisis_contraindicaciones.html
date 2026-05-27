@@ -62,7 +62,7 @@
   }
 
   .container {
-    max-width: 1280px;
+    max-width: 1440px;
     margin: 0 auto;
     padding: 56px 32px 80px;
     position: relative;
@@ -193,6 +193,7 @@
   }
   .legend-bar.abs { background: var(--red); }
   .legend-bar.rel { background: var(--amber); }
+  .legend-bar.low { background: var(--green); }
 
   .actions { display: flex; gap: 8px; }
 
@@ -229,10 +230,13 @@
   /* GRID */
   .grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(3, 1fr);
     gap: 40px;
   }
-  @media (max-width: 920px) {
+  @media (max-width: 1200px) {
+    .grid { grid-template-columns: 1fr 1fr; gap: 32px; }
+  }
+  @media (max-width: 768px) {
     .grid { grid-template-columns: 1fr; gap: 32px; }
     .container { padding: 36px 20px 60px; }
     .disclaimer { grid-template-columns: 1fr; gap: 8px; }
@@ -298,6 +302,7 @@
   }
   .card.abs::before { background: var(--red); }
   .card.rel::before { background: var(--amber); }
+  .card.low::before { background: var(--green); }
 
   .card:hover { border-color: var(--ink-muted); }
   .card.open { border-color: var(--ink); }
@@ -494,6 +499,7 @@
     <div class="legend">
       <div class="legend-item"><span class="legend-bar abs"></span> Absoluta — no administrar</div>
       <div class="legend-item"><span class="legend-bar rel"></span> Relativa — caso a caso</div>
+      <div class="legend-item"><span class="legend-bar low"></span> Bajo riesgo — beneficio > riesgo</div>
     </div>
     <div class="actions">
       <button class="btn btn-secondary" onclick="toggleAll(false)">Plegar todo</button>
@@ -604,283 +610,4 @@
 
       <article class="card abs" style="animation-delay: 0.45s">
         <div class="card-header" onclick="toggleCard(this)">
-          <span class="card-num">09 /</span>
-          <span class="card-title">Disección del arco aórtico</span>
-          <span class="chevron">▶</span>
-        </div>
-        <div class="card-body"><div class="card-body-inner">
-          <p>Para pacientes con ictus isquémico agudo y disección del arco aórtico conocida o sospechada, el tratamiento con trombólisis IV es potencialmente dañino y no debe administrarse.</p>
-        </div></div>
-      </article>
-
-      <article class="card abs" style="animation-delay: 0.50s">
-        <div class="card-header" onclick="toggleCard(this)">
-          <span class="card-num">10 /</span>
-          <span class="card-title">ARIA — anomalías de imagen relacionadas con amiloide</span>
-          <span class="chevron">▶</span>
-        </div>
-        <div class="card-body"><div class="card-body-inner">
-          <p>El riesgo de hemorragia intracerebral relacionada con la trombólisis en pacientes que reciben inmunoterapia amiloide o con <em>anomalías en las imágenes relacionadas con el amiloide (ARIA)</em> es desconocido; la trombólisis IV debe evitarse en estos pacientes.</p>
-        </div></div>
-      </article>
-    </section>
-
-    <section>
-      <div class="column-header">
-        <div class="column-meta">
-          <span>Columna 02</span>
-          <span class="count">18 ítems</span>
-        </div>
-        <h2 class="column-title">Contraindicaciones <em>relativas</em></h2>
-      </div>
-
-      <article class="card rel" style="animation-delay: 0.08s">
-        <div class="card-header" onclick="toggleCard(this)">
-          <span class="card-num">01 /</span>
-          <span class="card-title">Discapacidad preexistente o fragilidad</span>
-          <span class="chevron">▶</span>
-        </div>
-        <div class="card-body"><div class="card-body-inner">
-          <p>Los beneficios frente a los riesgos de ofrecer trombólisis IV en pacientes con discapacidad preexistente o fragilidad siguen siendo inciertos. El tratamiento debe determinarse de forma individualizada.</p>
-        </div></div>
-      </article>
-
-      <article class="card rel" style="animation-delay: 0.13s">
-        <div class="card-header" onclick="toggleCard(this)">
-          <span class="card-num">02 /</span>
-          <span class="card-title"><span class="window">&lt; 48 h</span>Exposición reciente a DOAC</span>
-          <span class="chevron">▶</span>
-        </div>
-        <div class="card-body"><div class="card-body-inner">
-          <p>En pacientes con síntomas incapacitantes y exposición reciente a DOAC (&lt;48 h) que se encuentran dentro de la ventana para alteplasa o tenecteplasa, se desconoce la seguridad de la trombólisis IV. Datos observacionales emergentes pero limitados sugieren que puede considerarse tras un análisis exhaustivo beneficio-riesgo individualizado.</p>
-        </div></div>
-      </article>
-
-      <article class="card rel" style="animation-delay: 0.18s">
-        <div class="card-header" onclick="toggleCard(this)">
-          <span class="card-num">03 /</span>
-          <span class="card-title"><span class="window">&lt; 3 meses</span>Ictus isquémico previo</span>
-          <span class="chevron">▶</span>
-        </div>
-        <div class="card-body"><div class="card-body-inner">
-          <p>El uso de trombólisis IV en pacientes con un ictus isquémico previo en los últimos 3 meses puede conllevar un mayor riesgo de hemorragia intracraneal. El potencial aumento del riesgo según el momento y el tamaño del ictus debe sopesarse frente a los beneficios de manera individualizada.</p>
-        </div></div>
-      </article>
-
-      <article class="card rel" style="animation-delay: 0.23s">
-        <div class="card-header" onclick="toggleCard(this)">
-          <span class="card-num">04 /</span>
-          <span class="card-title">Hemorragia intracerebral previa</span>
-          <span class="chevron">▶</span>
-        </div>
-        <div class="card-body"><div class="card-body-inner">
-          <p>La administración de trombólisis IV en pacientes con antecedentes de hemorragia intracerebral puede aumentar el riesgo de hemorragia sintomática. Se puede considerar que los pacientes con <em>angiopatía amiloide conocida</em> tienen un riesgo mayor.</p>
-        </div></div>
-      </article>
-
-      <article class="card rel" style="animation-delay: 0.28s">
-        <div class="card-header" onclick="toggleCard(this)">
-          <span class="card-num">05 /</span>
-          <span class="card-title"><span class="window">14 d – 3 m</span>Traumatismo mayor no SNC</span>
-          <span class="chevron">▶</span>
-        </div>
-        <div class="card-body"><div class="card-body-inner">
-          <p>Los pacientes con traumatismo mayor reciente entre 14 días y 3 meses del ictus isquémico agudo pueden tener un mayor riesgo de daño y hemorragia sistémica grave que requiera transfusión.</p>
-        </div></div>
-      </article>
-
-      <article class="card rel" style="animation-delay: 0.33s">
-        <div class="card-header" onclick="toggleCard(this)">
-          <span class="card-num">06 /</span>
-          <span class="card-title"><span class="window">&lt; 10 días</span>Cirugía mayor no SNC reciente</span>
-          <span class="chevron">▶</span>
-        </div>
-        <div class="card-body"><div class="card-body-inner">
-          <p>Los pacientes con cirugía mayor reciente en los últimos 10 días del ictus isquémico agudo pueden tener un mayor riesgo de daño. La consideración individual riesgo-beneficio es apropiada.</p>
-        </div></div>
-      </article>
-
-      <article class="card rel" style="animation-delay: 0.38s">
-        <div class="card-header" onclick="toggleCard(this)">
-          <span class="card-num">07 /</span>
-          <span class="card-title"><span class="window">&lt; 21 días</span>Hemorragia gastrointestinal o genitourinaria reciente</span>
-          <span class="chevron">▶</span>
-        </div>
-        <div class="card-body"><div class="card-body-inner">
-          <p>Los pacientes con hemorragia gastrointestinal o genitourinaria reciente en los últimos 21 días pueden tener un mayor riesgo de daño. Se recomienda la consulta con especialistas para determinar si la hemorragia ha sido tratada.</p>
-        </div></div>
-      </article>
-
-      <article class="card rel" style="animation-delay: 0.43s">
-        <div class="card-header" onclick="toggleCard(this)">
-          <span class="card-num">08 /</span>
-          <span class="card-title">Disección arterial intracraneal</span>
-          <span class="chevron">▶</span>
-        </div>
-        <div class="card-body"><div class="card-body-inner">
-          <p>Se desconoce la seguridad de la trombólisis IV en pacientes con ictus isquémico agudo debido a disección arterial intracraneal.</p>
-        </div></div>
-      </article>
-
-      <article class="card rel" style="animation-delay: 0.48s">
-        <div class="card-header" onclick="toggleCard(this)">
-          <span class="card-num">09 /</span>
-          <span class="card-title">Malformaciones vasculares intracraneales</span>
-          <span class="chevron">▶</span>
-        </div>
-        <div class="card-body"><div class="card-body-inner">
-          <p>Se desconoce la seguridad de la trombólisis IV para los pacientes que presentan ictus isquémico agudo y que se sabe que albergan una malformación vascular intracraneal no rota y no tratada.</p>
-        </div></div>
-      </article>
-
-      <article class="card rel" style="animation-delay: 0.53s">
-        <div class="card-header" onclick="toggleCard(this)">
-          <span class="card-num">10 /</span>
-          <span class="card-title"><span class="window">&lt; 3 meses</span>SCACEST reciente</span>
-          <span class="chevron">▶</span>
-        </div>
-        <div class="card-body"><div class="card-body-inner">
-          <p>Para SCACEST en los últimos 3 meses, la consideración individual riesgo-beneficio debe determinarse junto con <em>consulta emergente de cardiología</em>.</p>
-        </div></div>
-      </article>
-
-      <article class="card rel" style="animation-delay: 0.58s">
-        <div class="card-header" onclick="toggleCard(this)">
-          <span class="card-num">11 /</span>
-          <span class="card-title">Pericarditis aguda</span>
-          <span class="chevron">▶</span>
-        </div>
-        <div class="card-body"><div class="card-body-inner">
-          <p>La trombólisis IV para pacientes con ictus isquémico agudo mayor y pericarditis aguda puede ser razonable en casos individuales. Está justificada la consulta cardiológica emergente.</p>
-        </div></div>
-      </article>
-
-      <article class="card rel" style="animation-delay: 0.63s">
-        <div class="card-header" onclick="toggleCard(this)">
-          <span class="card-num">12 /</span>
-          <span class="card-title">Trombo auricular o ventricular izquierdo</span>
-          <span class="chevron">▶</span>
-        </div>
-        <div class="card-body"><div class="card-body-inner">
-          <p>La trombólisis IV para pacientes con trombo auricular o ventricular izquierdo conocido puede ser razonable en casos individuales. Consulta cardiológica emergente necesaria.</p>
-        </div></div>
-      </article>
-
-      <article class="card rel" style="animation-delay: 0.68s">
-        <div class="card-header" onclick="toggleCard(this)">
-          <span class="card-num">13 /</span>
-          <span class="card-title">Malignidad activa sistémica</span>
-          <span class="chevron">▶</span>
-        </div>
-        <div class="card-body"><div class="card-body-inner">
-          <p>Se desconoce la seguridad de la trombólisis IV en pacientes con malignidad activa sistémica. Está justificada la consulta emergente con oncología para evaluar riesgo-beneficio.</p>
-        </div></div>
-      </article>
-
-      <article class="card rel" style="animation-delay: 0.73s">
-        <div class="card-header" onclick="toggleCard(this)">
-          <span class="card-num">14 /</span>
-          <span class="card-title">Embarazo y período posparto</span>
-          <span class="chevron">▶</span>
-        </div>
-        <div class="card-body"><div class="card-body-inner">
-          <p>La trombólisis IV puede considerarse en el embarazo y el período posparto cuando los beneficios superan el riesgo de hemorragia uterina. Consulta obstétrica emergente necesaria.</p>
-        </div></div>
-      </article>
-
-      <article class="card rel" style="animation-delay: 0.78s">
-        <div class="card-header" onclick="toggleCard(this)">
-          <span class="card-num">15 /</span>
-          <span class="card-title"><span class="window">&lt; 7 días</span>Punción dural lumbar reciente</span>
-          <span class="chevron">▶</span>
-        </div>
-        <div class="card-body"><div class="card-body-inner">
-          <p>Puede considerarse en casos individuales, incluso tras haber realizado una punción dural lumbar en los 7 días anteriores.</p>
-        </div></div>
-      </article>
-
-      <article class="card rel" style="animation-delay: 0.83s">
-        <div class="card-header" onclick="toggleCard(this)">
-          <span class="card-num">16 /</span>
-          <span class="card-title"><span class="window">&lt; 7 días</span>Punción arterial en vaso no compresible</span>
-          <span class="chevron">▶</span>
-        </div>
-        <div class="card-body"><div class="card-body-inner">
-          <p>Se desconoce la seguridad en pacientes que han tenido una punción arterial de un vaso sanguíneo no compresible en los 7 días anteriores a los síntomas del ictus.</p>
-        </div></div>
-      </article>
-
-      <article class="card rel" style="animation-delay: 0.88s">
-        <div class="card-header" onclick="toggleCard(this)">
-          <span class="card-num">17 /</span>
-          <span class="card-title"><span class="window">14 d – 3 m</span>TCE moderado-severo subagudo</span>
-          <span class="chevron">▶</span>
-        </div>
-        <div class="card-body"><div class="card-body-inner">
-          <p>Puede considerarse en casos individuales con consulta cuidadosa con equipos de neurocirugía y cuidados neurocríticos.</p>
-        </div></div>
-      </article>
-
-      <article class="card rel" style="animation-delay: 0.93s">
-        <div class="card-header" onclick="toggleCard(this)">
-          <span class="card-num">18 /</span>
-          <span class="card-title"><span class="window">14 d – 3 m</span>Neurocirugía subaguda</span>
-          <span class="chevron">▶</span>
-        </div>
-        <div class="card-body"><div class="card-body-inner">
-          <p>Puede considerarse de forma individual, previa consulta con los miembros del equipo neuroquirúrgico.</p>
-        </div></div>
-      </article>
-    </section>
-  </div>
-
-  <footer>
-    <div class="footer-cite">Primum non nocere.</div>
-    <div class="footer-meta">
-      NEUROTOOLS · v. 2026.05<br>
-      © Dr. Juan Carlos Navarro García
-    </div>
-    <div class="footer-ref">
-      <strong>Fuente</strong>
-      2026 Guideline for the Early Management of Patients With Acute Ischemic Stroke: A Guideline From the American Heart Association / American Stroke Association.
-    </div>
-  </footer>
-
-</div>
-
-<script>
-  function toggleCard(headerEl) {
-    const card = headerEl.parentElement;
-    const body = card.querySelector('.card-body');
-    const isOpen = card.classList.contains('open');
-    if (isOpen) {
-      body.style.maxHeight = '0px';
-      card.classList.remove('open');
-    } else {
-      body.style.maxHeight = body.scrollHeight + 'px';
-      card.classList.add('open');
-    }
-  }
-
-  function toggleAll(open) {
-    document.querySelectorAll('.card').forEach(card => {
-      const body = card.querySelector('.card-body');
-      if (open) {
-        card.classList.add('open');
-        body.style.maxHeight = body.scrollHeight + 'px';
-      } else {
-        card.classList.remove('open');
-        body.style.maxHeight = '0px';
-      }
-    });
-  }
-
-  window.addEventListener('resize', () => {
-    document.querySelectorAll('.card.open .card-body').forEach(body => {
-      body.style.maxHeight = body.scrollHeight + 'px';
-    });
-  });
-</script>
-
-</body>
-</html>
+          <span class="card-num">09
