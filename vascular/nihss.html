@@ -799,6 +799,7 @@
 
   <div id="items-container"></div>
 
+  <!-- In-flow Results Dashboard -->
   <div class="results-dashboard">
     <div class="breakdown">
       <div class="breakdown-row" id="breakdown-row"></div>
@@ -823,6 +824,7 @@
         <div class="result-tag" id="lvo-tag">Sin datos</div>
       </div>
       
+      <!-- NUEVO BLOQUE: Indicación DAPT -->
       <div class="result-block" id="dapt-block" style="grid-column: 1 / -1; margin-top: 12px; display: none; background: var(--paper); padding: 16px; border: 1px solid var(--hairline); border-radius: 4px; border-left: 3px solid var(--ink-soft);">
         <div class="result-label" style="color: var(--ink);">Recomendación Antiagregación (Guías 2026)</div>
         <div id="dapt-text" style="font-size: 0.95rem; color: var(--ink-soft); line-height: 1.5; margin-top: 8px;"></div>
@@ -1380,38 +1382,36 @@ function buildReportText() {
   else lvoLine += 'Baja sospecha de OGV.';
 
   // --- NUEVA LÓGICA DAPT ---
-  let daptLinePlain = '';
   let daptLineHtml = '';
   const daptBlock = document.getElementById('dapt-block');
   const daptTextUI = document.getElementById('dapt-text');
 
+  const daptWarningHtml = `
+    <div style="margin-top: 8px; padding: 8px 12px; background: rgba(150, 41, 52, 0.04); border-left: 3px solid var(--red); border-radius: 3px; display: flex; flex-direction: column; gap: 2px;">
+      <strong style="color: var(--red); font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; letter-spacing: 0.04em; text-transform: uppercase;">⚠️ Excepción Clínica</strong>
+      <span style="font-size: 0.9rem; color: var(--ink-soft); line-height: 1.4;">El inicio de la antiagregación debe retrasarse 24 horas si el paciente ha recibido tratamiento de reperfusión (fibrinólisis intravenosa).</span>
+    </div>`;
+
   if (total >= 6) {
-    const msg = 'Antiagregación simple.';
-    daptLinePlain = `Antiagregación: ${msg}`;
-    daptLineHtml = `<strong>Antiagregación:</strong> ${msg}`;
+    const msgHtml = `<span style="display:block; margin-bottom: 4px;"><strong>Antiagregación simple.</strong></span>` + daptWarningHtml;
+    
+    daptLineHtml = msgHtml;
     
     // Actualizar UI
     if (daptBlock && daptTextUI) {
       daptBlock.style.display = 'block';
       daptBlock.style.borderLeftColor = 'var(--ink-muted)';
-      daptTextUI.innerHTML = msg;
+      daptTextUI.innerHTML = msgHtml;
     }
     
   } else if (total <= 5) {
-    const msgPlain = `Doble antiagregación plaquetaria (DAPT) indicada en los siguientes supuestos:\n  - < 24 horas: Siempre (si NIHSS ≤ 3) o por presunta causa aterosclerótica (si NIHSS 4-5).\n  - 24-72 horas: Solo si hay presunta causa aterosclerótica documentada con NIHSS ≤ 5 .\n  ⚠️ EXCEPCIÓN: Retrasar 24h si el paciente ha recibido fibrinólisis IV.`;
+    const msgHtml = `<span style="display:block; margin-bottom: 4px;">Puede estar indicada la <strong>doble antiagregación plaquetaria (clopidogrel + AAS x 21 días con dosis de carga inicial)</strong> en los siguientes supuestos:</span>
+    <ul style="margin: 0 0 8px 0; padding-left: 18px; line-height: 1.4;">
+      <li style="margin-bottom: 2px;"><strong>&lt; 24 horas:</strong> Siempre (si NIHSS ≤ 3) o por presunta causa aterosclerótica (si NIHSS 4-5).</li>
+      <li><strong>24-72 horas:</strong> Solo si hay presunta causa aterosclerótica documentada con NIHSS ≤ 5.</li>
+    </ul>` + daptWarningHtml;
     
-    const msgHtml = `Puede estar indicada la <strong>doble antiagregación plaquetaria (clopidogrel + AAS x 21 días con dosis de carga inicial)</strong> en los siguientes supuestos:
-    <ul style="margin: 6px 0 0; padding-left: 20px;">
-      <li><strong>&lt; 24 horas:</strong> Siempre (si NIHSS ≤ 3) o por presunta causa aterosclerótica (si NIHSS 4-5).</li>
-      <li><strong>24-72 horas:</strong> Solo si hay presunta causa aterosclerótica documentada con NIHSS ≤ 5 .</li>
-    </ul>
-    <div style="margin-top: 12px; padding: 10px 14px; background: rgba(150, 41, 52, 0.04); border-left: 3px solid var(--red); border-radius: 3px;">
-      <strong style="color: var(--red); font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; letter-spacing: 0.04em; text-transform: uppercase;">⚠️ Excepción Clínica</strong><br>
-      <span style="font-size: 0.92rem; color: var(--ink-soft);">El inicio de la antiagregación debe retrasarse 24 horas si el paciente ha recibido tratamiento de reperfusión (fibrinólisis intravenosa).</span>
-    </div>`;
-    
-    daptLinePlain = `Antiagregación: ${msgPlain}`;
-    daptLineHtml = `<strong>Antiagregación:</strong><br>${msgHtml}`;
+    daptLineHtml = msgHtml;
     
     // Actualizar UI
     if (daptBlock && daptTextUI) {
@@ -1422,7 +1422,7 @@ function buildReportText() {
   }
 
   // Montaje final del texto
-  const plain = text + '\n\n' + lvoLine + '\n\n' + daptLinePlain;
+  const plain = text; // SOLO COPIA LA CADENA NIHSS
   const html = text + `<span class="lvo-note">${lvoLine}</span><div style="margin-top: 16px; padding-top: 16px; border-top: 1px dashed var(--hairline-soft); font-size: 0.95rem; color: var(--ink-soft);">${daptLineHtml}</div>`;
 
   return { plain, html };
