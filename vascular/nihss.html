@@ -799,7 +799,6 @@
 
   <div id="items-container"></div>
 
-  <!-- In-flow Results Dashboard -->
   <div class="results-dashboard">
     <div class="breakdown">
       <div class="breakdown-row" id="breakdown-row"></div>
@@ -824,7 +823,6 @@
         <div class="result-tag" id="lvo-tag">Sin datos</div>
       </div>
       
-      <!-- NUEVO BLOQUE: Indicación DAPT -->
       <div class="result-block" id="dapt-block" style="grid-column: 1 / -1; margin-top: 12px; display: none; background: var(--paper); padding: 16px; border: 1px solid var(--hairline); border-radius: 4px; border-left: 3px solid var(--ink-soft);">
         <div class="result-label" style="color: var(--ink);">Recomendación Antiagregación (Guías 2026)</div>
         <div id="dapt-text" style="font-size: 0.95rem; color: var(--ink-soft); line-height: 1.5; margin-top: 8px;"></div>
@@ -1422,8 +1420,8 @@ function buildReportText() {
   }
 
   // Montaje final del texto
-  const plain = text; // SOLO COPIA LA CADENA NIHSS
-  const html = text + `<span class="lvo-note">${lvoLine}</span><div style="margin-top: 16px; padding-top: 16px; border-top: 1px dashed var(--hairline-soft); font-size: 0.95rem; color: var(--ink-soft);">${daptLineHtml}</div>`;
+  const plain = text; 
+  const html = text; 
 
   return { plain, html };
 }
