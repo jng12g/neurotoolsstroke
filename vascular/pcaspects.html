@@ -10,7 +10,7 @@
 <link rel="canonical" href="https://neurotools.es/vascular/pc-aspects.html">
 
 <meta property="og:title" content="Calculadora PC-ASPECTS | Neurotools">
-<meta property="og:description" content="Evalúa la extensión de los signos isquémicos tempranos en la circulación posterior con esta calculadora interactiva de la escala PC-ASPECTS.">
+<meta property="og:description" content="Evalúa la extensión de los signos isquémicos tempranos en la circulación posterior con esta calculadora interactiva de la escala PC-ASPECTS (AHA/ASA 2026).">
 <meta property="og:type" content="website">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -109,7 +109,7 @@
     border: 2px solid var(--hairline-soft);
     border-radius: 16px;
     padding: 16px 24px;
-    margin-bottom: 24px;
+    margin-bottom: 16px;
     background: var(--paper);
     transition: all 0.3s var(--ease);
     display: flex;
@@ -128,6 +128,26 @@
     display: inline-block;
     background: var(--green);
     color: white;
+  }
+
+  /* WARNING BANNER */
+  .warning-banner {
+    background: rgba(184, 134, 47, 0.1);
+    border-left: 4px solid var(--amber);
+    padding: 16px 20px;
+    border-radius: 8px;
+    margin-bottom: 24px;
+    font-size: 14px;
+    color: #7a5416;
+    display: none;
+    line-height: 1.5;
+    animation: fadeIn 0.3s ease-in;
+  }
+  .warning-banner strong { font-weight: 700; color: #5a3d0e; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-5px); }
+    to { opacity: 1; transform: translateY(0); }
   }
 
   /* CARDS */
@@ -265,7 +285,7 @@
     </div>
     <h1>PC-ASPECTS</h1>
     <div class="desc">Posterior Circulation Alberta Stroke Program Early CT Score</div>
-    <div class="ref">Evaluación tomográfica del territorio vertebrobasilar</div>
+    <div class="ref">Evaluación del territorio vertebrobasilar en TC</div>
   </header>
 
   <!-- SCORE BAR -->
@@ -275,8 +295,13 @@
       <div id="total-num">10<span>/10</span></div>
     </div>
     <div style="text-align:right">
-      <div id="adj-label">Territorio íntegro</div>
+      <div id="adj-label">Daño isquémico leve</div>
     </div>
+  </div>
+
+  <!-- WARNING BANNER -->
+  <div id="brainstem-warning" class="warning-banner">
+    ⚠️ <strong>Alerta de extensión:</strong> Índice protuberancia-mesencéfalo ≥ 3 puntos. Se considera infarto extenso en el tronco encefálico, lo que disminuye drásticamente la probabilidad de un resultado clínico favorable tras el tratamiento.
   </div>
 
   <!-- REFERENCIA ANATÓMICA -->
@@ -286,9 +311,9 @@
     </div>
     <div class="card-body" style="background: var(--paper);">
       <div style="font-size: 12px; color: var(--ink-muted); text-align: center; margin-bottom: 12px; font-family: 'JetBrains Mono', monospace;">
-       
+        Convención radiológica (el lado izquierdo corresponde al hemisferio derecho)
       </div>
-      <!-- Imagen de referencia -->
+      <!-- Asegúrate de que pcaspect.png existe en la carpeta vascular -->
       <img src="pcaspect.png" alt="Guía de Escala PC-ASPECTS" class="reference-image">
     </div>
   </div>
@@ -301,7 +326,7 @@
     </div>
     <div class="card-body">
       <div class="info-box">
-        <strong>Instrucciones:</strong> Seleccione los territorios que presentan signos tempranos de isquemia. Se restarán los puntos correspondientes a cada región sobre un total de 10. Tenga en cuenta que el mesencéfalo y el puente restan 2 puntos cada uno.
+        <strong>Instrucciones:</strong> Seleccione los territorios que presentan hipodensidad compatible con isquemia. La calculadora restará automáticamente los puntos correspondientes de la puntuación máxima de 10.
       </div>
 
       <div style="margin-bottom: 24px;">
@@ -347,12 +372,16 @@
   <!-- SEO / TEXTO CLÍNICO -->
   <div class="card" style="margin-bottom: 40px; background: transparent; box-shadow: none; border-color: var(--hairline);">
     <div class="card-head" style="background: transparent; border-bottom: none;">
-      <div class="left"><span style="font-size:20px">📚</span><h3 style="color: var(--ink-soft);">Sobre la escala PC-ASPECTS</h3></div>
+      <div class="left"><span style="font-size:20px">📚</span><h3 style="color: var(--ink-soft);">Correlación Clínica y Toma de Decisiones</h3></div>
     </div>
     <div class="card-body" style="font-size: 13px; line-height: 1.6; color: var(--ink-soft); padding-top: 0;">
-      <p>La puntuación <strong>PC-ASPECTS (Posterior Circulation Alberta Stroke Program Early CT Score)</strong> cuantifica los cambios isquémicos tempranos en la circulación posterior. A partir de una puntuación basal de 10, se restan puntos por la presencia de hipodensidades.</p>
-      <p>A diferencia de la escala ASPECTS anterior donde cada territorio resta 1 punto, en la escala PC-ASPECTS el <strong>mesencéfalo y el puente (protuberancia) restan 2 puntos cada uno</strong> por su mayor criticidad, mientras que los tálamos, hemisferios cerebelosos y territorios de arteria cerebral posterior (occipitales) restan 1 punto cada uno de forma bilateral.</p>
-      <p><strong>Correlación clínica:</strong> Una puntuación PC-ASPECTS ≥ 8 indica un pronóstico clínico favorable tras la terapia de reperfusión, mientras que puntuaciones menores sugieren un infarto más extenso con peor pronóstico funcional.</p>
+      <ul style="margin-left: 16px; margin-bottom: 12px; color: var(--ink);">
+        <li style="margin-bottom: 8px;"><strong>PC-ASPECTS ≥ 6:</strong> Daño isquémico leve. Se asocia con un pronóstico funcional favorable. Cumple criterios de recomendación (Clase 1) para trombectomía endovascular, sujeto al cumplimiento de otros parámetros clínicos (ej. NIHSS).</li>
+        <li><strong>PC-ASPECTS &lt; 6:</strong> Sugiere un infarto extenso de la circulación posterior, asociado a un peor pronóstico funcional.</li>
+      </ul>
+      <p style="font-size: 11.5px; color: var(--ink-muted); font-family: 'JetBrains Mono', monospace; font-style: italic;">
+        * Referencia adaptada a las directrices de la guía AHA/ASA 2026 y ensayos ATTENTION / BAOCHE.
+      </p>
     </div>
   </div>
 
@@ -383,7 +412,7 @@
     T_Izq: "Tálamo Izq.", T_Der: "Tálamo Der.",
     O_Izq: "Occipital Izq.", O_Der: "Occipital Der.",
     Mesenc: "Mesencéfalo",
-    Puente: "Puente",
+    Puente: "Puente / Protuberancia",
     C_Izq: "Cerebelo Izq.", C_Der: "Cerebelo Der."
   };
 
@@ -405,9 +434,15 @@
 
   function updateScore() {
     let deductions = 0;
+    let trunkDamage = 0;
+    
     Object.keys(state).forEach(key => {
       if (state[key]) {
         deductions += regionPoints[key];
+        // Sumar daño en tronco (Mesencéfalo y Puente son 2 pts cada uno)
+        if (key === 'Mesenc' || key === 'Puente') {
+          trunkDamage += regionPoints[key];
+        }
       }
     });
     
@@ -417,45 +452,52 @@
     const numEl = document.getElementById('total-num');
     const barEl = document.getElementById('score-bar');
     const labelEl = document.getElementById('adj-label');
+    const warningEl = document.getElementById('brainstem-warning');
 
     numEl.innerHTML = `${score}<span>/10</span>`;
 
-    // Cambiar color según puntuación (Criterio PC-ASPECTS)
-    if (score === 10) {
-      barEl.style.borderColor = "var(--hairline-soft)";
-      numEl.style.color = "var(--ink)";
-      labelEl.textContent = "Sin signos isquémicos";
-      labelEl.style.background = "var(--green)";
-    } else if (score >= 8) {
+    // Lógica actualizada AHA/ASA 2026 (Corte en 6)
+    if (score >= 6) {
       barEl.style.borderColor = "var(--green)";
-      numEl.style.color = "var(--green)";
-      labelEl.textContent = "Infarto leve (PC-ASPECTS ≥ 8)";
+      numEl.style.color = "var(--ink)";
+      labelEl.textContent = "Daño isquémico leve (Pronóstico favorable)";
       labelEl.style.background = "var(--green)";
-    } else if (score >= 5) {
-      barEl.style.borderColor = "var(--amber)";
-      numEl.style.color = "var(--amber)";
-      labelEl.textContent = "Infarto moderado (PC-ASPECTS 5-7)";
-      labelEl.style.background = "var(--amber)";
     } else {
       barEl.style.borderColor = "var(--red)";
       numEl.style.color = "var(--red)";
-      labelEl.textContent = "Infarto extenso (PC-ASPECTS ≤ 4)";
+      labelEl.textContent = "Infarto extenso (Peor pronóstico funcional)";
       labelEl.style.background = "var(--red)";
     }
 
-    updateConclusion(score, deductions);
+    // Alerta de tronco encefálico (≥ 3 puntos)
+    if (trunkDamage >= 3) {
+      warningEl.style.display = 'block';
+    } else {
+      warningEl.style.display = 'none';
+    }
+
+    updateConclusion(score, deductions, trunkDamage);
   }
 
-  function updateConclusion(score, deductions) {
+  function updateConclusion(score, deductions, trunkDamage) {
     const affected = Object.keys(state).filter(k => state[k]);
     const affectedNames = affected.map(k => `${regionNames[k]} (-${regionPoints[k]})`);
     
     let text = `Escala PC-ASPECTS: ${score}/10\n`;
     
     if (score === 10) {
-      text += `· Sin evidencia de signos isquémicos tempranos en el territorio vertebrobasilar.`;
+      text += `· Sin evidencia de signos isquémicos tempranos en el territorio vertebrobasilar.\n`;
+      text += `· Conclusión: Daño isquémico leve.`;
     } else {
-      text += `· Territorios afectados (-${deductions} pts): ${affectedNames.join(', ')}`;
+      text += `· Territorios afectados (-${deductions} pts): ${affectedNames.join(', ')}\n`;
+      if (score >= 6) {
+        text += `· Conclusión: Daño isquémico leve (Pronóstico funcional favorable).`;
+      } else {
+        text += `· Conclusión: Infarto extenso (Asociado a peor pronóstico funcional).`;
+      }
+      if (trunkDamage >= 3) {
+        text += `\n⚠️ Alerta: Índice protuberancia-mesencéfalo ≥ 3. Infarto extenso en tronco encefálico.`;
+      }
     }
     
     document.getElementById('concl-pre').textContent = text;
