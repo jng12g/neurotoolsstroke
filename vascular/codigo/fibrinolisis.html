@@ -1,1 +1,272 @@
+<div id="seccion-ventana-extendida" class="modulo-ictus">
+    
+    <div class="card intro-extendida">
+        <h3>Evaluación de Ventana Extendida y Hora Desconocida</h3>
+        <p>Herramienta de soporte a la decisión para la administración de fibrinólisis IV más allá de las 4.5 horas estándar o en ictus del despertar, basada en neuroimagen tisular avanzada[cite: 474].</p>
+    </div>
 
+    <div class="card">
+        <h4>1. Seleccione el Escenario Clínico</h4>
+        <div class="selector-escenario">
+            <label class="opcion-radio">
+                <input type="radio" name="escenario_ext" value="wake_up_temprano" onchange="actualizarEscenarioExt()">
+                <div class="radio-content">
+                    <strong>Ictus del Despertar / Hora Desconocida</strong>
+                    <span>Detectado hace &lt; 4.5 horas[cite: 471].</span>
+                </div>
+            </label>
+            <label class="opcion-radio">
+                <input type="radio" name="escenario_ext" value="ventana_4_9" onchange="actualizarEscenarioExt()">
+                <div class="radio-content">
+                    <strong>Ventana de 4.5 a 9 horas</strong>
+                    <span>O despertar &lt; 9h desde el punto medio del sueño[cite: 471].</span>
+                </div>
+            </label>
+            <label class="opcion-radio">
+                <input type="radio" name="escenario_ext" value="ventana_4_24_ogv" onchange="actualizarEscenarioExt()">
+                <div class="radio-content">
+                    <strong>Ventana de 4.5 a 24 horas (Con OGV)</strong>
+                    <span>Paciente NO candidato a TVE o con retraso crítico[cite: 471, 496].</span>
+                </div>
+            </label>
+        </div>
+    </div>
+
+    <div id="panel-wake-up" class="card panel-criterios oculto">
+        <h4>2. Criterios de Neuroimagen (Desajuste DWI-FLAIR)</h4>
+        <div class="checklist-criterios">
+            <label class="checkbox-item">
+                <input type="checkbox" id="chk_dwi_lesion" onchange="evaluarDecision()">
+                <span>Lesión hiperintensa evidente en secuencia DWI[cite: 479].</span>
+            </label>
+            <label class="checkbox-item">
+                <input type="checkbox" id="chk_flair_ausente" onchange="evaluarDecision()">
+                <span>Ausencia de cambios marcados de señal en la misma región en FLAIR[cite: 479].</span>
+            </label>
+            <label class="checkbox-item">
+                <input type="checkbox" id="chk_volumen_dwi" onchange="evaluarDecision()">
+                <span>Lesión en DWI afecta a &lt; 1/3 del territorio de la ACM[cite: 295].</span>
+            </label>
+        </div>
+    </div>
+
+    <div id="panel-perfusion" class="card panel-criterios oculto">
+        <h4>2. Volumetría por Perfusión (CTP o RM DWI-PWI)</h4>
+        <p class="nota-perfusion">Introduzca los datos obtenidos del software automatizado (ej. RAPID, iStroke)[cite: 301, 324].</p>
+        
+        <div class="grid-inputs-perfusion">
+            <div class="input-grupo">
+                <label for="vol_core">Volumen del Núcleo (Core) (mL):</label>
+                <input type="number" id="vol_core" placeholder="Ej. 25" min="0" oninput="calcularMismatch()">
+                <span class="ayuda-input">CBF &lt;30% o DWI[cite: 300].</span>
+            </div>
+            <div class="input-grupo">
+                <label for="vol_penumbra">Volumen de Hipoperfusión (mL):</label>
+                <input type="number" id="vol_penumbra" placeholder="Ej. 80" min="0" oninput="calcularMismatch()">
+                <span class="ayuda-input">Tmax &gt;6s[cite: 300].</span>
+            </div>
+        </div>
+
+        <div class="resultados-calculo-mismatch">
+            <div class="dato-mismatch">
+                <span class="etiqueta">Relación de Desajuste (Mismatch Ratio):</span>
+                <span class="valor" id="res_ratio">-</span>
+            </div>
+            <div class="dato-mismatch">
+                <span class="etiqueta">Volumen de Desajuste (Mismatch Volume):</span>
+                <span class="valor" id="res_vol_mismatch">-</span> <span class="unidad">mL</span>
+            </div>
+        </div>
+
+        <div id="alerta-tve" class="alerta-warning oculto">
+            <strong>Atención (Ventana 4.5 - 24h):</strong> La fibrinólisis IV en esta ventana solo está indicada si el paciente alberga una Oclusión de Gran Vaso (OGV) y <strong>no puede recibir Tratamiento Endovascular (TVE)</strong> de forma oportuna[cite: 496].
+            <label class="checkbox-item mt-10">
+                <input type="checkbox" id="chk_no_tve" onchange="evaluarDecision()">
+                <span>Confirmo que el paciente NO es candidato a TVE o sufrirá un retraso crítico.</span>
+            </label>
+        </div>
+    </div>
+
+    <div class="card dictamen-panel">
+        <h4>Recomendación Clínica</h4>
+        <div id="resultado-dictamen" class="alerta-neutra">
+            Seleccione un escenario y complete los criterios radiológicos para obtener una recomendación.
+        </div>
+    </div>
+
+</div>
+
+<style>
+    .modulo-ictus { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; color: #1a1a1a; max-width: 800px; margin: 0 auto; padding: 10px; }
+    .card { background: #ffffff; border: 1px solid #e0e0e0; border-radius: 8px; padding: 20px; margin-bottom: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+    .intro-extendida { background: #2c3e50; color: white; }
+    .intro-extendida h3 { margin-top: 0; color: #ecf0f1; }
+    
+    .selector-escenario { display: flex; flex-direction: column; gap: 10px; }
+    .opcion-radio { cursor: pointer; }
+    .opcion-radio input { display: none; }
+    .radio-content { border: 2px solid #ced4da; border-radius: 8px; padding: 15px; background: #f8f9fa; transition: all 0.2s; }
+    .opcion-radio input:checked + .radio-content { border-color: #2980b9; background: #ebf5fb; box-shadow: 0 0 0 1px #2980b9; }
+    .radio-content strong { display: block; font-size: 1.1rem; color: #2c3e50; margin-bottom: 4px; }
+    .radio-content span { font-size: 0.9rem; color: #7f8c8d; }
+
+    .oculto { display: none !important; }
+    .mt-10 { margin-top: 10px; }
+
+    .checklist-criterios { display: flex; flex-direction: column; gap: 12px; }
+    .checkbox-item { display: flex; align-items: flex-start; gap: 10px; cursor: pointer; font-size: 1rem; padding: 8px; border-radius: 6px; }
+    .checkbox-item:hover { background: #f1f2f6; }
+    .checkbox-item input { width: 20px; height: 20px; margin-top: 2px; cursor: pointer; }
+
+    .grid-inputs-perfusion { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
+    @media (max-width: 600px) { .grid-inputs-perfusion { grid-template-columns: 1fr; gap: 10px; } }
+    .input-grupo { display: flex; flex-direction: column; }
+    .input-grupo label { font-weight: bold; margin-bottom: 6px; font-size: 0.95rem; }
+    .input-grupo input { padding: 12px; border: 2px solid #ced4da; border-radius: 6px; font-size: 1.2rem; }
+    .ayuda-input { font-size: 0.8rem; color: #6c757d; margin-top: 4px; }
+
+    .resultados-calculo-mismatch { background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 6px; padding: 15px; display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px; }
+    .dato-mismatch { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed #ced4da; padding-bottom: 5px; }
+    .dato-mismatch:last-child { border-bottom: none; padding-bottom: 0; }
+    .dato-mismatch .etiqueta { font-weight: 600; color: #495057; }
+    .dato-mismatch .valor { font-size: 1.3rem; font-weight: bold; color: #2c3e50; }
+
+    .alerta-warning { background: #fff3cd; color: #856404; border: 1px solid #ffeeba; padding: 15px; border-radius: 6px; font-size: 0.9rem; }
+    
+    .dictamen-panel h4 { margin-top: 0; }
+    .alerta-neutra { background: #e2e3e5; color: #383d41; padding: 15px; border-radius: 6px; text-align: center; }
+    .alerta-exito { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; padding: 15px; border-radius: 6px; }
+    .alerta-peligro { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; padding: 15px; border-radius: 6px; }
+    .cor-badge { display: inline-block; background: #28a745; color: white; padding: 3px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: bold; margin-bottom: 5px; }
+</style>
+
+<script>
+    // Variables globales de cálculo
+    let coreVol = 0;
+    let penumbraVol = 0;
+    let mismatchRatio = 0;
+    let mismatchVol = 0;
+
+    function actualizarEscenarioExt() {
+        const escenario = document.querySelector('input[name="escenario_ext"]:checked').value;
+        const panelWakeUp = document.getElementById('panel-wake-up');
+        const panelPerfusion = document.getElementById('panel-perfusion');
+        const alertaTve = document.getElementById('alerta-tve');
+        
+        // Resetear inputs al cambiar de escenario
+        document.getElementById('chk_dwi_lesion').checked = false;
+        document.getElementById('chk_flair_ausente').checked = false;
+        document.getElementById('chk_volumen_dwi').checked = false;
+        document.getElementById('vol_core').value = '';
+        document.getElementById('vol_penumbra').value = '';
+        document.getElementById('chk_no_tve').checked = false;
+        calcularMismatch(); // Limpia los resultados de cálculo
+
+        if (escenario === 'wake_up_temprano') {
+            panelWakeUp.classList.remove('oculto');
+            panelPerfusion.classList.add('oculto');
+        } else {
+            panelWakeUp.classList.add('oculto');
+            panelPerfusion.classList.remove('oculto');
+            
+            if (escenario === 'ventana_4_24_ogv') {
+                alertaTve.classList.remove('oculto');
+            } else {
+                alertaTve.classList.add('oculto');
+            }
+        }
+        evaluarDecision();
+    }
+
+    function calcularMismatch() {
+        const coreInput = document.getElementById('vol_core').value;
+        const penumbraInput = document.getElementById('vol_penumbra').value;
+        
+        coreVol = parseFloat(coreInput) || 0;
+        penumbraVol = parseFloat(penumbraInput) || 0;
+
+        if (coreVol > 0 && penumbraVol > 0) {
+            mismatchRatio = penumbraVol / coreVol;
+            mismatchVol = penumbraVol - coreVol;
+            
+            document.getElementById('res_ratio').innerText = mismatchRatio.toFixed(2);
+            document.getElementById('res_vol_mismatch').innerText = mismatchVol.toFixed(1);
+        } else {
+            mismatchRatio = 0;
+            mismatchVol = 0;
+            document.getElementById('res_ratio').innerText = "-";
+            document.getElementById('res_vol_mismatch').innerText = "-";
+        }
+        
+        // Colorear el ratio para feedback visual básico
+        const ratioEl = document.getElementById('res_ratio');
+        if (mismatchRatio > 1.2) { ratioEl.style.color = "#27ae60"; } 
+        else { ratioEl.style.color = "#2c3e50"; }
+
+        evaluarDecision();
+    }
+
+    function evaluarDecision() {
+        const escenarioChecked = document.querySelector('input[name="escenario_ext"]:checked');
+        const dictamenDiv = document.getElementById('resultado-dictamen');
+        
+        if (!escenarioChecked) return;
+        const escenario = escenarioChecked.value;
+
+        let dictamenPositivo = false;
+        let mensaje = "";
+
+        if (escenario === 'wake_up_temprano') {
+            const dwi = document.getElementById('chk_dwi_lesion').checked;
+            const flair = document.getElementById('chk_flair_ausente').checked;
+            const vol = document.getElementById('chk_volumen_dwi').checked;
+
+            if (dwi && flair && vol) {
+                dictamenPositivo = true;
+                mensaje = `<span class="cor-badge">COR 2a | LOE B-R</span><br><strong>Fibrinólisis IV Indicada:</strong> El paciente presenta un perfil de desajuste DWI-FLAIR favorable[cite: 471, 479].`;
+            } else {
+                mensaje = `<strong>Fibrinólisis IV No Indicada:</strong> No se cumplen todos los criterios de desajuste DWI-FLAIR del ensayo WAKE-UP[cite: 479].`;
+            }
+        } 
+        else if (escenario === 'ventana_4_9') {
+            // Criterios EXTEND: core < 70, ratio > 1.2, mismatch vol > 10
+            if (coreVol > 0 && coreVol < 70 && mismatchRatio > 1.2 && mismatchVol > 10) {
+                dictamenPositivo = true;
+                mensaje = `<span class="cor-badge">COR 2a | LOE B-R</span><br><strong>Fibrinólisis IV Indicada:</strong> Perfil de perfusión favorable (Criterios EXTEND). El paciente presenta penumbra isquémica salvable[cite: 300, 471].`;
+            } else if (coreVol > 0) {
+                mensaje = `<strong>Fibrinólisis IV No Indicada:</strong> No se cumplen los umbrales volumétricos (Núcleo &lt; 70mL, Relación &gt; 1.2, Desajuste &gt; 10mL)[cite: 300].`;
+            } else {
+                mensaje = `Introduzca los volúmenes de perfusión para evaluar.`;
+            }
+        }
+        else if (escenario === 'ventana_4_24_ogv') {
+            const noTve = document.getElementById('chk_no_tve').checked;
+            // Criterios TRACE-III/TIMELESS: core < 70, ratio > 1.8, penumbra (volumen) > 15
+            // Nota: La guía específica penumbra > 15 mL (volumen de penumbra o desajuste)
+            if (coreVol > 0 && coreVol < 70 && mismatchRatio > 1.8 && penumbraVol > 15) {
+                if (noTve) {
+                    dictamenPositivo = true;
+                    mensaje = `<span class="cor-badge">COR 2b | LOE B-R</span><br><strong>Fibrinólisis IV Indicada:</strong> Perfil de perfusión favorable (Criterios TRACE-III). Justificado dado que el paciente alberga OGV pero NO es candidato a TVE oportuno[cite: 301, 324, 471].`;
+                } else {
+                    mensaje = `<strong>Fibrinólisis IV Retenida:</strong> El paciente cumple criterios de imagen, pero el Tratamiento Endovascular (TVE) es la prioridad. Solo considere IV si el TVE no es factible[cite: 496].`;
+                }
+            } else if (coreVol > 0) {
+                mensaje = `<strong>Fibrinólisis IV No Indicada:</strong> No se cumplen los umbrales volumétricos extendidos (Núcleo &lt; 70mL, Relación &gt; 1.8, Penumbra/Desajuste &gt; 15mL)[cite: 301, 324].`;
+            } else {
+                mensaje = `Introduzca los volúmenes y confirme el estado de TVE para evaluar.`;
+            }
+        }
+
+        // Aplicar estilos según resultado
+        dictamenDiv.innerHTML = mensaje;
+        dictamenDiv.className = ''; // limpiar clases
+        
+        if (dictamenPositivo) {
+            dictamenDiv.classList.add('alerta-exito');
+        } else if (mensaje.includes('No Indicada') || mensaje.includes('Retenida')) {
+            dictamenDiv.classList.add('alerta-peligro');
+        } else {
+            dictamenDiv.classList.add('alerta-neutra');
+        }
+    }
+</script>
