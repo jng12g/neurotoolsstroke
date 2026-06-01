@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Evidencias en soporte general temprano — Guía 2026 AHA/ASA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+ --paper:#f4efe4; --paper-2:#fbf8f1; --card:#fdfbf6;
+ --ink:#2a2520; --ink-soft:#6d6457; --ink-faint:#9a9082;
+ --line:#e4dccb; --line-soft:#efe9db;
+ --accent:#2f6b63; --accent-soft:#e0ebe7;
+ --c1:#2e7d52; --c1-bg:#e6efe6; --c1-bd:#bcd8c2;
+ --c2a:#a87d1c; --c2a-bg:#f4eccf; --c2a-bd:#e3d29a;
+ --c2b:#c1742a; --c2b-bg:#f6e8d6; --c2b-bd:#e8c79e;
+ --c3:#b23b2e; --c3-bg:#f3e0db; --c3-bd:#e3b6ac;
+ --c3h:#7d2418; --c3h-bg:#eccfc6; --c3h-bd:#cf9a8c;
+ --radius:16px; --shadow:0 1px 2px rgba(42,37,32,.04),0 8px 24px rgba(42,37,32,.06);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{
+ font-family:'Instrument Sans',system-ui,sans-serif;background:var(--paper);color:var(--ink);
+ line-height:1.55;font-size:16px;min-height:100vh;
+ background-image:radial-gradient(circle at 12% 8%,rgba(47,107,99,.05),transparent 40%),radial-gradient(circle at 88% 92%,rgba(178,59,46,.04),transparent 40%);
+}
+.wrap{max-width:920px;margin:0 auto;padding:clamp(16px,4vw,40px) clamp(14px,4vw,28px) 80px}
+header{margin-bottom:20px}
+.kicker{font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);font-weight:600;display:flex;align-items:center;gap:8px}
+.kicker svg{width:16px;height:16px}
+h1{font-family:'Fraunces',serif;font-weight:600;font-size:clamp(27px,5.2vw,42px);line-height:1.04;letter-spacing:-.01em;margin:6px 0 8px}
+.sub{color:var(--ink-soft);font-size:clamp(14px,2.4vw,16px);max-width:64ch}
+.disclaimer{margin-top:13px;background:var(--paper-2);border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:10px;padding:11px 14px;font-size:13px;color:var(--ink-soft);display:flex;gap:10px;align-items:flex-start}
+.disclaimer svg{width:18px;height:18px;flex:none;stroke:var(--accent);fill:none;stroke-width:1.7;margin-top:1px}
+.disclaimer.prov{border-left-color:var(--c2a)}
+.disclaimer.prov svg{stroke:var(--c2a)}
+
+.tabs{display:flex;gap:5px;overflow-x:auto;margin:22px 0 0;border-bottom:1px solid var(--line);-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{appearance:none;border:none;background:none;font-family:inherit;font-size:14px;font-weight:600;color:var(--ink-faint);padding:11px 13px;cursor:pointer;border-radius:10px 10px 0 0;position:relative;transition:color .15s;display:flex;align-items:center;gap:7px;white-space:nowrap;flex:none}
+.tab svg{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:1.7}
+.tab:hover{color:var(--ink)}
+.tab.active{color:var(--ink)}
+.tab.active::after{content:"";position:absolute;left:10px;right:10px;bottom:-1px;height:2.5px;background:var(--accent);border-radius:2px}
+
+.section{padding-top:22px;animation:fade .25s ease}
+@keyframes fade{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+.intro{font-size:14.5px;color:var(--ink-soft);max-width:68ch;margin-bottom:18px}
+.intro strong{color:var(--ink)}
+
+.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px;margin-bottom:22px}
+.hero h3{font-family:'Fraunces',serif;font-weight:600;font-size:17px;display:flex;align-items:center;gap:9px}
+.hero h3 svg{width:20px;height:20px;stroke:var(--accent);fill:none;stroke-width:1.7;flex:none}
+.hero .ph{font-size:12.5px;color:var(--ink-faint);margin:3px 0 14px}
+.phases{display:flex;flex-wrap:wrap;gap:7px}
+.phase{appearance:none;font-family:inherit;font-size:13px;font-weight:600;background:var(--paper-2);border:1px solid var(--line);color:var(--ink-soft);padding:9px 13px;border-radius:10px;cursor:pointer;transition:.13s;line-height:1.2;text-align:left}
+.phase:hover{border-color:var(--accent);color:var(--ink)}
+.phase.sel{background:var(--accent);border-color:var(--accent);color:#fff}
+.target{margin-top:14px;border-radius:13px;border:1px solid var(--line);overflow:hidden;animation:fade .26s ease}
+.target .big{background:var(--accent-soft);padding:15px 18px;display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;border-bottom:1px solid var(--line)}
+.target .big .val{font-family:'Fraunces',serif;font-size:29px;font-weight:700;color:var(--accent);line-height:1}
+.target .big .cap{font-size:13px;color:var(--ink-soft);font-weight:600}
+.target .note{padding:11px 18px;font-size:13px;color:var(--ink-soft)}
+.subhead{font-family:'Fraunces',serif;font-weight:600;font-size:14px;color:var(--ink-faint);margin:20px 0 9px;letter-spacing:.01em}
+
+.explore{display:grid;gap:11px}
+.exrow{border:1px solid var(--line);border-radius:13px;background:var(--card);overflow:hidden;box-shadow:var(--shadow)}
+.exrow summary{list-style:none;cursor:pointer;display:flex;gap:12px;align-items:center;padding:14px 15px;user-select:none}
+.exrow summary::-webkit-details-marker{display:none}
+.badge{flex:none;display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:10px;padding:6px 0;width:46px}
+.badge .b-cor{font-family:'Fraunces',serif;font-weight:700;font-size:17px;line-height:1}
+.badge .b-loe{font-size:9px;font-weight:600;letter-spacing:.02em;margin-top:2px;opacity:.85;white-space:nowrap}
+.exrow .extitle{flex:1;min-width:0;font-size:14.5px;font-weight:600;line-height:1.32;color:var(--ink)}
+.exrow .exchev{width:16px;height:16px;stroke:var(--ink-faint);fill:none;stroke-width:2;transition:transform .2s;flex:none}
+.exrow[open] .exchev{transform:rotate(90deg)}
+.exrow[open] summary{border-bottom:1px solid var(--line-soft)}
+.exbody{padding:14px 15px 15px}
+.verdict{font-size:11px;letter-spacing:.06em;text-transform:uppercase;font-weight:700;margin-bottom:9px;display:inline-block;padding:3px 9px;border-radius:7px}
+.quote-tag{font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);font-weight:600;margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.quote-tag svg{width:13px;height:13px;stroke:var(--accent);fill:none;stroke-width:1.8;flex:none}
+.quote p{font-family:'Fraunces',serif;font-size:15px;line-height:1.52;color:var(--ink)}
+.quote cite{display:block;margin-top:9px;font-style:normal;font-size:11.5px;color:var(--ink-faint)}
+.suphead{font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-faint);font-weight:700;margin:15px 0 7px;padding-top:13px;border-top:1px solid var(--line-soft);display:flex;align-items:center;gap:6px}
+.suphead::before{content:"";width:13px;height:13px;background:no-repeat center/contain url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="%239a9082" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.3h6c0-1 .4-1.8 1-2.3A7 7 0 0 0 12 2Z"/></svg>')}
+.suptext{font-size:13.5px;line-height:1.55;color:var(--ink-soft)}
+
+.cor-1{background:var(--c1-bg);border:1px solid var(--c1-bd);color:var(--c1)}
+.cor-2a{background:var(--c2a-bg);border:1px solid var(--c2a-bd);color:var(--c2a)}
+.cor-2b{background:var(--c2b-bg);border:1px solid var(--c2b-bd);color:var(--c2b)}
+.cor-3{background:var(--c3-bg);border:1px solid var(--c3-bd);color:var(--c3)}
+.cor-3h{background:var(--c3h-bg);border:1px solid var(--c3h-bd);color:var(--c3h)}
+
+.legend{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px;font-size:11.5px}
+.legend span{display:inline-flex;align-items:center;gap:5px;color:var(--ink-soft)}
+.legend i{width:13px;height:13px;border-radius:4px;display:inline-block}
+.footnote{margin-top:28px;font-size:12px;color:var(--ink-faint);text-align:center;line-height:1.6}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+ <div class="kicker">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l2-7 4 14 2-7h6"/></svg>
+  Neurotools · Vascular · Código Ictus
+ </div>
+ <h1>Evidencias en soporte general temprano</h1>
+ <p class="sub">Guía 2026 AHA/ASA. Manejo fisiológico en la fase aguda del ictus isquémico. Pulsa cada recomendación para ver su texto literal y su sustento científico.</p>
+</header>
+
+<nav class="tabs" id="tabs"></nav>
+<main id="view"></main>
+
+<div class="legend">
+ <span><i style="background:var(--c1-bg);border:1px solid var(--c1-bd)"></i>Clase de recomendación 1 · recomendado</span>
+ <span><i style="background:var(--c2a-bg);border:1px solid var(--c2a-bd)"></i>2a · razonable</span>
+ <span><i style="background:var(--c2b-bg);border:1px solid var(--c2b-bd)"></i>2b · puede considerarse</span>
+ <span><i style="background:var(--c3-bg);border:1px solid var(--c3-bd)"></i>3 · sin beneficio</span>
+ <span><i style="background:var(--c3h-bg);border:1px solid var(--c3h-bd)"></i>3 · perjudicial</span>
+</div>
+
+<p class="footnote">clase de recomendación = clase de recomendación · nivel de evidencia = nivel de evidencia · ictus isquémico agudo = ictus isquémico agudo · oclusión de gran vaso = oclusión de gran vaso · tratamiento endovascular = tratamiento endovascular · hiperoxia normobárica = hiperoxia normobárica · oxígeno hiperbárico = oxígeno hiperbárico · hemorragia intracraneal sintomática = hemorragia intracraneal sintomática.</p>
+</div>
+
+<script>
+const CITE='Soporte general temprano del ictus isquémico agudo';
+const ICON_CITE='<svg viewBox="0 0 24 24"><path d="M7 7h4v4c0 2-1 3-3 4M14 7h4v4c0 2-1 3-3 4"/></svg>';
+const CHEV='<svg class="exchev" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg>';
+const corClass=c=>({"1":"cor-1","2a":"cor-2a","2b":"cor-2b","3nb":"cor-3","3h":"cor-3h"})[c];
+const corBadge=c=>({"1":"1","2a":"2a","2b":"2b","3nb":"3","3h":"3"})[c];
+const corWord=c=>({"1":"Recomendado","2a":"Razonable","2b":"Puede considerarse","3nb":"Sin beneficio","3h":"Perjudicial"})[c];
+
+/* s = titular corto (resumen, no se trunca) · t = texto literal */
+const R={
+ a1:{cor:"1",loe:"C-LD",s:"Soporte de vía aérea si ↓ consciencia o disfunción bulbar",t:"En pacientes con ictus agudo y disminución del nivel de conciencia o disfunción bulbar, se recomienda el soporte de la vía aérea y la asistencia ventilatoria según sea necesario para mantener la permeabilidad de la vía aérea, su protección y una adecuada ventilación y oxigenación."},
+ a2:{cor:"1",loe:"C-LD",s:"O₂ suplementario si hipoxia: objetivo SpO₂ > 94%",t:"En pacientes con ictus isquémico agudo e hipoxia, se debe proporcionar oxígeno suplementario para mantener la saturación de oxígeno (SpO₂) > 94%."},
+ a3:{cor:"2b",loe:"B-R",s:"hiperoxia normobárica antes del tratamiento endovascular en oclusión de gran vaso anterior (NIHSS 10–20, < 6 h)",t:"En pacientes con ictus isquémico agudo dentro de las 6 horas desde el inicio, con puntuación NIHSS de 10 a 20, ASPECTS por TC ≥ 6, y oclusión de gran vaso de la circulación anterior (M1 o terminación carotídea) con tratamiento endovascular planificado (con o sin fibrinólisis IV), el uso de hiperoxia normobárica antes del tratamiento endovascular puede ser razonable para mejorar los resultados funcionales a los 90 días."},
+ a4:{cor:"2b",loe:"B-NR",s:"oxígeno hiperbárico en el embolismo aéreo arterial",t:"En pacientes con ictus isquémico agudo debido a un embolismo aéreo arterial, el oxígeno hiperbárico puede ser razonable para mejorar el resultado clínico."},
+ a5:{cor:"3nb",loe:"B-R",s:"O₂ rutinario sin hipoxia (no apto a tratamiento endovascular): sin beneficio",t:"En pacientes con ictus isquémico agudo sin hipoxia que no son aptos para tratamiento endovascular, no se recomienda la administración de oxígeno suplementario para mejorar los resultados funcionales."},
+ a6:{cor:"3nb",loe:"B-R",s:"oxígeno hiperbárico sin embolismo aéreo: sin beneficio",t:"En pacientes con ictus isquémico agudo no asociado a un embolismo aéreo, no se recomienda el uso de oxígeno hiperbárico para mejorar los resultados funcionales."},
+ h1:{cor:"3nb",loe:"B-R",s:"Cabeza a 0° frente a 30° de rutina: sin beneficio",t:"En pacientes con ictus isquémico agudo a nivel global, no hay beneficio en el posicionamiento rutinario de la cabeza a 0 grados en comparación con 30 grados durante 24 horas para mejorar el resultado funcional."},
+ h2:{cor:"3nb",loe:"B-R",s:"Trendelenburg (–20°) sin reperfusión: sin beneficio",t:"En pacientes con ictus isquémico agudo por causa probable de aterosclerosis de gran arteria para quienes no se dispone de ninguna intervención de reperfusión, no hay beneficio en el posicionamiento rutinario en Trendelenburg (–20 grados) en comparación con el posicionamiento de la cabeza a 0 o 30 grados para mejorar el resultado funcional."},
+ b1:{cor:"1",loe:"C-LD",s:"Corregir la hipotensión y la hipovolemia",t:"En pacientes con ictus isquémico agudo, la hipotensión y la hipovolemia deben corregirse para mantener los niveles de perfusión sistémica necesarios para respaldar la función orgánica."},
+ b2:{cor:"1",loe:"C-EO",s:"Tratar la HTA precoz si una comorbilidad lo exige",t:"En pacientes con ictus isquémico agudo, el tratamiento temprano de la hipertensión está indicado cuando lo requieran enfermedades concomitantes (por ejemplo, un evento coronario agudo concomitante, insuficiencia cardíaca aguda, disección aórtica, hemorragia intracraneal sintomática postrombolisis o preeclampsia/eclampsia) para reducir el riesgo de complicaciones."},
+ b3:{cor:"2b",loe:"C-EO",s:"PA ≥ 220/120 sin reperfusión: tratar es incierto",t:"En pacientes con PA ≥ 220/120 mmHg que no recibieron fibrinólisis IV ni tratamiento endovascular y no tienen enfermedades concomitantes que requieran un tratamiento antihipertensivo urgente, el beneficio de iniciar o reiniciar el tratamiento de la hipertensión dentro de las primeras 48 a 72 horas es incierto."},
+ b4:{cor:"3nb",loe:"A",s:"PA < 220/120 sin reperfusión: tratar no es efectivo",t:"En pacientes con PA < 220/120 mmHg que no recibieron fibrinólisis IV ni tratamiento endovascular y no tienen una enfermedad concomitante que requiera un tratamiento antihipertensivo urgente, iniciar o reiniciar el tratamiento de la hipertensión dentro de las primeras 48 a 72 horas después de un ictus isquémico agudo no es efectivo para prevenir la muerte o la dependencia."},
+ b5:{cor:"1",loe:"B-NR",s:"Antes de la fibrinólisis IV: reducir a < 185/110",t:"Los pacientes con ictus isquémico agudo que tienen la PA elevada y que, por lo demás, son aptos para el tratamiento con fibrinólisis IV deben recibir una reducción de su PAS a < 185 mmHg y de la presión arterial diastólica (PAD) a < 110 mmHg antes de que se inicie la terapia con fibrinólisis IV para reducir las complicaciones hemorrágicas."},
+ b6:{cor:"2a",loe:"B-NR",s:"Antes del tratamiento endovascular (sin fibrinólisis): mantener ≤ 185/110",t:"En pacientes para quienes se planifica un tratamiento endovascular y que no han recibido terapia de fibrinólisis IV, es razonable mantener la PA ≤ 185/110 mmHg antes del procedimiento para evitar complicaciones y mejorar los resultados del paciente."},
+ b7:{cor:"1",loe:"B-R",s:"Tras la fibrinólisis IV: < 180/105 al menos 24 h",t:"La PA debe mantenerse a < 180/105 mmHg durante al menos las primeras 24 horas después del tratamiento con fibrinólisis IV."},
+ b8:{cor:"3nb",loe:"B-R",s:"Post-fibrinólisis: PAS < 140 intensiva sin beneficio",t:"En pacientes con ictus isquémico agudo de gravedad leve a moderada que han sido tratados con fibrinólisis IV, no se recomienda la reducción intensiva de la PAS (objetivo de < 140 mmHg en comparación con < 180 mmHg) porque no se asocia con una mejora en el resultado funcional."},
+ b9:{cor:"2a",loe:"B-NR",s:"Durante y 24 h post-tratamiento endovascular: mantener ≤ 180/105",t:"En pacientes que se someten a tratamiento endovascular, es razonable mantener la PA a un nivel ≤ 180/105 mmHg durante y durante las 24 horas posteriores al procedimiento."},
+ b10:{cor:"3h",loe:"A",s:"Tras recanalización: PAS < 140 en 72 h es perjudicial",t:"En pacientes con ictus isquémico agudo con oclusión de gran vaso de la circulación anterior que han sido recanalizados con éxito mediante terapia endovascular (mTICI 2b, 2c o 3) y sin otra indicación para un objetivo de control de la presión arterial, la reducción intensiva de la PAS a un objetivo de < 140 mmHg durante las primeras 72 horas es perjudicial y no se recomienda."},
+ t1:{cor:"1",loe:"B-R",s:"Hipertermia: buscar la normotermia",t:"En pacientes con ictus isquémico agudo que tienen hipertermia, se recomienda buscar la normotermia, incluyendo el uso de protocolos iniciados por enfermería para el manejo de la fiebre, para mejorar los resultados funcionales y reducir la mortalidad."},
+ t2:{cor:"1",loe:"C-EO",s:"Identificar y tratar la fuente (infección)",t:"En pacientes con ictus isquémico agudo e hipertermia, se deben identificar y tratar las fuentes de la hipertermia, como las infecciones, para evitar complicaciones."},
+ t3:{cor:"3nb",loe:"B-R",s:"Hipotermia inducida en normotermia: sin beneficio",t:"En pacientes con ictus isquémico agudo y normotermia, no se recomienda el tratamiento con hipotermia inducida o la prevención profiláctica de la fiebre con el propósito de mejorar los resultados."},
+ g1:{cor:"1",loe:"C-LD",s:"Tratar la hipoglucemia < 60 mg/dL",t:"En pacientes con ictus isquémico agudo, la hipoglucemia (glucosa en sangre < 60 mg/dL) debe ser tratada para evitar complicaciones."},
+ g2:{cor:"2a",loe:"C-LD",s:"Hiperglucemia persistente: objetivo 140–180 mg/dL",t:"En pacientes con ictus isquémico agudo, es razonable tratar la hiperglucemia persistente para alcanzar niveles de glucosa en sangre en un rango de 140 a 180 mg/dL con una monitorización estrecha para prevenir peores resultados funcionales."},
+ g3:{cor:"3nb",loe:"A",s:"Control intensivo 80–130 (insulina IV): sin beneficio",t:"En pacientes hospitalizados con ictus isquémico agudo e hiperglucemia, no se recomienda el tratamiento con insulina IV para alcanzar niveles de glucosa en sangre en el rango de 80 a 130 mg/dL con el fin de mejorar los resultados funcionales a los 3 meses."}
+};
+
+/* Sustento científico — síntesis fiel del texto de soporte del documento */
+const SUP={
+ a1:"El soporte de la vía aérea debe determinarse por tres factores: la capacidad de mantener o proteger la vía aérea, la capacidad de ventilación y oxigenación adecuadas, y el curso clínico previsto con la probabilidad de deterioro. La hipoxia es común —afecta hasta al 63% de los pacientes en algún momento tras el ingreso— y se asocia a mayor riesgo de muerte y a dificultad para proteger la vía aérea. El fallo en proporcionar soporte adecuado aumenta la mortalidad y la discapacidad.",
+ a2:"Un estudio de cohorte retrospectivo (n=1479) mostró que una buena oxigenación en las primeras horas se asoció con menor mortalidad de forma dosis-dependiente; una SpO₂ < 93% conllevó mayor mortalidad frente al 93–95% (12.5% vs 6.9%, sin alcanzar significación). Un análisis post-hoc de HeadPoST encontró una asociación en J inversa entre la SpO₂ más baja y la muerte/dependencia, con un nadir óptimo en 96–97%, y una asociación significativa entre la SpO₂ y los eventos adversos graves.",
+ a3:"Los resultados negativos de estudios previos de hiperoxia normobárica pueden deberse a la falta de recanalización, por lo que varios ECA pequeños y monocéntricos la evaluaron en el contexto del tratamiento endovascular. El primero (180 sujetos) la halló segura y posiblemente efectiva; el segundo (86) identificó una reducción del crecimiento del infarto entre las 24 y 48 h; un tercero de escalada de dosis en China (100 pacientes) mostró menor volumen de infarto a 72 h con hiperoxia normobárica de 4 y 6 h. OPENS-2 (282 pacientes, 26 centros, controlado con sham) mostró mejor mRS a 90 días con hiperoxia normobárica (mediana 2 vs 3; ORc ajustada 1.65 [IC 95% 1.09–2.50]; P=0.018). Evidencia prometedora, pendiente de replicación multicéntrica.",
+ a4:"Un metanálisis de estudios no aleatorizados en embolismo aéreo cerebral mostró que un menor tiempo hasta el oxígeno hiperbárico se asocia con mayor probabilidad de resultado favorable: del 65% cuando se inicia de inmediato al 30% cuando se retrasa unas 15 horas.",
+ a5:"Múltiples ECA no han demostrado mejoría con oxígeno suplementario en pacientes no hipóxicos. El ECA más grande (n=8003) no halló mejores resultados funcionales a 90 días, y un metanálisis de 15 estudios (n=9255) tampoco encontró beneficio. Existe creciente preocupación por el daño de la hiperoxia (producción de radicales libres): en pacientes ventilados con ictus en UCI, la hiperoxia arterial se asoció de forma independiente con la mortalidad intrahospitalaria (OR ajustada 1.2 [IC 95% 1.0–1.5]).",
+ a6:"Un metanálisis de 8 ECA (n=493) no encontró diferencias entre oxígeno hiperbárico y control en la NIHSS, el índice de Barthel ni los marcadores inflamatorios. Los resultados son mixtos y la evidencia actual no respalda el uso rutinario de oxígeno hiperbárico en el ictus agudo no asociado a embolismo aéreo.",
+ h1:"HeadPoST —gran ensayo internacional aleatorizado por conglomerados, cruzado y abierto— no halló diferencias en la mRS a 90 días entre la posición de cabeza plana (0°) y elevada (≥30°) mantenidas 24 h. Los pacientes en posición plana toleraron peor la posición asignada, pero las tasas de neumonía no difirieron. Ha sido criticado por incluir mayoritariamente ictus menores (NIHSS mediana de 4), con menor probabilidad de beneficiarse de un aumento de la perfusión.",
+ h2:"HOPES-2 incluyó exclusivamente ictus isquémico agudo por aterosclerosis de gran arteria no aptos para otro tratamiento, comparando la posición de Trendelenburg (–20°) con el posicionamiento estándar (0–30°). No encontró diferencias en el resultado funcional. Todos estos ensayos confirmaron la seguridad y viabilidad del posicionamiento a 0° o con la cabeza hacia abajo, sin diferencias significativas en complicaciones.",
+ b1:"Los estudios observacionales son contradictorios, con asociaciones entre peores resultados y una PA más baja, y ningún estudio ha abordado específicamente el tratamiento de la PA baja en el ictus. En un análisis sistemático de 12 estudios de coloides frente a cristaloides, las probabilidades de muerte o dependencia fueron similares. No existen datos para guiar el volumen ni la duración de la fluidoterapia.",
+ b2:"Los pacientes con ictus isquémico agudo pueden presentar comorbilidades agudas graves —como insuficiencia cardíaca aguda o disección aórtica— que requieren una reducción urgente de la PA para prevenir su empeoramiento. Sin embargo, una reducción excesiva puede exacerbar la isquemia cerebral en el contexto de una autorregulación alterada, por lo que se recomienda un manejo individualizado con una reducción inicial del 15%.",
+ b3:"La hipertensión grave (más comúnmente > 220/120 mmHg) fue criterio de exclusión en los ensayos previos de reducción de PA. A pesar de la falta de estudios controlados en este escenario sin una indicación médica concreta, generalmente se recomienda la reducción de la PA, individualizada y equilibrando la perfusión cerebral y sistémica, con un descenso inicial del 15%.",
+ b4:"Un metanálisis de numerosos ECA encontró que reducir la PA en las primeras 48–72 h tras el ictus isquémico agudo no mejora los resultados funcionales ni la mortalidad. Además, se sabe que la PA desciende espontáneamente en aproximadamente el 75% de estos pacientes en los primeros días.",
+ b5:"Los ECA de alteplasa IV exigieron una PAS < 185 y una PAD < 110 mmHg antes del tratamiento. Los estudios observacionales y los metanálisis sugieren que el riesgo de hemorragia tras la alteplasa es mayor con PA más elevadas y con mayor variabilidad de la PA. El ensayo AcT excluyó la hipertensión refractaria que impidiera mantener la PA objetivo < 180/105 mmHg.",
+ b6:"De los ECA que demostraron el beneficio del tratamiento endovascular, varios (REVASCAT, SWIFT PRIME, EXTEND-IA, THRACE, MR CLEAN, DAWN, ANGEL-ASPECT y TESLA) excluyeron una PA > 185/110 mmHg. Los estudios observacionales asocian una PA pretrombectomía más alta con peores resultados, pero no hay datos de ECA sobre el objetivo óptimo; como varios ensayos importantes manejaron la PA preprocedimiento a < 185/110, es razonable usar ese nivel como guía.",
+ b7:"La recomendación permanece prácticamente sin cambios respecto a las guías previas, por las asociaciones conocidas con hemorragia intracraneal sintomática por hiperperfusión y con el empeoramiento isquémico por hipoperfusión. En conjunto, se recomienda mantener la PAS entre 140 y 180 mmHg tras la trombolisis.",
+ b8:"En un ECA de pacientes aptos a trombolisis con PAS ≥ 150 mmHg, el objetivo de 130–140 frente a < 180 mmHg no produjo diferencias en la mRS a 90 días, pese a haber menos pacientes con hemorragia intracraneal sintomática en el grupo intensivo. Un análisis post-hoc de un ECA de alta calidad confirmó que, en ictus isquémico agudo leve-moderado tras alteplasa, reducir a < 140 mmHg disminuye el riesgo de hemorragia intracraneal sintomática pero no aporta beneficio funcional frente a < 180 mmHg.",
+ b9:"La recomendación se mantiene respecto a guías anteriores. Los objetivos óptimos de PA tras la trombectomía continúan estudiándose activamente debido a las asociaciones con la hemorragia intracraneal sintomática por hiperperfusión y con el empeoramiento de la isquemia por hipoperfusión.",
+ b10:"Dos ECA de alta calidad, un metanálisis de ECA y un análisis de subgrupos preespecificado demostraron que reducir la PAS a < 140 mmHg en las primeras 24 h tras el tratamiento endovascular —sin otra indicación, como una oclusión en tándem con estenosis crónica de alto grado— conduce a menor independencia funcional y mayor mortalidad, y que un objetivo < 120 mmHg durante 72 h causa mayor deterioro neurológico temprano y discapacidad a 3 meses. Dos ECA adicionales muestran que < 130 mmHg no reduce las hemorragia intracraneal sintomática y que < 160 mmHg es poco probable que mejore el resultado.",
+ t1:"En varios ECA y grandes estudios observacionales que incluyen colectivamente a miles de pacientes, la temperatura corporal elevada en la fase intrahospitalaria temprana se asoció con peores resultados funcionales y mayor mortalidad frente a la normotermia. Los protocolos dirigidos por enfermería para monitorizar y tratar la fiebre están respaldados por ECA que demuestran mejores resultados a corto y largo plazo, incluida la mortalidad.",
+ t2:"Aunque puede ocurrir hipertermia central, es una fuente relativamente poco común en comparación con la infección concurrente. Los pacientes con ictus isquémico agudo e infección tienen peores resultados, por lo que la fuente debe identificarse y tratarse con rapidez para evitar más complicaciones.",
+ t3:"Los estudios de hipotermia en pacientes normotérmicos —incluido un gran ensayo de fase III de hipotermia profiláctica— no han mostrado beneficio en los resultados funcionales, ni siquiera en infartos grandes sometidos a hemicraneectomía descompresiva. Algunos estudios sugieren que la inducción de hipotermia aumenta el riesgo de eventos adversos.",
+ g1:"La hipoglucemia no solo puede simular un ictus agudo, sino que existe una relación en J entre la glucemia en la fase aguda y la mortalidad y los resultados funcionales desfavorables. Por ello, la hipoglucemia significativa (< 60 mg/dL) debe corregirse para lograr la normoglucemia.",
+ g2:"Los datos observacionales muestran peores resultados clínicos con hiperglucemia hospitalaria persistente —incluidos niveles > 120–126 mg/dL—, lo que sugiere que tratar los niveles muy elevados (> 180 mg/dL) es razonable, manteniendo la monitorización para prevenir la hipoglucemia.",
+ g3:"El ECA SHINE comparó un objetivo de glucemia de 80–130 frente a 80–180 mg/dL durante hasta 72 h tras el ictus isquémico agudo. Finalizó precozmente por futilidad en un análisis intermedio tras incluir 1151 participantes, sin beneficio del control intensivo sobre el resultado funcional a 3 meses. La hipoglucemia grave (< 40 mg/dL) ocurrió únicamente en el grupo de tratamiento intensivo."
+};
+
+const PHASES=[
+ {id:"none",label:"Sin terapia de reperfusión",target:null,
+  note:"No hay un objetivo único de reducción. Con PA < 220/120 mmHg, tratar en las primeras 48–72 h no es efectivo (clase de recomendación 3). Con PA ≥ 220/120 mmHg, el beneficio es incierto (clase de recomendación 2b). Tratar siempre que exista comorbilidad que lo exija (clase de recomendación 1). Reducción inicial sugerida del 15%.",
+  ids:["b1","b2","b3","b4"]},
+ {id:"prefib",label:"Antes de fibrinólisis IV",target:"< 185 / 110",cap:"mmHg antes de iniciar",
+  note:"Reducir antes de administrar el fibrinolítico para disminuir las complicaciones hemorrágicas.",ids:["b5"]},
+ {id:"preevt",label:"Antes de tratamiento endovascular (sin fibrinólisis)",target:"≤ 185 / 110",cap:"mmHg preprocedimiento",
+  note:"Nivel orientativo derivado de los ensayos de trombectomía; no hay datos de ECA específicos para el objetivo óptimo pre-tratamiento endovascular.",ids:["b6"]},
+ {id:"postfib",label:"Después de fibrinólisis IV",target:"< 180 / 105",cap:"mmHg ≥ 24 h",
+  note:"Mantener al menos 24 h. La reducción intensiva de la PAS < 140 en ictus leve-moderado no mejora el resultado funcional (clase de recomendación 3).",ids:["b7","b8"]},
+ {id:"postevt",label:"Durante y 24 h post-tratamiento endovascular",target:"≤ 180 / 105",cap:"mmHg",
+  note:"Objetivo durante el procedimiento y en las 24 h siguientes.",ids:["b9"]},
+ {id:"recan",label:"Tras recanalización exitosa (mTICI 2b–3)",target:"PAS < 140",cap:"PERJUDICIAL en 72 h",harm:true,
+  note:"En oclusión de gran vaso de circulación anterior recanalizada con éxito y sin otra indicación, bajar la PAS a < 140 mmHg en las primeras 72 h es perjudicial: menor independencia funcional y mayor mortalidad. Un objetivo < 120 mmHg/72 h causa mayor deterioro neurológico.",ids:["b10"]}
+];
+
+const TABS=[
+ {id:"aire",label:"Vía aérea y O₂",icon:'<path d="M12 3c-1.5 2.5-5 4-5 8a5 5 0 0 0 10 0c0-4-3.5-5.5-5-8Z"/><path d="M9 14a3 3 0 0 0 6 0"/>',
+  intro:"Mantener la permeabilidad y protección de la vía aérea y una oxigenación adecuada es prioritario: la hipoxia afecta hasta al 63% de los pacientes y se asocia a mayor mortalidad. El objetivo es <strong>SpO₂ > 94%</strong> solo si hay hipoxia; el oxígeno suplementario rutinario en normoxia no aporta beneficio e incluso preocupa por la hiperoxia. La hiperoxia normobárica antes del tratamiento endovascular es una vía prometedora en un subgrupo concreto (OPENS-2).",
+  ids:["a1","a2","a3","a4","a5","a6"]},
+ {id:"cabeza",label:"Posición de la cabeza",icon:'<circle cx="12" cy="8" r="3"/><path d="M5 21c0-3 3-5 7-5s7 2 7 5"/><path d="M3 11h2M19 11h2"/>',
+  intro:"Tres ECA (HeadPoST y otros) no han demostrado beneficio del posicionamiento rutinario de la cabeza —ni a 0° frente a 30°, ni en Trendelenburg— sobre el resultado funcional, aunque todos confirmaron su seguridad. El posicionamiento a 0° puede tener utilidad temporal puntual para optimizar la perfusión en tipos concretos de ictus isquémico agudo.",
+  ids:["h1","h2"]},
+ {id:"pa",label:"Presión arterial",icon:'<path d="M3 12h4l2-7 4 14 2-7h6"/>',bp:true,
+  intro:"La PA muy elevada concurrente con la reperfusión puede ser perjudicial, sobre todo por complicaciones hemorrágicas. Los objetivos cambian según la fase del código y según si se ha administrado fibrinólisis, trombectomía o ninguna. Usa el selector para ver el objetivo de cada momento; debajo están todas las recomendaciones.",
+  ids:["b1","b2","b3","b4","b5","b6","b7","b8","b9","b10"]},
+ {id:"temp",label:"Temperatura",icon:'<path d="M14 4v9.5a4 4 0 1 1-4 0V4a2 2 0 0 1 4 0Z"/><path d="M10 9h4"/>',
+  intro:"En presencia de hipertermia se busca la <strong>normotermia</strong> (protocolos de enfermería para temperaturas > 37,5 °C) e identificar/tratar la causa, habitualmente infecciosa. La hipotermia inducida o la prevención profiláctica de la fiebre en pacientes normotérmicos no aportan beneficio y pueden aumentar los eventos adversos.",
+  ids:["t1","t2","t3"]},
+ {id:"gluc",label:"Glucemia",icon:'<path d="M12 3c-2 3-5 5.5-5 9a5 5 0 0 0 10 0c0-3.5-3-6-5-9Z"/><path d="M12 13l-2 4h4l-2 4"/>',
+  intro:"Relación en J entre glucemia aguda y pronóstico. Corregir la <strong>hipoglucemia < 60 mg/dL</strong> y tratar la hiperglucemia persistente con objetivo <strong>140–180 mg/dL</strong>. El control intensivo (80–130 mg/dL con insulina IV) no mejora el resultado funcional a 3 meses y aumenta la hipoglucemia grave (ensayo SHINE).",
+  ids:["g1","g2","g3"]}
+];
+
+function recRow(id){
+ const r=R[id];
+ return `<details class="exrow"><summary>
+   <span class="badge ${corClass(r.cor)}"><span class="b-cor">${corBadge(r.cor)}</span><span class="b-loe">${r.loe}</span></span>
+   <span class="extitle">${r.s}</span>${CHEV}
+  </summary><div class="exbody">
+   <span class="verdict ${corClass(r.cor)}">${corWord(r.cor)} · clase de recomendación ${corBadge(r.cor)} · nivel de evidencia ${r.loe}</span>
+   <div class="quote-tag">${ICON_CITE} Texto de la guía</div>
+   <p class="quote"><span style="display:block">${r.t}</span><cite>${CITE}</cite></p>
+   ${SUP[id]?`<div class="suphead">Sustento científico</div><p class="suptext">${SUP[id]}</p>`:""}
+  </div></details>`;
+}
+
+function bpHero(){
+ return `<div class="hero">
+  <h3><svg viewBox="0 0 24 24"><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"/><circle cx="12" cy="12" r="4"/></svg>Objetivo de presión arterial por fase</h3>
+  <p class="ph">Selecciona la fase clínica para ver el objetivo y la recomendación literal.</p>
+  <div class="phases" id="phases">${PHASES.map(p=>`<button class="phase" data-id="${p.id}">${p.label}</button>`).join("")}</div>
+  <div id="targetBox"></div>
+ </div>`;
+}
+function showPhase(p){
+ const box=document.getElementById("targetBox");
+ const big=p.target
+  ? `<div class="big"><span class="val" style="${p.harm?'color:var(--c3h)':''}">${p.target}</span><span class="cap" style="${p.harm?'color:var(--c3h)':''}">${p.cap}</span></div>`
+  : `<div class="big"><span class="cap" style="font-size:14px">Manejo individualizado — ver nota</span></div>`;
+ box.innerHTML=`<div class="target">${big}<div class="note">${p.note}</div><div style="padding:4px 15px 15px"><div class="explore">${p.ids.map(recRow).join("")}</div></div></div>`;
+}
+
+let active="aire";
+const tabsEl=document.getElementById("tabs");
+const view=document.getElementById("view");
+tabsEl.innerHTML=TABS.map(t=>`<button class="tab${t.id===active?' active':''}" data-id="${t.id}"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round">${t.icon}</svg>${t.label}</button>`).join("");
+
+function render(){
+ const t=TABS.find(x=>x.id===active);
+ let html=`<div class="section"><p class="intro">${t.intro}</p>`;
+ if(t.bp){ html+=bpHero(); html+=`<div class="subhead">Todas las recomendaciones — Presión arterial</div>`; }
+ html+=`<div class="explore">${t.ids.map(recRow).join("")}</div></div>`;
+ view.innerHTML=html;
+ if(t.bp){
+  document.querySelectorAll(".phase").forEach(btn=>btn.addEventListener("click",()=>{
+   document.querySelectorAll(".phase").forEach(x=>x.classList.remove("sel"));
+   btn.classList.add("sel");
+   showPhase(PHASES.find(p=>p.id===btn.dataset.id));
+  }));
+ }
+}
+tabsEl.querySelectorAll(".tab").forEach(tb=>tb.addEventListener("click",()=>{
+ tabsEl.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));
+ tb.classList.add("active");
+ active=tb.dataset.id;
+ render();
+}));
+render();
+</script>
+</body>
+</html>
