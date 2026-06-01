@@ -1,4 +1,4 @@
-const CACHE_NAME = 'neurotools-cache-v26; // Actualizado a v26
+const CACHE_NAME = 'neurotools-cache-v27; // Actualizado a v27
 
 const urlsToCache = [
   '/',
@@ -33,6 +33,7 @@ const urlsToCache = [
   '/vascular/CHA₂DS₂-VA.html',
   '/vascular/abcd2.html',
   '/vascular/boston.html',
+  '/vascular/pcaspects.html',
   '/vascular/fibrinolisis.html',
   '/vascular/soporte.html',
   '/vascular/aspect.html',
