@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Calculadora PC-ASPECTS en Ictus — NEUROTOOLS</title>
+<meta name="description" content="Calculadora clínica interactiva de la escala PC-ASPECTS para evaluar la extensión de la isquemia en el ictus de la circulación posterior (territorio vertebrobasilar).">
+
+<link rel="canonical" href="https://neurotools.es/vascular/pc-aspects.html">
+
+<meta property="og:title" content="Calculadora PC-ASPECTS | Neurotools">
+<meta property="og:description" content="Evalúa la extensión de los signos isquémicos tempranos en la circulación posterior con esta calculadora interactiva de la escala PC-ASPECTS.">
+<meta property="og:type" content="website">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --paper: #f4efe4;
+    --paper-deep: #ebe4d3;
+    --paper-card: #faf6ec;
+    --ink: #1a1614;
+    --ink-soft: #4a3f38;
+    --ink-muted: #8a7d72;
+    --accent: #7a1f2b;
+    --accent-warm: #a64a3a;
+    --hairline: #cfc4ad;
+    --hairline-soft: #e8e1ce;
+    --green: #4a6741;
+    --amber: #b8862f;
+    --red: #962934;
+    --ease: cubic-bezier(.2,.7,.3,1);
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Instrument Sans', system-ui, sans-serif;
+    font-size: 16px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+    opacity: 0.3;
+    mix-blend-mode: multiply;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.1 0 0 0 0 0.08 0 0 0 0 0.07 0 0 0 0.45 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  }
+
+  .container {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 40px 20px 80px;
+    position: relative;
+    z-index: 2;
+  }
+
+  /* HEADER */
+  header {
+    text-align: center;
+    margin-bottom: 24px;
+    padding: 28px 24px;
+    background: linear-gradient(135deg, #1a1614, #4a3f38);
+    border-radius: 20px;
+    box-shadow: 0 8px 32px rgba(26, 22, 20, 0.15);
+    color: #fff;
+  }
+  .breadcrumb {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--paper-deep);
+    margin-bottom: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .breadcrumb a { color: var(--paper); text-decoration: none; font-weight: 600; }
+  .breadcrumb .sep { color: var(--ink-muted); }
+  
+  header h1 {
+    font-family: 'Fraunces', Georgia, serif;
+    font-size: 32px;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    margin: 0 0 8px;
+  }
+  header .desc { font-size: 14px; opacity: 0.8; font-family: 'Instrument Sans', sans-serif; }
+  header .ref { font-size: 11px; opacity: 0.5; margin-top: 8px; font-family: 'JetBrains Mono', monospace; }
+
+  /* SCORE BAR */
+  #score-bar {
+    border: 2px solid var(--hairline-soft);
+    border-radius: 16px;
+    padding: 16px 24px;
+    margin-bottom: 24px;
+    background: var(--paper);
+    transition: all 0.3s var(--ease);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .lbl { font-size: 11px; color: var(--ink-muted); letter-spacing: 2px; font-family: 'JetBrains Mono', monospace; margin-bottom: 4px; }
+  #total-num { font-size: 48px; font-weight: 900; line-height: 1; font-family: 'JetBrains Mono', monospace; color: var(--ink); }
+  #total-num span { font-size: 20px; opacity: 0.5; }
+  
+  #adj-label {
+    border-radius: 20px;
+    padding: 6px 16px;
+    font-weight: 700;
+    font-size: 14px;
+    display: inline-block;
+    background: var(--green);
+    color: white;
+  }
+
+  /* CARDS */
+  .card {
+    background: var(--paper-card);
+    border-radius: 16px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04), 0 4px 24px rgba(0,0,0,0.02);
+    margin-bottom: 20px;
+    overflow: hidden;
+    border: 1px solid var(--hairline-soft);
+  }
+  .card-head {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 20px;
+    background: linear-gradient(135deg, rgba(74,63,56,0.05), rgba(74,63,56,0.02));
+    border-bottom: 1px solid var(--hairline-soft);
+  }
+  .card-head .left { display: flex; align-items: center; gap: 10px; }
+  .card-head h3 { margin: 0; font-size: 15px; font-weight: 800; color: var(--ink); }
+  .card-body { padding: 16px 20px; }
+
+  /* IMAGE */
+  .reference-image {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+    border-radius: 8px;
+    mix-blend-mode: multiply;
+  }
+
+  /* BUTTONS GRID */
+  .checkbox-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 10px;
+  }
+  .btn-region {
+    font-family: 'Instrument Sans', sans-serif;
+    padding: 12px 16px;
+    border-radius: 10px;
+    border: 1.5px solid var(--hairline-soft);
+    background: var(--paper-card);
+    color: var(--ink-soft);
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: left;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .btn-region .pts {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    opacity: 0.6;
+    font-weight: 400;
+    background: var(--hairline-soft);
+    padding: 2px 8px;
+    border-radius: 6px;
+  }
+  .btn-region.active {
+    border-color: var(--red);
+    background: rgba(150, 41, 52, 0.08);
+    color: var(--red);
+  }
+  .btn-region.active .pts {
+    background: var(--red);
+    color: white;
+    opacity: 1;
+    font-weight: 700;
+  }
+
+  /* INFO BOX */
+  .info-box {
+    background: var(--paper-deep);
+    border-radius: 10px;
+    padding: 12px 16px;
+    margin-bottom: 16px;
+    font-size: 13px;
+    color: var(--ink-soft);
+    line-height: 1.6;
+  }
+
+  /* CONCLUSION */
+  .concl-card { 
+    background: var(--paper-card); 
+    border-radius: 16px; 
+    box-shadow: 0 1px 4px #0001, 0 4px 24px #0002; 
+    margin-top: 32px; 
+    margin-bottom: 40px; 
+    overflow: hidden; 
+  }
+  .concl-head { 
+    background: linear-gradient(135deg, var(--ink), var(--ink-soft)); 
+    padding: 14px 20px; 
+    display: flex; 
+    align-items: center; 
+    justify-content: space-between; 
+  }
+  .concl-head-left { display: flex; align-items: center; gap: 10px; }
+  .concl-head h3 { margin: 0; font-size: 15px; font-weight: 800; color: #fff; }
+  #copy-btn { 
+    padding: 7px 18px; 
+    border-radius: 10px; 
+    background: var(--paper-card); 
+    color: var(--ink); 
+    border: none; 
+    font-weight: 700; 
+    font-size: 13px; 
+    cursor: pointer;
+    transition: all .2s; 
+  }
+  #copy-btn.copied { background: var(--green); color: #fff; }
+  #concl-pre {
+    margin: 0; padding: 16px 20px;
+    font-size: 13px; line-height: 1.8;
+    color: var(--ink); font-family: 'JetBrains Mono', monospace;
+    background: var(--paper);
+    white-space: pre-wrap; word-break: break-word;
+    border-top: 1px solid var(--hairline-soft);
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- HEADER -->
+  <header>
+    <div class="breadcrumb">
+      <a href="/index.html">← VOLVER AL ÍNDICE</a>
+      <span class="sep">/</span>
+      <span>Ictus isquémico agudo</span>
+    </div>
+    <h1>PC-ASPECTS</h1>
+    <div class="desc">Posterior Circulation Alberta Stroke Program Early CT Score</div>
+    <div class="ref">Evaluación tomográfica del territorio vertebrobasilar</div>
+  </header>
+
+  <!-- SCORE BAR -->
+  <div id="score-bar">
+    <div>
+      <div class="lbl">PUNTUACIÓN TOTAL</div>
+      <div id="total-num">10<span>/10</span></div>
+    </div>
+    <div style="text-align:right">
+      <div id="adj-label">Territorio íntegro</div>
+    </div>
+  </div>
+
+  <!-- REFERENCIA ANATÓMICA -->
+  <div class="card">
+    <div class="card-head">
+      <div class="left"><span style="font-size:20px">🗺️</span><h3>Territorios radiológicos</h3></div>
+    </div>
+    <div class="card-body" style="background: var(--paper);">
+      <div style="font-size: 12px; color: var(--ink-muted); text-align: center; margin-bottom: 12px; font-family: 'JetBrains Mono', monospace;">
+        Convención radiológica (el lado izquierdo corresponde al hemisferio derecho)
+      </div>
+      <!-- Imagen de referencia -->
+      <img src="pcaspect.png" alt="Guía de Escala PC-ASPECTS" class="reference-image">
+    </div>
+  </div>
+
+  <!-- CONTROLES -->
+  <div class="card">
+    <div class="card-head">
+      <div class="left"><span style="font-size:20px">🧠</span><h3>Signos isquémicos tempranos</h3></div>
+      <button onclick="resetCalculator()" style="background:none; border:none; color:var(--ink-muted); font-size:12px; font-family:'JetBrains Mono', monospace; cursor:pointer; text-decoration:underline;">[Reiniciar]</button>
+    </div>
+    <div class="card-body">
+      <div class="info-box">
+        <strong>Instrucciones:</strong> Seleccione los territorios que presentan signos tempranos de isquemia. Se restarán los puntos correspondientes a cada región sobre un total de 10. Tenga en cuenta que el mesencéfalo y el puente restan 2 puntos cada uno.
+      </div>
+
+      <div style="margin-bottom: 24px;">
+        <div class="lbl" style="color: var(--accent); font-weight: 600; margin-bottom: 10px;">NIVEL DEL TÁLAMO</div>
+        <div class="checkbox-grid">
+          <button class="btn-region" data-region="T_Izq" data-points="1" onclick="toggleRegion('T_Izq')">Tálamo Izquierdo <span class="pts">0</span></button>
+          <button class="btn-region" data-region="T_Der" data-points="1" onclick="toggleRegion('T_Der')">Tálamo Derecho <span class="pts">0</span></button>
+          <button class="btn-region" data-region="O_Izq" data-points="1" onclick="toggleRegion('O_Izq')">Lóbulo Occipital Izq. <span class="pts">0</span></button>
+          <button class="btn-region" data-region="O_Der" data-points="1" onclick="toggleRegion('O_Der')">Lóbulo Occipital Der. <span class="pts">0</span></button>
+        </div>
+      </div>
+
+      <div style="margin-bottom: 24px;">
+        <div class="lbl" style="color: var(--accent); font-weight: 600; margin-bottom: 10px;">NIVEL DEL MESENCÉFALO</div>
+        <div class="checkbox-grid">
+          <button class="btn-region" data-region="Mesenc" data-points="2" onclick="toggleRegion('Mesenc')">Mesencéfalo <span class="pts">0</span></button>
+        </div>
+      </div>
+
+      <div>
+        <div class="lbl" style="color: var(--accent); font-weight: 600; margin-bottom: 10px;">NIVEL DEL PUENTE Y CEREBELO</div>
+        <div class="checkbox-grid">
+          <button class="btn-region" data-region="Puente" data-points="2" onclick="toggleRegion('Puente')">Puente / Protuberancia <span class="pts">0</span></button>
+          <button class="btn-region" data-region="C_Izq" data-points="1" onclick="toggleRegion('C_Izq')">Cerebelo Izquierdo <span class="pts">0</span></button>
+          <button class="btn-region" data-region="C_Der" data-points="1" onclick="toggleRegion('C_Der')">Cerebelo Derecho <span class="pts">0</span></button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONCLUSIÓN COPIABLE -->
+  <div class="concl-card">
+    <div class="concl-head">
+      <div class="concl-head-left">
+        <span style="font-size:18px">📋</span>
+        <h3>Resumen clínico</h3>
+      </div>
+      <button id="copy-btn" onclick="copyConclusion()">⎘ Copiar</button>
+    </div>
+    <pre id="concl-pre"></pre>
+  </div>
+
+  <!-- SEO / TEXTO CLÍNICO -->
+  <div class="card" style="margin-bottom: 40px; background: transparent; box-shadow: none; border-color: var(--hairline);">
+    <div class="card-head" style="background: transparent; border-bottom: none;">
+      <div class="left"><span style="font-size:20px">📚</span><h3 style="color: var(--ink-soft);">Sobre la escala PC-ASPECTS</h3></div>
+    </div>
+    <div class="card-body" style="font-size: 13px; line-height: 1.6; color: var(--ink-soft); padding-top: 0;">
+      <p>La puntuación <strong>PC-ASPECTS (Posterior Circulation Alberta Stroke Program Early CT Score)</strong> cuantifica los cambios isquémicos tempranos en la circulación posterior. A partir de una puntuación basal de 10, se restan puntos por la presencia de hipodensidades.</p>
+      <p>A diferencia de la escala ASPECTS anterior donde cada territorio resta 1 punto, en la escala PC-ASPECTS el <strong>mesencéfalo y el puente (protuberancia) restan 2 puntos cada uno</strong> por su mayor criticidad, mientras que los tálamos, hemisferios cerebelosos y territorios de arteria cerebral posterior (occipitales) restan 1 punto cada uno de forma bilateral.</p>
+      <p><strong>Correlación clínica:</strong> Una puntuación PC-ASPECTS ≥ 8 indica un pronóstico clínico favorable tras la terapia de reperfusión, mientras que puntuaciones menores sugieren un infarto más extenso con peor pronóstico funcional.</p>
+    </div>
+  </div>
+
+</div>
+
+<!-- Script del botón de volver atrás -->
+<script src="/js/back-button.js"></script>
+
+<script>
+  // Estado de las regiones y sus valores
+  const state = {
+    T_Izq: false, T_Der: false,
+    O_Izq: false, O_Der: false,
+    Mesenc: false,
+    Puente: false,
+    C_Izq: false, C_Der: false
+  };
+
+  const regionPoints = {
+    T_Izq: 1, T_Der: 1,
+    O_Izq: 1, O_Der: 1,
+    Mesenc: 2,
+    Puente: 2,
+    C_Izq: 1, C_Der: 1
+  };
+
+  const regionNames = {
+    T_Izq: "Tálamo Izq.", T_Der: "Tálamo Der.",
+    O_Izq: "Occipital Izq.", O_Der: "Occipital Der.",
+    Mesenc: "Mesencéfalo",
+    Puente: "Puente",
+    C_Izq: "Cerebelo Izq.", C_Der: "Cerebelo Der."
+  };
+
+  function toggleRegion(region) {
+    state[region] = !state[region];
+    const btn = document.querySelector(`button[data-region="${region}"]`);
+    const ptsValue = regionPoints[region];
+    
+    if (state[region]) {
+      btn.classList.add('active');
+      btn.querySelector('.pts').textContent = `-${ptsValue}`;
+    } else {
+      btn.classList.remove('active');
+      btn.querySelector('.pts').textContent = '0';
+    }
+    
+    updateScore();
+  }
+
+  function updateScore() {
+    let deductions = 0;
+    Object.keys(state).forEach(key => {
+      if (state[key]) {
+        deductions += regionPoints[key];
+      }
+    });
+    
+    const score = Math.max(0, 10 - deductions);
+    
+    // Actualizar UI
+    const numEl = document.getElementById('total-num');
+    const barEl = document.getElementById('score-bar');
+    const labelEl = document.getElementById('adj-label');
+
+    numEl.innerHTML = `${score}<span>/10</span>`;
+
+    // Cambiar color según puntuación (Criterio PC-ASPECTS)
+    if (score === 10) {
+      barEl.style.borderColor = "var(--hairline-soft)";
+      numEl.style.color = "var(--ink)";
+      labelEl.textContent = "Sin signos isquémicos";
+      labelEl.style.background = "var(--green)";
+    } else if (score >= 8) {
+      barEl.style.borderColor = "var(--green)";
+      numEl.style.color = "var(--green)";
+      labelEl.textContent = "Infarto leve (PC-ASPECTS ≥ 8)";
+      labelEl.style.background = "var(--green)";
+    } else if (score >= 5) {
+      barEl.style.borderColor = "var(--amber)";
+      numEl.style.color = "var(--amber)";
+      labelEl.textContent = "Infarto moderado (PC-ASPECTS 5-7)";
+      labelEl.style.background = "var(--amber)";
+    } else {
+      barEl.style.borderColor = "var(--red)";
+      numEl.style.color = "var(--red)";
+      labelEl.textContent = "Infarto extenso (PC-ASPECTS ≤ 4)";
+      labelEl.style.background = "var(--red)";
+    }
+
+    updateConclusion(score, deductions);
+  }
+
+  function updateConclusion(score, deductions) {
+    const affected = Object.keys(state).filter(k => state[k]);
+    const affectedNames = affected.map(k => `${regionNames[k]} (-${regionPoints[k]})`);
+    
+    let text = `Escala PC-ASPECTS: ${score}/10\n`;
+    
+    if (score === 10) {
+      text += `· Sin evidencia de signos isquémicos tempranos en el territorio vertebrobasilar.`;
+    } else {
+      text += `· Territorios afectados (-${deductions} pts): ${affectedNames.join(', ')}`;
+    }
+    
+    document.getElementById('concl-pre').textContent = text;
+  }
+
+  function resetCalculator() {
+    Object.keys(state).forEach(k => {
+      state[k] = false;
+      const btn = document.querySelector(`button[data-region="${k}"]`);
+      btn.classList.remove('active');
+      btn.querySelector('.pts').textContent = '0';
+    });
+    updateScore();
+  }
+
+  function copyConclusion() {
+    const text = document.getElementById('concl-pre').textContent;
+    navigator.clipboard.writeText(text).then(() => {
+      const btn = document.getElementById('copy-btn');
+      btn.textContent = '✓ Copiado';
+      btn.classList.add('copied');
+      setTimeout(() => { btn.textContent = '⎘ Copiar'; btn.classList.remove('copied'); }, 2000);
+    });
+  }
+
+  // Init
+  updateScore();
+</script>
+
+</body>
+</html>
