@@ -1,272 +1,503 @@
-<div id="seccion-ventana-extendida" class="modulo-ictus">
-    
-    <div class="card intro-extendida">
-        <h3>Evaluación de Ventana Extendida y Hora Desconocida</h3>
-        <p>Herramienta de soporte a la decisión para la administración de fibrinólisis IV más allá de las 4.5 horas estándar o en ictus del despertar, basada en neuroimagen tisular avanzada[cite: 474].</p>
-    </div>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Evidencias en trombólisis IV — Guía 2026 AHA/ASA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#f4efe4; --paper-2:#fbf8f1; --card:#fdfbf6;
+  --ink:#2a2520; --ink-soft:#6d6457; --ink-faint:#9a9082;
+  --line:#e4dccb; --line-soft:#efe9db;
+  --accent:#2f6b63; --accent-soft:#e0ebe7;
+  --c1:#2e7d52;  --c1-bg:#e6efe6;  --c1-bd:#bcd8c2;
+  --c2a:#a87d1c; --c2a-bg:#f4eccf; --c2a-bd:#e3d29a;
+  --c2b:#c1742a; --c2b-bg:#f6e8d6; --c2b-bd:#e8c79e;
+  --c3:#b23b2e;  --c3-bg:#f3e0db;  --c3-bd:#e3b6ac;
+  --c3h:#7d2418; --c3h-bg:#eccfc6; --c3h-bd:#cf9a8c;
+  --radius:16px; --shadow:0 1px 2px rgba(42,37,32,.04),0 8px 24px rgba(42,37,32,.06);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{
+  font-family:'Instrument Sans',system-ui,sans-serif;background:var(--paper);color:var(--ink);
+  line-height:1.55;font-size:16px;min-height:100vh;
+  background-image:radial-gradient(circle at 12% 8%,rgba(47,107,99,.05),transparent 40%),radial-gradient(circle at 88% 92%,rgba(178,59,46,.04),transparent 40%);
+}
+.wrap{max-width:920px;margin:0 auto;padding:clamp(16px,4vw,40px) clamp(14px,4vw,28px) 80px}
+.backlink{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:var(--ink-soft);text-decoration:none;padding:7px 12px 7px 10px;border:1px solid var(--line);border-radius:9px;background:var(--paper-2);transition:.15s;margin-bottom:18px}
+.backlink:hover{color:var(--ink);border-color:var(--accent);background:var(--accent-soft)}
+.backlink svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+header{margin-bottom:20px}
+.kicker{font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);font-weight:600;display:flex;align-items:center;gap:8px}
+.kicker svg{width:16px;height:16px}
+h1{font-family:'Fraunces',serif;font-weight:600;font-size:clamp(27px,5.2vw,42px);line-height:1.04;letter-spacing:-.01em;margin:6px 0 8px}
+.sub{color:var(--ink-soft);font-size:clamp(14px,2.4vw,16px);max-width:64ch}
 
-    <div class="card">
-        <h4>1. Seleccione el Escenario Clínico</h4>
-        <div class="selector-escenario">
-            <label class="opcion-radio">
-                <input type="radio" name="escenario_ext" value="wake_up_temprano" onchange="actualizarEscenarioExt()">
-                <div class="radio-content">
-                    <strong>Ictus del Despertar / Hora Desconocida</strong>
-                    <span>Detectado hace &lt; 4.5 horas[cite: 471].</span>
-                </div>
-            </label>
-            <label class="opcion-radio">
-                <input type="radio" name="escenario_ext" value="ventana_4_9" onchange="actualizarEscenarioExt()">
-                <div class="radio-content">
-                    <strong>Ventana de 4.5 a 9 horas</strong>
-                    <span>O despertar &lt; 9h desde el punto medio del sueño[cite: 471].</span>
-                </div>
-            </label>
-            <label class="opcion-radio">
-                <input type="radio" name="escenario_ext" value="ventana_4_24_ogv" onchange="actualizarEscenarioExt()">
-                <div class="radio-content">
-                    <strong>Ventana de 4.5 a 24 horas (Con OGV)</strong>
-                    <span>Paciente NO candidato a TVE o con retraso crítico[cite: 471, 496].</span>
-                </div>
-            </label>
-        </div>
-    </div>
+.tabs{display:flex;gap:5px;overflow-x:auto;margin:22px 0 0;border-bottom:1px solid var(--line);-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{appearance:none;border:none;background:none;font-family:inherit;font-size:14px;font-weight:600;color:var(--ink-faint);padding:11px 13px;cursor:pointer;border-radius:10px 10px 0 0;position:relative;transition:color .15s;display:flex;align-items:center;gap:7px;white-space:nowrap;flex:none}
+.tab svg{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:1.7}
+.tab:hover{color:var(--ink)}
+.tab.active{color:var(--ink)}
+.tab.active::after{content:"";position:absolute;left:10px;right:10px;bottom:-1px;height:2.5px;background:var(--accent);border-radius:2px}
 
-    <div id="panel-wake-up" class="card panel-criterios oculto">
-        <h4>2. Criterios de Neuroimagen (Desajuste DWI-FLAIR)</h4>
-        <div class="checklist-criterios">
-            <label class="checkbox-item">
-                <input type="checkbox" id="chk_dwi_lesion" onchange="evaluarDecision()">
-                <span>Lesión hiperintensa evidente en secuencia DWI[cite: 479].</span>
-            </label>
-            <label class="checkbox-item">
-                <input type="checkbox" id="chk_flair_ausente" onchange="evaluarDecision()">
-                <span>Ausencia de cambios marcados de señal en la misma región en FLAIR[cite: 479].</span>
-            </label>
-            <label class="checkbox-item">
-                <input type="checkbox" id="chk_volumen_dwi" onchange="evaluarDecision()">
-                <span>Lesión en DWI afecta a &lt; 1/3 del territorio de la ACM[cite: 295].</span>
-            </label>
-        </div>
-    </div>
+.section{padding-top:22px;animation:fade .25s ease}
+@keyframes fade{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+.intro{font-size:14.5px;color:var(--ink-soft);max-width:68ch;margin-bottom:18px}
+.intro strong{color:var(--ink)}
+.subhead{font-family:'Fraunces',serif;font-weight:600;font-size:15.5px;color:var(--ink);margin:22px 0 10px;display:flex;align-items:center;gap:9px}
+.subhead svg{width:18px;height:18px;stroke:var(--accent);fill:none;stroke-width:1.7;flex:none}
 
-    <div id="panel-perfusion" class="card panel-criterios oculto">
-        <h4>2. Volumetría por Perfusión (CTP o RM DWI-PWI)</h4>
-        <p class="nota-perfusion">Introduzca los datos obtenidos del software automatizado (ej. RAPID, iStroke)[cite: 301, 324].</p>
-        
-        <div class="grid-inputs-perfusion">
-            <div class="input-grupo">
-                <label for="vol_core">Volumen del Núcleo (Core) (mL):</label>
-                <input type="number" id="vol_core" placeholder="Ej. 25" min="0" oninput="calcularMismatch()">
-                <span class="ayuda-input">CBF &lt;30% o DWI[cite: 300].</span>
-            </div>
-            <div class="input-grupo">
-                <label for="vol_penumbra">Volumen de Hipoperfusión (mL):</label>
-                <input type="number" id="vol_penumbra" placeholder="Ej. 80" min="0" oninput="calcularMismatch()">
-                <span class="ayuda-input">Tmax &gt;6s[cite: 300].</span>
-            </div>
-        </div>
+/* card hero (PA / extended window selector) */
+.hero{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px;margin-bottom:22px}
+.hero h3{font-family:'Fraunces',serif;font-weight:600;font-size:17px;display:flex;align-items:center;gap:9px}
+.hero h3 svg{width:20px;height:20px;stroke:var(--accent);fill:none;stroke-width:1.7;flex:none}
+.hero .ph{font-size:12.5px;color:var(--ink-faint);margin:3px 0 14px}
 
-        <div class="resultados-calculo-mismatch">
-            <div class="dato-mismatch">
-                <span class="etiqueta">Relación de Desajuste (Mismatch Ratio):</span>
-                <span class="valor" id="res_ratio">-</span>
-            </div>
-            <div class="dato-mismatch">
-                <span class="etiqueta">Volumen de Desajuste (Mismatch Volume):</span>
-                <span class="valor" id="res_vol_mismatch">-</span> <span class="unidad">mL</span>
-            </div>
-        </div>
+/* PA targets row */
+.patargets{display:grid;grid-template-columns:1fr;gap:10px;margin-top:6px}
+@media(min-width:600px){.patargets{grid-template-columns:1fr 1fr}}
+.patgt{border:1px solid var(--line);border-radius:11px;padding:13px 15px;background:var(--paper-2)}
+.patgt .lab{font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-faint);font-weight:700}
+.patgt .val{font-family:'Fraunces',serif;font-size:24px;font-weight:700;color:var(--accent);line-height:1.1;margin:5px 0 3px}
+.patgt .note{font-size:12.5px;color:var(--ink-soft)}
 
-        <div id="alerta-tve" class="alerta-warning oculto">
-            <strong>Atención (Ventana 4.5 - 24h):</strong> La fibrinólisis IV en esta ventana solo está indicada si el paciente alberga una Oclusión de Gran Vaso (OGV) y <strong>no puede recibir Tratamiento Endovascular (TVE)</strong> de forma oportuna[cite: 496].
-            <label class="checkbox-item mt-10">
-                <input type="checkbox" id="chk_no_tve" onchange="evaluarDecision()">
-                <span>Confirmo que el paciente NO es candidato a TVE o sufrirá un retraso crítico.</span>
-            </label>
-        </div>
-    </div>
+/* extended window interactive */
+.field{margin-bottom:14px}
+.flabel{font-size:13px;font-weight:600;color:var(--ink);margin-bottom:7px}
+.opts{display:flex;flex-wrap:wrap;gap:6px}
+.opt{appearance:none;font-family:inherit;font-size:13px;font-weight:600;background:var(--paper-2);border:1px solid var(--line);color:var(--ink-soft);padding:8px 12px;border-radius:9px;cursor:pointer;transition:.13s;line-height:1.2;text-align:left}
+.opt:hover{border-color:var(--accent);color:var(--ink)}
+.opt.sel{background:var(--accent);border-color:var(--accent);color:#fff}
+.opt.dis{opacity:.4;pointer-events:none}
+.resetbtn{margin-top:6px;appearance:none;background:none;border:none;font-family:inherit;font-size:12.5px;color:var(--ink-faint);cursor:pointer;text-decoration:underline;padding:0}
 
-    <div class="card dictamen-panel">
-        <h4>Recomendación Clínica</h4>
-        <div id="resultado-dictamen" class="alerta-neutra">
-            Seleccione un escenario y complete los criterios radiológicos para obtener una recomendación.
-        </div>
-    </div>
+/* recommendation cards */
+.explore{display:grid;gap:11px}
+.exrow{border:1px solid var(--line);border-radius:13px;background:var(--card);overflow:hidden;box-shadow:var(--shadow)}
+.exrow summary{list-style:none;cursor:pointer;display:flex;gap:12px;align-items:center;padding:14px 15px;user-select:none}
+.exrow summary::-webkit-details-marker{display:none}
+.badge{flex:none;display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:10px;padding:6px 0;width:46px}
+.badge .b-cor{font-family:'Fraunces',serif;font-weight:700;font-size:17px;line-height:1}
+.badge .b-loe{font-size:9px;font-weight:600;letter-spacing:.02em;margin-top:2px;opacity:.85;white-space:nowrap}
+.exrow .extitle{flex:1;min-width:0;font-size:14.5px;font-weight:600;line-height:1.32;color:var(--ink)}
+.exrow .exchev{width:16px;height:16px;stroke:var(--ink-faint);fill:none;stroke-width:2;transition:transform .2s;flex:none}
+.exrow[open] .exchev{transform:rotate(90deg)}
+.exrow[open] summary{border-bottom:1px solid var(--line-soft)}
+.exbody{padding:14px 15px 15px}
+.verdict{font-size:11px;letter-spacing:.06em;text-transform:uppercase;font-weight:700;margin-bottom:9px;display:inline-block;padding:3px 9px;border-radius:7px}
+.quote-tag{font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);font-weight:600;margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.quote-tag svg{width:13px;height:13px;stroke:var(--accent);fill:none;stroke-width:1.8;flex:none}
+.quote{background:var(--paper-2);border-radius:12px;border:1px solid var(--line-soft);padding:13px 15px;margin-top:3px}
+.quote p{font-family:'Fraunces',serif;font-size:15px;line-height:1.52;color:var(--ink);margin:0}
+.quote cite{display:block;margin-top:9px;font-style:normal;font-size:11.5px;color:var(--ink-faint)}
+.suphead{font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-faint);font-weight:700;margin:15px 0 7px;padding-top:13px;border-top:1px solid var(--line-soft);display:flex;align-items:center;gap:6px}
+.suphead::before{content:"";width:13px;height:13px;background:no-repeat center/contain url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="%239a9082" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.3h6c0-1 .4-1.8 1-2.3A7 7 0 0 0 12 2Z"/></svg>')}
+.suptext{font-size:13.5px;line-height:1.55;color:var(--ink-soft)}
 
+.cor-1{background:var(--c1-bg);border:1px solid var(--c1-bd);color:var(--c1)}
+.cor-2a{background:var(--c2a-bg);border:1px solid var(--c2a-bd);color:var(--c2a)}
+.cor-2b{background:var(--c2b-bg);border:1px solid var(--c2b-bd);color:var(--c2b)}
+.cor-3{background:var(--c3-bg);border:1px solid var(--c3-bd);color:var(--c3)}
+.cor-3h{background:var(--c3h-bg);border:1px solid var(--c3h-bd);color:var(--c3h)}
+
+/* PRISMS table */
+.prisms{background:var(--card);border:1px solid var(--line);border-radius:13px;overflow:hidden;box-shadow:var(--shadow);margin-bottom:18px}
+.prisms .ph{padding:14px 16px;border-bottom:1px solid var(--line)}
+.prisms .ph h4{font-family:'Fraunces',serif;font-weight:600;font-size:15.5px;margin-bottom:3px}
+.prisms .ph p{font-size:12.5px;color:var(--ink-faint)}
+.prisms ul{list-style:none;padding:6px 0}
+.prisms li{display:flex;gap:11px;align-items:flex-start;padding:9px 16px;font-size:13.5px;color:var(--ink-soft);border-top:1px solid var(--line-soft)}
+.prisms li:first-child{border-top:none}
+.prisms li svg{width:15px;height:15px;flex:none;stroke:var(--c1);fill:none;stroke-width:2.2;margin-top:2px}
+.prisms li strong{color:var(--ink);font-weight:600}
+
+/* scenario picker */
+.scenarios{display:flex;flex-direction:column;gap:9px}
+.scenrow{border:1px solid var(--line);border-radius:11px;background:var(--card);padding:12px 14px;display:flex;gap:11px;align-items:flex-start;box-shadow:var(--shadow)}
+.scenrow .pill{flex:none;font-family:'Fraunces',serif;font-weight:700;font-size:11px;letter-spacing:.04em;text-transform:uppercase;padding:4px 9px;border-radius:7px;margin-top:1px;white-space:nowrap}
+.scenrow .sc-body{flex:1;min-width:0}
+.scenrow .sc-title{font-size:14px;font-weight:600;color:var(--ink);margin-bottom:4px}
+.scenrow .sc-text{font-size:13px;color:var(--ink-soft);line-height:1.5}
+
+/* dose table */
+.dosetab{border:1px solid var(--line);border-radius:13px;overflow:hidden;background:var(--card);box-shadow:var(--shadow);margin-bottom:18px}
+.dosetab .dh{padding:13px 16px;border-bottom:1px solid var(--line);background:var(--paper-2)}
+.dosetab .dh h4{font-family:'Fraunces',serif;font-size:15px;font-weight:600}
+.dosetab .dh p{font-size:12px;color:var(--ink-faint);margin-top:3px}
+.dosetab table{width:100%;border-collapse:collapse;font-size:13.5px}
+.dosetab th,.dosetab td{padding:10px 16px;text-align:left;border-bottom:1px solid var(--line-soft)}
+.dosetab th{font-size:11.5px;letter-spacing:.04em;text-transform:uppercase;color:var(--ink-faint);font-weight:700}
+.dosetab td:last-child,.dosetab th:last-child{text-align:right}
+.dosetab tr:last-child td{border-bottom:none}
+.dosetab .num{font-family:'Fraunces',serif;font-weight:700;font-size:15px;color:var(--accent)}
+
+/* monitor & complication blocks */
+.opblk{background:var(--card);border:1px solid var(--line);border-radius:13px;padding:15px 17px;margin-bottom:13px;box-shadow:var(--shadow)}
+.opblk h4{font-family:'Fraunces',serif;font-weight:600;font-size:15px;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.opblk h4 svg{width:18px;height:18px;stroke:var(--accent);fill:none;stroke-width:1.7;flex:none}
+.opblk dl{display:grid;grid-template-columns:1fr;gap:9px;font-size:13.5px}
+@media(min-width:560px){.opblk dl{grid-template-columns:160px 1fr;gap:8px 16px}}
+.opblk dt{font-weight:600;color:var(--ink);font-size:12.5px}
+.opblk dd{color:var(--ink-soft)}
+
+.legend{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px;font-size:11.5px}
+.legend span{display:inline-flex;align-items:center;gap:5px;color:var(--ink-soft)}
+.legend i{width:13px;height:13px;border-radius:4px;display:inline-block}
+.footnote{margin-top:28px;font-size:12px;color:var(--ink-faint);text-align:center;line-height:1.6}
+</style>
+</head>
+<body>
+<div class="wrap">
+<a href="index.html" class="backlink"><svg viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg>Volver al índice</a>
+<header>
+  <div class="kicker">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l2-7 4 14 2-7h6"/></svg>
+    Neurotools · Vascular · Código Ictus
+  </div>
+  <h1>Evidencias en trombólisis intravenosa</h1>
+  <p class="sub">Guía 2026 AHA/ASA. Indicaciones, ventana extendida, riesgo de sangrado, agente y manejo de complicaciones. Pulsa cada recomendación para ver su texto literal y su sustento científico.</p>
+</header>
+
+<nav class="tabs" id="tabs"></nav>
+<main id="view"></main>
+
+<div class="legend">
+  <span><i style="background:var(--c1-bg);border:1px solid var(--c1-bd)"></i>Clase 1 · recomendado</span>
+  <span><i style="background:var(--c2a-bg);border:1px solid var(--c2a-bd)"></i>2a · razonable</span>
+  <span><i style="background:var(--c2b-bg);border:1px solid var(--c2b-bd)"></i>2b · puede considerarse</span>
+  <span><i style="background:var(--c3-bg);border:1px solid var(--c3-bd)"></i>3 · sin beneficio</span>
+  <span><i style="background:var(--c3h-bg);border:1px solid var(--c3h-bd)"></i>3 · perjudicial</span>
+</div>
+<p class="footnote">Recomendaciones reproducidas de la guía 2026 AHA/ASA aportada. La selección final exige integrar neuroimagen, comorbilidad y decisión compartida con el paciente.</p>
 </div>
 
-<style>
-    .modulo-ictus { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; color: #1a1a1a; max-width: 800px; margin: 0 auto; padding: 10px; }
-    .card { background: #ffffff; border: 1px solid #e0e0e0; border-radius: 8px; padding: 20px; margin-bottom: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-    .intro-extendida { background: #2c3e50; color: white; }
-    .intro-extendida h3 { margin-top: 0; color: #ecf0f1; }
-    
-    .selector-escenario { display: flex; flex-direction: column; gap: 10px; }
-    .opcion-radio { cursor: pointer; }
-    .opcion-radio input { display: none; }
-    .radio-content { border: 2px solid #ced4da; border-radius: 8px; padding: 15px; background: #f8f9fa; transition: all 0.2s; }
-    .opcion-radio input:checked + .radio-content { border-color: #2980b9; background: #ebf5fb; box-shadow: 0 0 0 1px #2980b9; }
-    .radio-content strong { display: block; font-size: 1.1rem; color: #2c3e50; margin-bottom: 4px; }
-    .radio-content span { font-size: 0.9rem; color: #7f8c8d; }
-
-    .oculto { display: none !important; }
-    .mt-10 { margin-top: 10px; }
-
-    .checklist-criterios { display: flex; flex-direction: column; gap: 12px; }
-    .checkbox-item { display: flex; align-items: flex-start; gap: 10px; cursor: pointer; font-size: 1rem; padding: 8px; border-radius: 6px; }
-    .checkbox-item:hover { background: #f1f2f6; }
-    .checkbox-item input { width: 20px; height: 20px; margin-top: 2px; cursor: pointer; }
-
-    .grid-inputs-perfusion { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
-    @media (max-width: 600px) { .grid-inputs-perfusion { grid-template-columns: 1fr; gap: 10px; } }
-    .input-grupo { display: flex; flex-direction: column; }
-    .input-grupo label { font-weight: bold; margin-bottom: 6px; font-size: 0.95rem; }
-    .input-grupo input { padding: 12px; border: 2px solid #ced4da; border-radius: 6px; font-size: 1.2rem; }
-    .ayuda-input { font-size: 0.8rem; color: #6c757d; margin-top: 4px; }
-
-    .resultados-calculo-mismatch { background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 6px; padding: 15px; display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px; }
-    .dato-mismatch { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed #ced4da; padding-bottom: 5px; }
-    .dato-mismatch:last-child { border-bottom: none; padding-bottom: 0; }
-    .dato-mismatch .etiqueta { font-weight: 600; color: #495057; }
-    .dato-mismatch .valor { font-size: 1.3rem; font-weight: bold; color: #2c3e50; }
-
-    .alerta-warning { background: #fff3cd; color: #856404; border: 1px solid #ffeeba; padding: 15px; border-radius: 6px; font-size: 0.9rem; }
-    
-    .dictamen-panel h4 { margin-top: 0; }
-    .alerta-neutra { background: #e2e3e5; color: #383d41; padding: 15px; border-radius: 6px; text-align: center; }
-    .alerta-exito { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; padding: 15px; border-radius: 6px; }
-    .alerta-peligro { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; padding: 15px; border-radius: 6px; }
-    .cor-badge { display: inline-block; background: #28a745; color: white; padding: 3px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: bold; margin-bottom: 5px; }
-</style>
-
 <script>
-    // Variables globales de cálculo
-    let coreVol = 0;
-    let penumbraVol = 0;
-    let mismatchRatio = 0;
-    let mismatchVol = 0;
+const ICON_CITE='<svg viewBox="0 0 24 24"><path d="M7 7h4v4c0 2-1 3-3 4M14 7h4v4c0 2-1 3-3 4"/></svg>';
+const CHEV='<svg class="exchev" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg>';
+const CITE='Recomendaciones AHA/ASA 2026 — Trombólisis IV';
+const corClass=c=>({"1":"cor-1","2a":"cor-2a","2b":"cor-2b","3nb":"cor-3","3h":"cor-3h"})[c];
+const corBadge=c=>({"1":"1","2a":"2a","2b":"2b","3nb":"3","3h":"3"})[c];
+const corWord=c=>({"1":"Recomendado","2a":"Razonable","2b":"Puede considerarse","3nb":"Sin beneficio","3h":"Perjudicial"})[c];
 
-    function actualizarEscenarioExt() {
-        const escenario = document.querySelector('input[name="escenario_ext"]:checked').value;
-        const panelWakeUp = document.getElementById('panel-wake-up');
-        const panelPerfusion = document.getElementById('panel-perfusion');
-        const alertaTve = document.getElementById('alerta-tve');
-        
-        // Resetear inputs al cambiar de escenario
-        document.getElementById('chk_dwi_lesion').checked = false;
-        document.getElementById('chk_flair_ausente').checked = false;
-        document.getElementById('chk_volumen_dwi').checked = false;
-        document.getElementById('vol_core').value = '';
-        document.getElementById('vol_penumbra').value = '';
-        document.getElementById('chk_no_tve').checked = false;
-        calcularMismatch(); // Limpia los resultados de cálculo
+/* ================== RECOMMENDATIONS ================== */
+const R={
+  /* — Indicaciones — */
+  i1:{cor:"1",loe:"A",s:"Cuanto más rápido, mejor resultado funcional",t:"En pacientes adultos con ictus isquémico agudo con déficits discapacitantes, independientemente de la puntuación en la escala NIHSS, y que sean aptos para fibrinólisis intravenosa, un tratamiento más rápido mejora los resultados funcionales.",sup:"El inicio temprano de la terapia trombolítica es fundamental para maximizar la recuperación neurológica. Múltiples datos de ensayos clínicos y grandes registros han demostrado que cada minuto de retraso provoca una pérdida incremental de tejido y empeora la recuperación. El efecto del tratamiento depende en gran medida del tiempo: cuanto antes, mejor."},
+  i2:{cor:"1",loe:"B-NR",s:"Iniciar lo antes posible dentro de las primeras 4,5 h",t:"En pacientes adultos con ictus isquémico agudo que son aptos para fibrinólisis intravenosa dentro de las 4,5 horas desde el inicio de los síntomas, el tratamiento debe iniciarse lo antes posible, asegurando una administración rápida y segura.",sup:"La eficacia se estableció con el ensayo NINDS rt-PA (0–3 h) y se extendió a 3–4,5 h con ECASS-III. La administración rápida es la piedra angular del tratamiento: el beneficio absoluto disminuye con el tiempo y la velocidad importa tanto como la elegibilidad."},
+  i3:{cor:"1",loe:"B-NR",s:"Equipos preparados ante hemorragia y angioedema",t:"En pacientes con ictus isquémico agudo que se someten a fibrinólisis intravenosa, los profesionales sanitarios deben estar preparados para tratar los posibles efectos adversos emergentes, incluidas las complicaciones hemorrágicas y el angioedema orolingual que puede causar obstrucción de las vías respiratorias.",sup:"Las complicaciones potencialmente mortales (hemorragia intracraneal sintomática, angioedema orolingual con obstrucción de la vía aérea) son infrecuentes pero requieren protocolos de actuación inmediata. Ver pestaña Agente y manejo para los algoritmos."},
+  i4:{cor:"1",loe:"C-EO",s:"Discutir riesgos y beneficios con paciente o representante legal",t:"En pacientes con ictus isquémico agudo aptos para fibrinólisis intravenosa, los profesionales sanitarios deben discutir sus posibles riesgos y beneficios con los pacientes competentes y/o con los representantes legales disponibles.",sup:"Cuando el paciente no puede otorgar el consentimiento (afasia, confusión) y no se dispone inmediatamente de un representante legalmente autorizado, dado el beneficio demostrado y la necesidad de agilizar el tratamiento, no se debe demorar la administración mientras se localiza al representante."},
+  i5:{cor:"1",loe:"B-NR",s:"Determinar glucemia antes de iniciar el tratamiento",t:"En pacientes con sospecha de ictus isquémico, los profesionales sanitarios que los atienden deben determinar los niveles de glucemia capilar o plasmática antes de iniciar la fibrinólisis intravenosa para evaluar y tratar urgentemente las alteraciones graves de la glucosa que puedan imitar o agravar un ictus.",sup:"La hipo e hiperglucemia graves se definen normalmente como <50 y >400 mg/dL respectivamente. La hipoglucemia puede simular un ictus; la hiperglucemia extrema empeora el pronóstico. Corregir la glucemia con los medicamentos adecuados y reevaluar los déficits clínicos tras la corrección."},
+  i6:{cor:"1",loe:"C-LD",s:"Si el déficit persiste tras corregir la glucemia: tratar",t:"En pacientes con sospecha de ictus isquémico con hipoglucemia o hiperglucemia grave, si los síntomas de ictus discapacitante persisten a pesar de la corrección a normoglucemia, se recomienda la administración de fibrinólisis intravenosa para mejorar los resultados funcionales.",sup:"El riesgo mínimo de tratar un imitador de ictus se ve superado por el gran beneficio funcional en un ictus real. Si los déficits permanecen tras normalizar la glucemia, el cuadro probablemente no es un imitador metabólico y procede tratar."},
+  i7:{cor:"1",loe:"A",s:"Cambios isquémicos tempranos leve-moderados: no contraindican",t:"En pacientes con ictus isquémico agudo que, por lo demás, son aptos para fibrinólisis intravenosa y presentan un cambio isquémico temprano de extensión leve a moderada (que no sea una hipodensidad franca atribuible a la presentación), se recomienda el tratamiento.",sup:"Los cambios isquémicos tempranos leve-moderados en la TAC no modificaron el efecto del tratamiento de la fibrinólisis en el ensayo NINDS tPA y no deben considerarse una contraindicación. Una extensión amplia de hipodensidad (ASPECTS muy bajo o hipodensidad clara mayor que la sustancia blanca contralateral) sí contraindica el tratamiento."},
+  i8:{cor:"3nb",loe:"B-R",s:"Ictus leve no discapacitante en ≤4,5 h: no aporta beneficio",t:"En pacientes adultos aptos con ictus isquémico agudo que se presentan con déficits por ictus leves no discapacitantes (por ejemplo, síndrome sensitivo aislado en muchos casos) dentro de las 4,5 horas posteriores al inicio de los síntomas, no se recomienda la fibrinólisis intravenosa.",sup:"El ensayo PRISMS, multicéntrico y aleatorizado, comparó alteplasa frente a aspirina en ictus agudo leve y déficits no discapacitantes. No mostró diferencias en el porcentaje ajustado de pacientes con resultado funcional favorable a 90 días, pero sí más hemorragias intracraneales sintomáticas con alteplasa. La definición operativa de déficit discapacitante (ver tabla PRISMS) es la herramienta de decisión."},
+  /* — Riesgo de sangrado — */
+  b1:{cor:"1",loe:"B-NR",s:"Antiagregación simple o doble: no contraindica el tratamiento",t:"En pacientes con sospecha de ictus isquémico agudo que están tomando antiagregación simple o doble antiagregación plaquetaria, y que, por lo demás, son aptos para fibrinólisis intravenosa, se recomienda la fibrinólisis intravenosa.",sup:"La fibrinólisis se asocia con un pequeño aumento absoluto del riesgo de hemorragia intracraneal sintomática (0,9% con antiagregación simple, 1,2% con doble), superado por el beneficio absoluto esperado del tratamiento (≈8% de mejoría funcional). El balance neto sigue siendo favorable."},
+  b2:{cor:"2a",loe:"B-NR",s:"No retrasar por pruebas de coagulación sin sospecha",t:"En pacientes con ictus isquémico agudo dentro de las 4,5 horas desde la última vez que se supo que estaban bien y que son aptos para fibrinólisis intravenosa, es razonable no retrasar la fibrinólisis intravenosa mientras se esperan los resultados de las pruebas de coagulación, salvo que exista sospecha clínica de coagulopatía.",sup:"Cada minuto perdido reduce el beneficio. En ausencia de antecedentes de warfarina, heparina o sospecha clínica de coagulopatía, esperar los resultados de laboratorio puede causar más daño por retraso que por una coagulopatía oculta no anticipada."},
+  b3:{cor:"1",loe:"B-NR",s:"Microsangrados de carga desconocida: tratar igualmente",t:"En pacientes con ictus isquémico agudo que son aptos para fibrinólisis intravenosa dentro de las 4,5 horas desde el inicio de los síntomas y con una carga desconocida de microsangrados cerebrales, se recomienda administrar fibrinólisis intravenosa.",sup:"Los microsangrados ocurren en el 5–20% de los pacientes que reciben fibrinólisis. Análisis de subgrupos sugieren que tener un número limitado (1–10) no aumenta sustancialmente el riesgo. Detectar el número exacto requiere RM, que no debe retrasar el tratamiento."},
+  b4:{cor:"2a",loe:"B-NR",s:"Microsangrados (>10) en RM previa: probablemente razonable tratar",t:"En pacientes con ictus isquémico agudo dentro de las 4,5 horas desde la última vez que se supo que estaban bien y que son aptos para fibrinólisis intravenosa, es razonable la administración de fibrinólisis intravenosa para lograr mejores resultados clínicos.",sup:"Los microsangrados extensos sugieren una enfermedad vascular subyacente (angiopatía amiloide, microangiopatía hipertensiva) y peor pronóstico hemorrágico. Un metanálisis (6765 pacientes) asoció su presencia con mayor riesgo de hemorragia sintomática, pero el beneficio absoluto del tratamiento típicamente lo supera."},
+  b5:{cor:"2b",loe:"B-NR",s:"Microsangrados muy numerosos previos: balance incierto",t:"En pacientes con ictus isquémico agudo dentro de las 4,5 horas desde la última vez que se supo que estaban bien y que son aptos para fibrinólisis intravenosa, si previamente se había demostrado en una RM una carga elevada de microsangrados cerebrales (>10), el tratamiento puede considerarse caso a caso.",sup:"Los microsangrados muy numerosos a menudo indican angiopatía amiloide avanzada, donde el riesgo de hemorragia sintomática post-trombólisis puede ser sustancialmente mayor. La decisión es individualizada: gravedad del ictus, expectativa funcional, alternativas de reperfusión."},
+  /* — Ventana extendida — */
+  v1:{cor:"2a",loe:"B-R",s:"Hora de inicio desconocida con RM (DWI/FLAIR mismatch) en ≤4,5 h",t:"En pacientes con ictus isquémico agudo que (a) tienen una hora de inicio desconocida y se encuentran dentro de las 4,5 horas desde la detección de los síntomas, y (b) presentan una lesión en la RM-DWI menor de un tercio del territorio de la arteria cerebral media y sin cambios marcados de señal en la secuencia FLAIR, la fibrinólisis intravenosa administrada dentro de las 4,5 horas desde la detección de los síntomas del ictus puede ser beneficiosa para mejorar los resultados funcionales.",sup:"El ensayo WAKE-UP utilizó el desajuste DWI-FLAIR en la RM como «reloj tisular»: una lesión hiperintensa en DWI sin hiperseñal correspondiente clara o marcada en FLAIR sugiere que el ictus tiene menos de ~4,5 h. WAKE-UP mostró mejoría funcional con alteplasa frente a placebo, estableciendo el principio de la imagen como sustituto del reloj."},
+  v2:{cor:"2a",loe:"B-R",s:"Despertar 0–9 h o última vez bien 4,5–9 h con perfusión",t:"En pacientes con ictus isquémico agudo que presentan penumbra isquémica salvable detectada mediante estudios de perfusión automatizados y que (a) se despiertan con síntomas de ictus dentro de las 9 horas posteriores al punto medio del sueño o (b) se encuentran entre 4,5 y 9 horas desde la última vez que se supo que estaban bien, la fibrinólisis intravenosa puede ser razonable para mejorar los resultados funcionales.",sup:"El ensayo EXTEND aleatorizó a 225 pacientes con selección basada en perfusión (TC o RM) buscando penumbra salvable, y alcanzó su variable principal de mejoría en la mRS de 0 a 1 a los 90 días (35,4% frente a 29,5%; razón de riesgo ajustada, 1,44). La selección por imagen de perfusión amplía la ventana segura en este subgrupo."},
+  v3:{cor:"2b",loe:"B-R",s:"Oclusión de gran vaso en 4,5–24 h sin acceso a trombectomía",t:"En pacientes con ictus isquémico agudo secundario a una oclusión de gran vaso con penumbra isquémica salvable, que se presentan entre las 4,5 y 24 horas desde el inicio de los síntomas o desde la última vez que se supo que estaban bien, y que no pueden recibir tratamiento endovascular, el tratamiento con fibrinólisis intravenosa dirigido por profesionales con experiencia en la atención trombolítica del ictus puede ser beneficioso para mejorar los resultados funcionales.",sup:"El ensayo TRACE-III evaluó la fibrinólisis intravenosa en pacientes con oclusión de gran vaso en China, en una población mayoritariamente sin acceso inmediato a trombectomía. La mayoría (77%) de los participantes de EXTEND también albergaban oclusión de gran vaso que actualmente se trataría con trombectomía, lo que limita la generalización. Esta recomendación cubre el escenario en que la trombectomía no está disponible."},
+  /* — Agente — */
+  a1:{cor:"1",loe:"A",s:"Tenecteplase 0,25 mg/kg o alteplasa 0,9 mg/kg en ≤4,5 h",t:"En pacientes adultos con ictus isquémico agudo que se presentan dentro de las 4,5 horas posteriores al inicio de los síntomas o desde la última vez que se supo que estaban bien y que son aptos para fibrinólisis intravenosa, se recomienda tenecteplase a una dosis de 0,25 mg/kg de peso corporal (máximo 25 mg) o alteplasa a una dosis de 0,9 mg/kg de peso corporal para mejorar los resultados funcionales.",sup:"Múltiples ensayos aleatorizados de fase 3 (AcT, ATTEST-2, NOR-TEST 2 parte A entre otros) han demostrado no inferioridad —y en algunos análisis ventaja— de tenecteplase 0,25 mg/kg frente a alteplasa 0,9 mg/kg en eficacia y seguridad. Tenecteplase ofrece ventajas prácticas: bolo único en 5–10 segundos, dosificación simplificada por bandas de peso, menor coste logístico."},
+  a2:{cor:"3nb",loe:"A",s:"Tenecteplase a 0,4 mg/kg: no aporta beneficio",t:"En pacientes adultos con ictus isquémico agudo que se presentan dentro de las 4,5 horas posteriores al inicio de los síntomas o desde la última vez que se supo que estaban bien y que son aptos para fibrinólisis intravenosa, no se recomienda el uso de tenecteplase a una dosis de 0,4 mg/kg de peso corporal.",sup:"NOR-TEST 2 parte A comparó tenecteplase 0,4 mg/kg con alteplasa y se detuvo precozmente por seguridad: mayor mortalidad y más hemorragia sintomática con la dosis alta, sin mejor resultado funcional. La dosis correcta es 0,25 mg/kg con un máximo de 25 mg."},
+  /* — Otros fibrinolíticos / sonotrombolisis — */
+  o1:{cor:"2b",loe:"B-R",s:"Reteplase IV en ≤4,5 h sin trombectomía: puede considerarse",t:"En pacientes aptos con ictus isquémico agudo que se presentan dentro de las 4,5 horas desde la última vez que se supo que estaban bien y que no se van a someter a tratamiento endovascular, se puede considerar el uso de reteplase intravenoso, en lugar de alteplasa, para aumentar las probabilidades de un resultado funcional excelente a los 90 días.",sup:"RAISE (China, 1412 pacientes) comparó reteplase frente a alteplasa en ≤4,5 h sin trombectomía y mostró mayor proporción de resultado funcional excelente (mRS 0–1) a 90 días con reteplase, sin diferencias significativas en hemorragia sintomática. Datos prometedores pendientes de replicación fuera de China."},
+  o2:{cor:"2b",loe:"B-R",s:"Prouroquinasa mutante IV en ≤4,5 h sin trombectomía",t:"En pacientes aptos con ictus isquémico agudo dentro de las 4,5 horas desde la última vez que se supo que estaban bien y que no se van a someter a tratamiento endovascular, se puede considerar el uso de prouroquinasa mutante intravenosa, en lugar de alteplasa, debido a una menor probabilidad de sangrado y a la no inferioridad en las probabilidades de un resultado funcional excelente a los 90 días.",sup:"PROST-2 mostró no inferioridad funcional de prouroquinasa mutante frente a alteplasa con menor tasa de hemorragia sintomática. Evidencia procedente de China; menor experiencia global."},
+  o3:{cor:"3nb",loe:"A",s:"Desmoteplase IV en 3–9 h: sin beneficio",t:"En pacientes aptos con ictus isquémico agudo que se presentan entre 3 y 9 horas desde la última vez que se supo que estaban bien, no se recomienda desmoteplase intravenoso para mejorar la independencia funcional a los 90 días.",sup:"Los ensayos DIAS-3 y DIAS-4 con desmoteplase en ventana extendida no mostraron beneficio funcional frente a placebo."},
+  o4:{cor:"3nb",loe:"B-R",s:"Prouroquinasa mutante + alteplasa dosis bajas: sin beneficio",t:"En pacientes aptos con ictus isquémico agudo dentro de las 4,5 horas desde la última vez que se supo que estaban bien, no se recomienda la prouroquinasa mutante intravenosa en combinación con dosis bajas de alteplasa para mejorar los resultados funcionales.",sup:"La combinación no aportó beneficio adicional sobre alteplasa estándar."},
+  o5:{cor:"3nb",loe:"B-R",s:"Uroquinasa IV en ≤6 h: no es beneficiosa",t:"En pacientes aptos con ictus isquémico agudo dentro de las 6 horas desde la última vez que se supo que estaban bien, la uroquinasa intravenosa no es beneficiosa para disminuir las probabilidades de muerte o dependencia.",sup:"Los datos disponibles no respaldan el uso de uroquinasa IV en el ictus isquémico agudo."},
+  o6:{cor:"3h",loe:"A",s:"Estreptoquinasa IV: perjudicial, no administrar",t:"En pacientes aptos con ictus isquémico agudo dentro de las 6 horas desde la última vez que se supo que estaban bien, no se debe administrar estreptoquinasa intravenosa porque no logra una mejor tasa de independencia funcional a los 90 días y se asocia con un aumento de la mortalidad temprana.",sup:"Los ensayos MAST-I, MAST-E y ASK mostraron exceso de mortalidad temprana sin beneficio funcional. La estreptoquinasa está formalmente desaconsejada en el ictus isquémico agudo."},
+  o7:{cor:"3nb",loe:"A",s:"Sonotrombolisis adyuvante: no aporta beneficio",t:"En pacientes con ictus isquémico agudo, no se recomienda la sonotrombolisis como terapia adyuvante a la fibrinólisis intravenosa en comparación con la fibrinólisis intravenosa sola, ya que no aumentó las probabilidades de mejoría neurológica temprana ni mejoró el resultado funcional a los 90 días.",sup:"El ensayo CLOTBUST-ER y otros estudios no confirmaron el beneficio inicial sugerido por estudios piloto. La sonotrombolisis no debe usarse como adyuvante en la práctica clínica habitual."},
+  /* — Circunstancias especiales / pediátrico — */
+  e1:{cor:"2a",loe:"B-NR",s:"Anemia falciforme conocida: la fibrinólisis puede ser beneficiosa",t:"En pacientes adultos aptos con ictus isquémico agudo y enfermedad de células falciformes conocida, la fibrinólisis intravenosa puede ser beneficiosa para mejorar el resultado funcional sin aumentar la tasa de hemorragia intracerebral sintomática, la hemorragia sistémica potencialmente mortal u otras complicaciones trombolíticas.",sup:"Datos observacionales muestran tasas similares de complicaciones hemorrágicas en pacientes con y sin anemia falciforme. La enfermedad falciforme no debe excluir per se del tratamiento."},
+  e2:{cor:"2b",loe:"C-LD",s:"Oclusión central retina no arterítica con visión discapacitante",t:"En adultos con oclusión aguda no arterítica de la arteria central de la retina que causa una pérdida visual discapacitante, y que por lo demás son aptos para la fibrinólisis intravenosa, la utilidad del tratamiento con fibrinólisis intravenosa dentro de las 4,5 horas desde la última vez que se supo que estaban bien es incierta.",sup:"Evidencia limitada y heterogénea. Algunos estudios pequeños y series sugieren posible beneficio en ventanas muy estrechas; otros no muestran efecto. Decisión individualizada con oftalmología."},
+  e3:{cor:"2b",loe:"C-LD",s:"Pediátrico 28 días–18 años con déficit discapacitante en ≤4,5 h",t:"En pacientes pediátricos de 28 días a 18 años con ictus isquémico agudo confirmado que se presentan dentro de las 4,5 horas desde el inicio de los síntomas y con déficits discapacitantes, se puede considerar la fibrinólisis intravenosa.",sup:"El ensayo aleatorizado pediátrico TIPS se suspendió por falta de reclutamiento. El análisis retrospectivo de los 26 pacientes incluidos confirma la seguridad de la alteplasa intravenosa en niños. Existen datos iniciales de seguridad de tenecteplase en 11 niños sin hemorragia intracraneal. Faltan ensayos prospectivos amplios."}
+};
 
-        if (escenario === 'wake_up_temprano') {
-            panelWakeUp.classList.remove('oculto');
-            panelPerfusion.classList.add('oculto');
-        } else {
-            panelWakeUp.classList.add('oculto');
-            panelPerfusion.classList.remove('oculto');
-            
-            if (escenario === 'ventana_4_24_ogv') {
-                alertaTve.classList.remove('oculto');
-            } else {
-                alertaTve.classList.add('oculto');
-            }
-        }
-        evaluarDecision();
-    }
+/* PRISMS disabling-deficit examples */
+const PRISMS=[
+  "Hemianopsia completa: ≥ 2 en NIHSS ítem 3",
+  "Afasia severa: ≥ 2 en NIHSS ítem 9",
+  "Negligencia visual o sensorial: ≥ 1 en NIHSS ítem 11",
+  "Cualquier debilidad que limite el esfuerzo contra gravedad: ≥ 2 en NIHSS ítems 5 o 6",
+  "Pérdida total de visión: ≥ 2 en NIHSS ítem 3",
+  "Cualquier déficit que el paciente o el clínico considere incapacitante para su empleo o las actividades de la vida diaria"
+];
 
-    function calcularMismatch() {
-        const coreInput = document.getElementById('vol_core').value;
-        const penumbraInput = document.getElementById('vol_penumbra').value;
-        
-        coreVol = parseFloat(coreInput) || 0;
-        penumbraVol = parseFloat(penumbraInput) || 0;
+/* Extended window decision tree */
+const EWIN_SCENARIOS=[
+  {id:"wakeup",label:"Inicio desconocido (despertar) — detección ≤ 4,5 h",
+   image:["rm","none"]},
+  {id:"wakeup9",label:"Despertar 0–9 h desde el punto medio del sueño",
+   image:["perf","none"]},
+  {id:"late",label:"Última vez bien 4,5–9 h",
+   image:["perf","none"]},
+  {id:"verylate",label:"Última vez bien 4,5–24 h con oclusión de gran vaso, sin acceso a trombectomía",
+   image:["perf","none"]}
+];
+const EWIN_IMG={
+  rm:"RM con DWI + FLAIR",
+  perf:"Perfusión automatizada (TC o RM) con penumbra salvable",
+  none:"No disponible"
+};
+const EWIN_RESULT={
+  "wakeup|rm":{rec:"v1",extra:"Aplicar el criterio WAKE-UP: lesión DWI < 1/3 del territorio de la arteria cerebral media SIN hiperseñal marcada en FLAIR. La fibrinólisis se administra dentro de las 4,5 h desde la detección."},
+  "wakeup|none":{idd:"Sin RM con DWI/FLAIR el escenario «inicio desconocido» queda fuera del marco WAKE-UP. Considerar la disponibilidad de perfusión para reclasificar a otra rama, o reservar para tratamiento endovascular si procede."},
+  "wakeup9|perf":{rec:"v2",extra:"EXTEND admitió pacientes que despertaban con síntomas dentro de las 9 horas desde el punto medio del sueño, seleccionados por penumbra salvable en perfusión automatizada."},
+  "wakeup9|none":{idd:"La ventana de 0–9 h desde el punto medio del sueño exige perfusión automatizada para identificar penumbra salvable. Sin imagen de perfusión no es aplicable la recomendación basada en EXTEND."},
+  "late|perf":{rec:"v2",extra:"EXTEND incluyó pacientes con última vez bien 4,5–9 h y penumbra salvable demostrada por perfusión."},
+  "late|none":{idd:"Más allá de las 4,5 h sin imagen de perfusión no procede la fibrinólisis estándar. Reevaluar la posibilidad de tratamiento endovascular si hay oclusión de gran vaso."},
+  "verylate|perf":{rec:"v3",extra:"TRACE-III amplió la ventana hasta 24 h en oclusión de gran vaso seleccionada por imagen, en contexto de no disponibilidad de trombectomía. Es una recomendación 2b: dirigida por profesionales con experiencia."},
+  "verylate|none":{idd:"En la ventana 4,5–24 h con oclusión de gran vaso, el tratamiento estándar es la trombectomía mecánica. La fibrinólisis intravenosa solo está respaldada (2b) si hay imagen de perfusión que demuestre penumbra y no es posible el tratamiento endovascular."}
+};
 
-        if (coreVol > 0 && penumbraVol > 0) {
-            mismatchRatio = penumbraVol / coreVol;
-            mismatchVol = penumbraVol - coreVol;
-            
-            document.getElementById('res_ratio').innerText = mismatchRatio.toFixed(2);
-            document.getElementById('res_vol_mismatch').innerText = mismatchVol.toFixed(1);
-        } else {
-            mismatchRatio = 0;
-            mismatchVol = 0;
-            document.getElementById('res_ratio').innerText = "-";
-            document.getElementById('res_vol_mismatch').innerText = "-";
-        }
-        
-        // Colorear el ratio para feedback visual básico
-        const ratioEl = document.getElementById('res_ratio');
-        if (mismatchRatio > 1.2) { ratioEl.style.color = "#27ae60"; } 
-        else { ratioEl.style.color = "#2c3e50"; }
+/* Scenario classification tables 11/12/13 */
+const SCEN_PROB=[ /* tabla 11 — beneficio probable */
+  ["Disecciones arteriales cervicales extracraneales","Razonablemente segura dentro de las 4,5 h y probablemente recomendada."],
+  ["Neoplasias intracraneales extraaxiales","Riesgo de daño probablemente bajo. Beneficio probablemente supera al riesgo."],
+  ["Ictus durante o tras angiografía","El beneficio probablemente supera al riesgo en esta población."],
+  ["Aneurisma intracraneal no roto","Riesgo de daño probablemente bajo. Considerar el tratamiento."],
+  ["Antecedente remoto de sangrado digestivo o genitourinario","Pueden ser candidatos. Consideración individual y consulta con especialista."],
+  ["Antecedente remoto de infarto agudo de miocardio","Probablemente más beneficio que riesgo."],
+  ["Consumo de drogas recreativas","Probablemente más beneficio que riesgo en la mayoría de los casos."],
+  ["Incertidumbre diagnóstica o imitador de ictus","Salvo contraindicaciones absolutas, el riesgo de daño es bajo y el beneficio probablemente supera al riesgo."],
+  ["Enfermedad de moyamoya","No parece aumentar el riesgo de hemorragia intracraneal sintomática."]
+];
+const SCEN_UNCERT=[ /* tabla 12 — incierto / individualizar */
+  ["Discapacidad preexistente o fragilidad","Balance incierto. Decisión individualizada."],
+  ["Anticoagulante oral directo en últimas 48 h","Seguridad desconocida. Análisis individualizado: tiempo desde la última toma, función renal, gravedad, disponibilidad de trombectomía."],
+  ["Ictus isquémico en los últimos 3 meses","Posible mayor riesgo de hemorragia intracerebral. Sopesar tamaño del ictus previo y tiempo transcurrido."],
+  ["Hemorragia intracraneal previa","Riesgo aumentado. Angiopatía amiloide conocida: mayor riesgo. hemorragia intracraneal por causa modificable (hipertensión, coagulopatía): puede tener más beneficio que riesgo."],
+  ["Traumatismo mayor extracraneal (no sistema nervioso central) 14 días–3 meses","Riesgo incrementado de hemorragia sistémica grave. Consulta quirúrgica."],
+  ["Cirugía mayor extracraneal (no sistema nervioso central) en los últimos 10 días","Riesgo incrementado de complicaciones hemorrágicas. Valoración del campo quirúrgico."],
+  ["Sangrado digestivo o genitourinario en los últimos 21 días","Riesgo aumentado. Evaluación con especialista."],
+  ["Disección arterial intracraneal","Seguridad desconocida."],
+  ["Malformación vascular intracraneal no rota","Seguridad desconocida."],
+  ["Infarto agudo de miocardio con elevación del ST en los últimos 3 meses","Riesgo incrementado. Consulta cardiológica urgente. Si concurrente, dosis adecuada a la isquemia cerebral."],
+  ["Pericarditis aguda","Puede ser razonable si el ictus es mayor y probablemente discapacitante. Consulta cardiológica urgente."],
+  ["Trombo auricular o ventricular izquierdo","Puede ser razonable ante ictus mayor con alta probabilidad de discapacidad grave."],
+  ["Neoplasia maligna sistémica activa","Seguridad desconocida. Consulta oncológica urgente."],
+  ["Embarazo y puerperio","Puede considerarse si los beneficios superan el riesgo de hemorragia uterina. Interconsulta obstétrica."],
+  ["Punción dural en los últimos 7 días","Puede considerarse en casos individuales."],
+  ["Punción arterial no compresible en los últimos 7 días","Seguridad desconocida."],
+  ["Traumatismo craneoencefálico moderado-grave 14 días–3 meses","Evaluación con neurocirugía y neurocríticos."],
+  ["Neurocirugía 14 días–3 meses","Considerar de forma individualizada con neurocirugía."]
+];
+const SCEN_CONTRA=[ /* tabla 13 — contraindicaciones */
+  ["TAC con hipodensidad extensa","No administrar si la hipodensidad clara responsable de los síntomas es mayor que la sustancia blanca contralateral no afectada."],
+  ["TAC con hemorragia","No administrar bajo ninguna circunstancia si hay hemorragia intracraneal aguda en la TAC."],
+  ["Traumatismo craneoencefálico moderado-grave en los últimos 14 días","Contraindicado si conllevó pérdida de consciencia > 30 min, Escala de coma de Glasgow < 13 o hemorragia/contusión/fractura craneal."],
+  ["Neurocirugía en los últimos 14 días","Potencialmente perjudicial. No administrar si hay cirugía intracraneal o espinal en los 14 días previos."],
+  ["Lesión medular aguda en los últimos 3 meses","Contraindicado."],
+  ["Neoplasia intracraneal intraaxial","Potencialmente perjudicial. No administrar (por ejemplo, gliomas)."],
+  ["Endocarditis infecciosa","No administrar por alto riesgo de hemorragia cerebral."],
+  ["Coagulopatía grave o trombocitopenia","No administrar si: plaquetas < 100.000/mm³, INR > 1,7, tiempo de tromboplastina parcial activada > 40 s o tiempo de protrombina > 15 s. En ausencia de warfarina/heparina puede iniciarse antes del resultado y suspender si se confirma alteración."],
+  ["Disección del arco aórtico","Potencialmente perjudicial. No administrar bajo ninguna circunstancia."],
+  ["Anomalías de imagen relacionadas con amiloide (ARIA) o inmunoterapia antiamiloide","Riesgo de hemorragia intracraneal desconocido. Evitar la fibrinólisis intravenosa."]
+];
 
-        evaluarDecision();
-    }
+/* ================== TAB DEFINITIONS ================== */
+const TABS=[
+  {id:"indic",label:"Indicaciones",icon:'<path d="M9 11l3 3 8-8"/><path d="M21 12v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h11"/>',
+   intro:"Cuatro pilares: <strong>déficits discapacitantes</strong>, <strong>tiempo</strong> (≤4,5 h desde inicio o última vez bien), <strong>glucemia</strong> normalizada, y <strong>neuroimagen</strong> sin hipodensidad franca ni hemorragia. Cuanto antes mejor: el efecto depende del tiempo.",
+   ids:["i1","i2","i7","i5","i6","i8","i3","i4"]},
+  {id:"vent",label:"Ventana extendida",icon:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+   intro:"Más allá de las 4,5 h o con hora de inicio desconocida, la imagen sustituye al reloj. Tres ensayos definen las opciones: <strong>WAKE-UP</strong> (RM con desajuste DWI-FLAIR), <strong>EXTEND</strong> (perfusión con penumbra salvable hasta 9 h) y <strong>TRACE-III</strong> (4,5–24 h con oclusión de gran vaso sin trombectomía disponible). Usa el selector para identificar el ensayo aplicable.",
+   ewin:true,ids:["v1","v2","v3"]},
+  {id:"riesgo",label:"Riesgo de sangrado",icon:'<path d="M12 2v6m0 0c0 3 5 5 5 9a5 5 0 0 1-10 0c0-4 5-6 5-9Z"/>',
+   intro:"Antiagregación y microsangrados <strong>no contraindican</strong> el tratamiento; el balance riesgo-beneficio sigue favoreciéndolo. Las contraindicaciones absolutas son pocas y específicas (hipodensidad franca, hemorragia en TAC, coagulopatía grave con plaquetas < 100.000, INR > 1,7, TTPA > 40 s o TP > 15 s, neurocirugía o TCE recientes, disección aórtica, endocarditis). El selector inferior clasifica los escenarios clínicos.",
+   ids:["b1","b2","b3","b4","b5"],scenarios:true},
+  {id:"agente",label:"Agente y manejo",icon:'<path d="M9 3h6l3 4v13a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V7Z"/><path d="M9 14h6M9 17h4"/>',
+   intro:"<strong>Tenecteplase 0,25 mg/kg</strong> (máx 25 mg) en bolo único o <strong>alteplasa 0,9 mg/kg</strong> en bolo + infusión de 60 min. La dosis de 0,4 mg/kg de tenecteplase es perjudicial. Otros agentes con datos: reteplase y prouroquinasa mutante (2b, sin trombectomía); estreptoquinasa <strong>contraindicada</strong>; sonotrombolisis sin beneficio. Manejo de complicaciones y monitorización post-tratamiento al final de la pestaña.",
+   ids:["a1","a2","o1","o2","o3","o4","o5","o6","o7"],agent:true},
+  {id:"esp",label:"Casos especiales",icon:'<circle cx="12" cy="8" r="3"/><path d="M6 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/>',
+   intro:"Anemia falciforme, oclusión arterial retiniana y pediátrico (28 días–18 años). En pediátrico el ensayo TIPS se suspendió por reclutamiento y la evidencia disponible es de seguridad, no de eficacia.",
+   ids:["e1","e2","e3"]}
+];
 
-    function evaluarDecision() {
-        const escenarioChecked = document.querySelector('input[name="escenario_ext"]:checked');
-        const dictamenDiv = document.getElementById('resultado-dictamen');
-        
-        if (!escenarioChecked) return;
-        const escenario = escenarioChecked.value;
+/* ================== RENDER ================== */
+function recRow(id){
+  const r=R[id];
+  return `<details class="exrow"><summary>
+      <span class="badge ${corClass(r.cor)}"><span class="b-cor">${corBadge(r.cor)}</span><span class="b-loe">${r.loe}</span></span>
+      <span class="extitle">${r.s}</span>${CHEV}
+    </summary><div class="exbody">
+      <span class="verdict ${corClass(r.cor)}">${corWord(r.cor)} · Clase ${corBadge(r.cor)} · Evidencia ${r.loe}</span>
+      <div class="quote-tag">${ICON_CITE} Texto de la guía</div>
+      <div class="quote"><p>${r.t}</p><cite>${CITE}</cite></div>
+      <div class="suphead">Sustento científico</div>
+      <p class="suptext">${r.sup}</p>
+    </div></details>`;
+}
 
-        let dictamenPositivo = false;
-        let mensaje = "";
+function paBlock(){
+  return `<div class="hero">
+    <h3><svg viewBox="0 0 24 24"><path d="M3 12h4l2-7 4 14 2-7h6"/></svg>Presión arterial — objetivos en torno a la fibrinólisis</h3>
+    <p class="ph">Recomendaciones específicas de la guía de soporte general. Para los objetivos en otras fases (sin reperfusión, tras trombectomía, tras recanalización), consultar el tool de soporte general.</p>
+    <div class="patargets">
+      <div class="patgt"><div class="lab">Antes de iniciar la fibrinólisis</div><div class="val">&lt; 185 / 110 mmHg</div><div class="note">Reducir antes de administrar el fibrinolítico para disminuir las complicaciones hemorrágicas. Clase 1 · Evidencia B-NR.</div></div>
+      <div class="patgt"><div class="lab">Durante y al menos 24 h después</div><div class="val">&lt; 180 / 105 mmHg</div><div class="note">Mantener durante al menos las primeras 24 h. Reducción intensiva a &lt; 140 mmHg en ictus leve-moderado: sin beneficio. Clase 1 · Evidencia B-R.</div></div>
+    </div>
+  </div>`;
+}
 
-        if (escenario === 'wake_up_temprano') {
-            const dwi = document.getElementById('chk_dwi_lesion').checked;
-            const flair = document.getElementById('chk_flair_ausente').checked;
-            const vol = document.getElementById('chk_volumen_dwi').checked;
+function prismsBlock(){
+  return `<div class="prisms">
+    <div class="ph"><h4>¿Cuándo se considera un déficit «claramente discapacitante»?</h4><p>Definición operativa del ensayo PRISMS. Cualquiera de los siguientes basta para considerar el déficit discapacitante.</p></div>
+    <ul>${PRISMS.map(p=>`<li><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg><span>${p}</span></li>`).join("")}</ul>
+  </div>`;
+}
 
-            if (dwi && flair && vol) {
-                dictamenPositivo = true;
-                mensaje = `<span class="cor-badge">COR 2a | LOE B-R</span><br><strong>Fibrinólisis IV Indicada:</strong> El paciente presenta un perfil de desajuste DWI-FLAIR favorable[cite: 471, 479].`;
-            } else {
-                mensaje = `<strong>Fibrinólisis IV No Indicada:</strong> No se cumplen todos los criterios de desajuste DWI-FLAIR del ensayo WAKE-UP[cite: 479].`;
-            }
-        } 
-        else if (escenario === 'ventana_4_9') {
-            // Criterios EXTEND: core < 70, ratio > 1.2, mismatch vol > 10
-            if (coreVol > 0 && coreVol < 70 && mismatchRatio > 1.2 && mismatchVol > 10) {
-                dictamenPositivo = true;
-                mensaje = `<span class="cor-badge">COR 2a | LOE B-R</span><br><strong>Fibrinólisis IV Indicada:</strong> Perfil de perfusión favorable (Criterios EXTEND). El paciente presenta penumbra isquémica salvable[cite: 300, 471].`;
-            } else if (coreVol > 0) {
-                mensaje = `<strong>Fibrinólisis IV No Indicada:</strong> No se cumplen los umbrales volumétricos (Núcleo &lt; 70mL, Relación &gt; 1.2, Desajuste &gt; 10mL)[cite: 300].`;
-            } else {
-                mensaje = `Introduzca los volúmenes de perfusión para evaluar.`;
-            }
-        }
-        else if (escenario === 'ventana_4_24_ogv') {
-            const noTve = document.getElementById('chk_no_tve').checked;
-            // Criterios TRACE-III/TIMELESS: core < 70, ratio > 1.8, penumbra (volumen) > 15
-            // Nota: La guía específica penumbra > 15 mL (volumen de penumbra o desajuste)
-            if (coreVol > 0 && coreVol < 70 && mismatchRatio > 1.8 && penumbraVol > 15) {
-                if (noTve) {
-                    dictamenPositivo = true;
-                    mensaje = `<span class="cor-badge">COR 2b | LOE B-R</span><br><strong>Fibrinólisis IV Indicada:</strong> Perfil de perfusión favorable (Criterios TRACE-III). Justificado dado que el paciente alberga OGV pero NO es candidato a TVE oportuno[cite: 301, 324, 471].`;
-                } else {
-                    mensaje = `<strong>Fibrinólisis IV Retenida:</strong> El paciente cumple criterios de imagen, pero el Tratamiento Endovascular (TVE) es la prioridad. Solo considere IV si el TVE no es factible[cite: 496].`;
-                }
-            } else if (coreVol > 0) {
-                mensaje = `<strong>Fibrinólisis IV No Indicada:</strong> No se cumplen los umbrales volumétricos extendidos (Núcleo &lt; 70mL, Relación &gt; 1.8, Penumbra/Desajuste &gt; 15mL)[cite: 301, 324].`;
-            } else {
-                mensaje = `Introduzca los volúmenes y confirme el estado de TVE para evaluar.`;
-            }
-        }
+function ewinBlock(){
+  return `<div class="hero" id="ewinHero">
+    <h3><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Selector — ¿qué ensayo aplica?</h3>
+    <p class="ph">Selecciona el escenario clínico y la imagen disponible.</p>
+    <div class="field"><div class="flabel">Escenario</div><div class="opts" id="ewScen">${EWIN_SCENARIOS.map(s=>`<button class="opt" data-k="scen" data-v="${s.id}">${s.label}</button>`).join("")}</div></div>
+    <div class="field"><div class="flabel">Imagen disponible</div><div class="opts" id="ewImg">${Object.entries(EWIN_IMG).map(([k,v])=>`<button class="opt" data-k="img" data-v="${k}">${v}</button>`).join("")}</div></div>
+    <button class="resetbtn" id="ewReset">Reiniciar</button>
+    <div id="ewResult" style="margin-top:14px"></div>
+  </div>`;
+}
 
-        // Aplicar estilos según resultado
-        dictamenDiv.innerHTML = mensaje;
-        dictamenDiv.className = ''; // limpiar clases
-        
-        if (dictamenPositivo) {
-            dictamenDiv.classList.add('alerta-exito');
-        } else if (mensaje.includes('No Indicada') || mensaje.includes('Retenida')) {
-            dictamenDiv.classList.add('alerta-peligro');
-        } else {
-            dictamenDiv.classList.add('alerta-neutra');
-        }
-    }
+function ewinResult(scen,img){
+  if(!scen||!img) return "";
+  const k=scen+"|"+img;
+  const data=EWIN_RESULT[k];
+  if(!data) return "";
+  if(data.idd){
+    return `<div class="exrow" style="border-color:var(--line)"><div style="padding:14px 16px"><div style="font-family:'Fraunces',serif;font-weight:600;font-size:15px;color:var(--ink-soft);margin-bottom:6px">Sin recomendación aplicable</div><div style="font-size:13.5px;color:var(--ink-soft)">${data.idd}</div></div></div>`;
+  }
+  const r=R[data.rec];
+  return `<div class="exrow" open><div style="padding:14px 15px;border-bottom:1px solid var(--line-soft);display:flex;gap:12px;align-items:center">
+      <span class="badge ${corClass(r.cor)}"><span class="b-cor">${corBadge(r.cor)}</span><span class="b-loe">${r.loe}</span></span>
+      <span class="extitle">${r.s}</span></div>
+    <div class="exbody">
+      <span class="verdict ${corClass(r.cor)}">${corWord(r.cor)} · Clase ${corBadge(r.cor)} · Evidencia ${r.loe}</span>
+      <div class="quote-tag">${ICON_CITE} Texto de la guía</div>
+      <div class="quote"><p>${r.t}</p><cite>${CITE}</cite></div>
+      <div class="suphead">Sustento científico</div>
+      <p class="suptext">${r.sup}</p>
+      <div class="suphead">Aplicación práctica</div>
+      <p class="suptext">${data.extra}</p>
+    </div></div>`;
+}
+
+function scenariosBlock(){
+  const row=(title,text,cls)=>`<div class="scenrow"><span class="pill ${cls}">${cls==="cor-1"?"Probable":cls==="cor-2a"?"Individualizar":"Contraindicado"}</span><div class="sc-body"><div class="sc-title">${title}</div><div class="sc-text">${text}</div></div></div>`;
+  return `<div class="subhead"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5a2 2 0 0 1 2-2h11a1 1 0 0 1 1 1v15a1 1 0 0 1-1 1H6a2 2 0 0 1-2-2Z"/><path d="M8 8h7M8 12h7M8 16h4"/></svg>Escenarios clínicos: ¿hay beneficio?</div>
+    <details class="exrow" open><summary><span class="badge cor-1"><span class="b-cor">✓</span></span><span class="extitle">Beneficio probable — el tratamiento se considera</span>${CHEV}</summary><div class="exbody"><div class="scenarios">${SCEN_PROB.map(([t,d])=>row(t,d,"cor-1")).join("")}</div></div></details>
+    <details class="exrow"><summary><span class="badge cor-2a"><span class="b-cor">!</span></span><span class="extitle">Incierto — decisión individualizada</span>${CHEV}</summary><div class="exbody"><div class="scenarios">${SCEN_UNCERT.map(([t,d])=>row(t,d,"cor-2a")).join("")}</div></div></details>
+    <details class="exrow"><summary><span class="badge cor-3"><span class="b-cor">×</span></span><span class="extitle">Contraindicado o potencialmente perjudicial</span>${CHEV}</summary><div class="exbody"><div class="scenarios">${SCEN_CONTRA.map(([t,d])=>row(t,d,"cor-3")).join("")}</div></div></details>`;
+}
+
+function agentBlock(){
+  return `<div class="subhead"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M4 18V8a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v10M4 18h16"/><path d="M9 13l2 2 4-4"/></svg>Dosificación de tenecteplase por peso</div>
+    <div class="dosetab"><div class="dh"><h4>Bolo único, sin infusión</h4><p>0,25 mg/kg de peso. Dosis máxima absoluta 25 mg.</p></div>
+      <table><thead><tr><th>Peso</th><th>Dosis</th><th>Volumen</th></tr></thead><tbody>
+        <tr><td>&lt; 60 kg</td><td class="num">15 mg</td><td>3 mL</td></tr>
+        <tr><td>60 a &lt; 70 kg</td><td class="num">17,5 mg</td><td>3,5 mL</td></tr>
+        <tr><td>70 a &lt; 80 kg</td><td class="num">20 mg</td><td>4 mL</td></tr>
+        <tr><td>80 a &lt; 90 kg</td><td class="num">22,5 mg</td><td>4,5 mL</td></tr>
+        <tr><td>≥ 90 kg</td><td class="num">25 mg</td><td>5 mL</td></tr>
+      </tbody></table>
+    </div>
+    <div class="opblk"><h4><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Alteplasa — protocolo de administración</h4>
+      <dl><dt>Dosis</dt><dd>0,9 mg/kg (máximo 90 mg)</dd>
+      <dt>Bolo</dt><dd>10% de la dosis total en 1 minuto</dd>
+      <dt>Infusión</dt><dd>90% restante en infusión continua de 60 minutos</dd></dl></div>
+    <div class="opblk"><h4><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M4 18V8a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v10M4 18h16"/></svg>Monitorización post-tratamiento</h4>
+      <dl><dt>Ubicación</dt><dd>Unidad de ictus o cuidados intensivos.</dd>
+      <dt>Suspensión</dt><dd>Si cefalea intensa, hipertensión aguda, náuseas, vómitos o empeoramiento neurológico: detener infusión (si alteplasa) y solicitar TAC craneal urgente.</dd>
+      <dt>Frecuencia</dt><dd>PA y exploración neurológica cada 15 min durante y 2 h tras la administración; luego cada 30 min durante 6 h; después cada hora hasta completar 24 h.</dd>
+      <dt>Manejo de PA</dt><dd>Aumentar la frecuencia de medidas si la sistólica &gt; 180 mmHg o la diastólica &gt; 105 mmHg. Administrar antihipertensivos para mantener &lt; 180/105 al menos 24 h.</dd>
+      <dt>Procedimientos invasivos</dt><dd>Retrasar sondas nasogástricas, vesicales permanentes y catéteres intraarteriales si el paciente puede manejarse con seguridad sin ellos.</dd>
+      <dt>Neuroimagen</dt><dd>TAC o RM de control a las 24 h, antes de iniciar antiagregantes o anticoagulantes.</dd></dl></div>
+    <div class="opblk"><h4><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v6m0 0c0 3 5 5 5 9a5 5 0 0 1-10 0c0-4 5-6 5-9Z"/></svg>Hemorragia intracraneal sintomática en las primeras 24 h</h4>
+      <dl><dt>Detener infusión</dt><dd>Detener alteplasa o bolo de tenecteplase de inmediato.</dd>
+      <dt>Pruebas urgentes</dt><dd>Hemograma, tiempo de protrombina/INR, tiempo de tromboplastina parcial activada, fibrinógeno, pruebas cruzadas y TAC craneal sin contraste.</dd>
+      <dt>Crioprecipitado</dt><dd>10 U en 10–30 min para mantener fibrinógeno ≥ 150 mg/dL.</dd>
+      <dt>Antifibrinolíticos</dt><dd>Ácido tranexámico 1000 mg IV en 10 min, O ácido épsilon-aminocaproico 4–5 g en 1 h.</dd>
+      <dt>Soporte</dt><dd>Control de presión arterial, presión intracraneal, presión de perfusión cerebral, temperatura y glucemia. Consulta con hematología y neurocirugía.</dd></dl></div>
+    <div class="opblk"><h4><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5c-3 0-5 3-5 6 0 3 2 5 5 8 3-3 5-5 5-8 0-3-2-6-5-6Z"/></svg>Angioedema orolingual asociado a la trombólisis</h4>
+      <dl><dt>Vía aérea</dt><dd>Intubación si afectación de laringe u orofaringe. Preferible fibroscopio con paciente despierto.</dd>
+      <dt>Suspensión</dt><dd>Detener trombolítico e inhibidores de la enzima convertidora de la angiotensina.</dd>
+      <dt>Tratamiento inicial</dt><dd>Metilprednisolona 125 mg IV + difenhidramina 50 mg IV + ranitidina 50 mg IV.</dd>
+      <dt>Progresión</dt><dd>Adrenalina 0,3 mL SC (0,1%). Considerar icatibant 30 mg SC (máximo 3 dosis en 24 h).</dd></dl></div>`;
+}
+
+/* state */
+let active="indic";
+let ew={scen:null,img:null};
+const tabsEl=document.getElementById("tabs");
+const viewEl=document.getElementById("view");
+
+tabsEl.innerHTML=TABS.map(t=>`<button class="tab${t.id===active?' active':''}" data-id="${t.id}"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round">${t.icon}</svg>${t.label}</button>`).join("");
+
+function render(){
+  const t=TABS.find(x=>x.id===active);
+  let html=`<div class="section"><p class="intro">${t.intro}</p>`;
+  if(t.id==="indic"){
+    html+=paBlock();
+    html+=`<div class="subhead"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3 8-8"/><path d="M21 12v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h11"/></svg>Recomendaciones de elegibilidad</div>`;
+    html+=`<div class="explore">${["i1","i2","i7","i5","i6"].map(recRow).join("")}</div>`;
+    html+=`<div class="subhead"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg>Cuándo NO tratar — déficits leves no discapacitantes</div>`;
+    html+=`<div class="explore">${["i8"].map(recRow).join("")}</div>`;
+    html+=prismsBlock();
+    html+=`<div class="subhead"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h18M12 3v18"/></svg>Preparación del equipo y consentimiento</div>`;
+    html+=`<div class="explore">${["i3","i4"].map(recRow).join("")}</div>`;
+  } else if(t.id==="vent"){
+    html+=ewinBlock();
+    html+=`<div class="subhead"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Recomendaciones de ventana extendida</div>`;
+    html+=`<div class="explore">${t.ids.map(recRow).join("")}</div>`;
+  } else if(t.id==="riesgo"){
+    html+=`<div class="explore">${t.ids.map(recRow).join("")}</div>`;
+    html+=scenariosBlock();
+  } else if(t.id==="agente"){
+    html+=`<div class="subhead"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h6l3 4v13a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V7Z"/></svg>Elección del agente</div>`;
+    html+=`<div class="explore">${["a1","a2"].map(recRow).join("")}</div>`;
+    html+=`<div class="subhead"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l2-7 4 14 2-7h6"/></svg>Otros fibrinolíticos y sonotrombolisis</div>`;
+    html+=`<div class="explore">${["o1","o2","o3","o4","o5","o6","o7"].map(recRow).join("")}</div>`;
+    html+=agentBlock();
+  } else if(t.id==="esp"){
+    html+=`<div class="explore">${t.ids.map(recRow).join("")}</div>`;
+  }
+  html+=`</div>`;
+  viewEl.innerHTML=html;
+
+  if(t.id==="vent"){
+    const upd=()=>{
+      document.querySelectorAll("#ewScen .opt").forEach(b=>b.classList.toggle("sel",b.dataset.v===ew.scen));
+      // disable img options not compatible with current scen
+      const allowed = ew.scen ? EWIN_SCENARIOS.find(s=>s.id===ew.scen).image : null;
+      document.querySelectorAll("#ewImg .opt").forEach(b=>{
+        const ok = !allowed || allowed.includes(b.dataset.v);
+        b.classList.toggle("dis",!ok);
+        b.classList.toggle("sel",b.dataset.v===ew.img);
+      });
+      document.getElementById("ewResult").innerHTML=ewinResult(ew.scen,ew.img);
+    };
+    document.querySelectorAll("#ewScen .opt").forEach(b=>b.addEventListener("click",()=>{ew.scen=(ew.scen===b.dataset.v?null:b.dataset.v); if(ew.scen){const allowed=EWIN_SCENARIOS.find(s=>s.id===ew.scen).image; if(ew.img && !allowed.includes(ew.img)) ew.img=null;} upd();}));
+    document.querySelectorAll("#ewImg .opt").forEach(b=>b.addEventListener("click",()=>{if(b.classList.contains("dis"))return; ew.img=(ew.img===b.dataset.v?null:b.dataset.v); upd();}));
+    document.getElementById("ewReset").addEventListener("click",()=>{ew={scen:null,img:null};upd();});
+    upd();
+  }
+}
+tabsEl.querySelectorAll(".tab").forEach(tb=>tb.addEventListener("click",()=>{
+  tabsEl.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));
+  tb.classList.add("active");
+  active=tb.dataset.id;
+  if(active!=="vent") ew={scen:null,img:null};
+  render();
+}));
+render();
 </script>
+</body>
+</html>
