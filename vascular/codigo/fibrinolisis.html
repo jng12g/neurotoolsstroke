@@ -153,7 +153,10 @@ h1{font-family:'Fraunces',serif;font-weight:600;font-size:clamp(27px,5.2vw,42px)
 </head>
 <body>
 <div class="wrap">
-<a href="index.html" class="backlink"><svg viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg>Volver al índice</a>
+<a class="backlink" href="index.html">
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+  Volver al índice
+</a>
 <header>
   <div class="kicker">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l2-7 4 14 2-7h6"/></svg>
@@ -226,9 +229,8 @@ const R={
 const PRISMS=[
   "Hemianopsia completa: ≥ 2 en NIHSS ítem 3",
   "Afasia severa: ≥ 2 en NIHSS ítem 9",
-  "Negligencia visual o sensorial: ≥ 1 en NIHSS ítem 11",
+  "Hemiatención grave o extinción a más de 1 modalidad (≥ 2 en la pregunta de 'extinción e inatención' de la NIHSS)",
   "Cualquier debilidad que limite el esfuerzo contra gravedad: ≥ 2 en NIHSS ítems 5 o 6",
-  "Pérdida total de visión: ≥ 2 en NIHSS ítem 3",
   "Cualquier déficit que el paciente o el clínico considere incapacitante para su empleo o las actividades de la vida diaria"
 ];
 
@@ -344,7 +346,7 @@ function paBlock(){
     <p class="ph">Recomendaciones específicas de la guía de soporte general. Para los objetivos en otras fases (sin reperfusión, tras trombectomía, tras recanalización), consultar el tool de soporte general.</p>
     <div class="patargets">
       <div class="patgt"><div class="lab">Antes de iniciar la fibrinólisis</div><div class="val">&lt; 185 / 110 mmHg</div><div class="note">Reducir antes de administrar el fibrinolítico para disminuir las complicaciones hemorrágicas. Clase 1 · Evidencia B-NR.</div></div>
-      <div class="patgt"><div class="lab">Durante y al menos 24 h después</div><div class="val">&lt; 180 / 105 mmHg</div><div class="note">Mantener durante al menos las primeras 24 h. Reducción intensiva a &lt; 140 mmHg en ictus leve-moderado: sin beneficio. Clase 1 · Evidencia B-R.</div></div>
+      <div class="patgt"><div class="lab">Durante y al menos 24 h después</div><div class="val">&lt; 180 / 105 mmHg</div><div class="note">Mantener durante al menos las primeras 24 h. Clase 1 · Evidencia B-R. Reducción intensiva a &lt; 140 mmHg en ictus leve-moderado: sin beneficio. Clase 3: Sin Beneficio .</div></div>
     </div>
   </div>`;
 }
